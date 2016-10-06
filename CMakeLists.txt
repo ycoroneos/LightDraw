@@ -43,11 +43,15 @@ endif()
 
 #GLM
 list(APPEND voxl_INCLUDES 3rd_party/glm)
+list(APPEND voxl_INCLUDES .)
 
 list (APPEND voxl_SRC
   src/main.cpp
+  src/voxel.cpp
 )
 list (APPEND voxl_HEADER
+  inc/voxel.h
+  inc/gl.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

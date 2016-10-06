@@ -1,8 +1,8 @@
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
+#include "inc/voxel.h"
 
-#include <glm/vec3.hpp>// glm::vec3
-#include <glm/geometric.hpp>// glm::cross, glm::normalize
+Voxel v = Voxel(glm::mat4());
 
 int main(void)
 {
@@ -22,9 +22,6 @@ int main(void)
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
-
-    glm::vec3 a=glm::vec3(1,1,1);
-    glm::vec3 b = glm::normalize(glm::cross(a, a));
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
