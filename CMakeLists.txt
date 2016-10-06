@@ -20,7 +20,7 @@ elseif(MSVC)
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -WX")
 endif()
 
-set (VOXL_LIBS ${OPENGL_gl_LIBRARY})
+set (voxl_LIBS ${OPENGL_gl_LIBRARY})
 
 # GLFW
 set(GLFW_INSTALL OFF)
@@ -28,33 +28,28 @@ set(GLFW_BUILD_DOCS OFF)
 set(GLFW_BUILD_TESTS OFF)
 set(GLFW_BUILD_EXAMPLES OFF)
 set(BUILD_SHARED_LIBS OFF)
-add_subdirectory(glfw)
-list(APPEND VOXL_LIBS glfw)
-list(APPEND VOXL_INCLUDES glfw/include)
+add_subdirectory(3rd_party/glfw)
+list(APPEND voxl_LIBS glfw)
+list(APPEND voxl_INCLUDES 3rd_party/glfw/include)
 
 # GLEW - not needed on OS X
+# we add glew source/header directly to the build, no glew library build.
 if (NOT APPLE)
-  find_package(GLEW REQUIRED)
-    if (GLEW_FOUND)
-      list(APPEND VOXL_INCLUDES ${GLEW_INCLUDE_DIRS})
-      list(APPEND VOXL_LIBS ${GLEW_LIBRARIES})
-    endif()
+  add_definitions(-DGLEW_STATIC)
+  list(APPEND voxl_INCLUDES 3rd_party/glew/include)
+  list(APPEND voxl_SRC 3rd_party/glew/src/glew.c)
+  SOURCE_GROUP(GLEW FILES 3rd_party/glew/src/glew.c)
 endif()
 
 #GLM
-list(APPEND VOXL_INCLUDES glm/glm)
+list(APPEND voxl_INCLUDES 3rd_party/glm)
 
-## vecmath include directory
-#include_directories(vecmath/include)
-#add_subdirectory(vecmath)
-#list (APPEND A2_LIBS vecmath)
-#list (APPEND A2_INCLUDES vecmath/include)
-list (APPEND VOXL_SRC
+list (APPEND voxl_SRC
   src/main.cpp
 )
-list (APPEND VOXL_HEADER
+list (APPEND voxl_HEADER
 )
 
-add_executable(voxl ${VOXL_SRC} ${VOXL_HEADER})
-target_include_directories(voxl PUBLIC ${VOXL_INCLUDES})
-target_link_libraries(voxl ${VOXL_LIBS})
+add_executable(voxl ${voxl_SRC} ${voxl_HEADER})
+target_include_directories(voxl PUBLIC ${voxl_INCLUDES})
+target_link_libraries(voxl ${voxl_LIBS})
