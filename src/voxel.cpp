@@ -34,6 +34,6 @@ GLuint indices[] = { 0,1,2, //front
                      5,6,1, //top
                      5,1,0};
 
-Voxel::Voxel(glm::mat4 transform) : m_transform(transform), m_nverts(8), m_position(vertices), m_nindices(36), m_indices(indices)
+Voxel::Voxel(glm::mat4 transform) : m_transform(transform), m_nverts(sizeof(vertices)/sizeof(vertices[0])), m_position(vertices), m_nindices(36), m_indices(indices)
 {
 }

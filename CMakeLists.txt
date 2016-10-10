@@ -48,10 +48,16 @@ list(APPEND voxl_INCLUDES .)
 list (APPEND voxl_SRC
   src/main.cpp
   src/voxel.cpp
+  src/chunk.cpp
+  src/glt.cpp
+  src/camera.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
   inc/gl.h
+  inc/chunk.h
+  inc/glt.h
+  inc/camera.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

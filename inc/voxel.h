@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <glm/glm.hpp>
-#include "inc/gl.h"
+#include <inc/gl.h>
 using namespace glm;
 
 class Voxel
