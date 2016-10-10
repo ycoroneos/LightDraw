@@ -19,8 +19,8 @@ GLFWwindow* createOpenGLWindow(int width, int height, const char* title) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #else
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 #endif
     window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -47,7 +47,7 @@ GLFWwindow* createOpenGLWindow(int width, int height, const char* title) {
 
     // This line is optional, but very useful for debugging
 #ifndef __APPLE__
-    setupDebugPrint();
+//    setupDebugPrint();
 #endif
     return window;
 }
