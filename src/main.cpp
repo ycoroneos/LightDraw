@@ -1,11 +1,14 @@
 #include "inc/gl.h"
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "inc/voxel.h"
 #include "inc/glt.h"
 #include "inc/scene.h"
 #include "inc/input.h"
 #include <stdio.h>
+
+glm::mat4 Projection;
 
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -18,6 +21,11 @@ void window_size_callback(GLFWwindow* window, int width, int height)
       int offsety = (height - width) / 2;
       glViewport(0, offsety, width, width);
   }
+  float fovy = 45.0;
+  float nearz = 0.1f;
+  float farz = 100.0f;
+  float aspect = float(width)/float(height);
+  Projection = glm::perspective(fovy, aspect, nearz, farz);
 }
 
 int main(void)
@@ -44,7 +52,7 @@ int main(void)
 
 
         //draw
-        drawScene();
+        drawScene(&Projection);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

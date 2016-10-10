@@ -11,11 +11,11 @@ unsigned voxelprog;
 void initScene()
 {
   camera.enableInput();
-  voxelprog = compileProgram("shaders/voxel.vs", "shaders/voxel.fs");
+  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   vxg = new VoxelGrid(10,10,10);
 }
 
-void drawScene()
+void drawScene(mat4 *Projection)
 {
 }
 
