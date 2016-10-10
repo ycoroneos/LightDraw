@@ -29,6 +29,7 @@ int main(void)
     window = createOpenGLWindow(640,480,"voxl");
     window_size_callback(window, 640, 480);
     glfwSetWindowSizeCallback(window, window_size_callback);
+    glEnable(GL_DEPTH_TEST);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
