@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include "inc/voxel.h"
 #include "inc/glt.h"
+#include "inc/scene.h"
+#include "inc/input.h"
 #include <stdio.h>
 
 void window_size_callback(GLFWwindow* window, int width, int height)
@@ -29,9 +31,12 @@ int main(void)
     window = createOpenGLWindow(640,480,"voxl");
     window_size_callback(window, 640, 480);
     glfwSetWindowSizeCallback(window, window_size_callback);
+    glfwSetKeyCallback(window, keyCallback);
+    glfwSetCursorPosCallback(window, mouseCallback);
     glEnable(GL_DEPTH_TEST);
 
     /* Loop until the user closes the window */
+    initScene();
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
@@ -39,6 +44,7 @@ int main(void)
 
 
         //draw
+        drawScene();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -47,6 +53,7 @@ int main(void)
         glfwPollEvents();
     }
 
+    cleanupScene();
     glfwTerminate();
     return 0;
 }

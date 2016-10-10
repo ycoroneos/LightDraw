@@ -12,7 +12,7 @@ using namespace glm;
 //  v2------v3
 
 
-vec3 vertices[]= { vec3(0.5,0.5,-0.5),      //v0
+static vec3 vertices[]= { vec3(0.5,0.5,-0.5),      //v0
                    vec3(-0.5, 0.5, -0.5),   //v1
                    vec3(-0.5, -0.5, -0.5),  //v2
                    vec3(0.5, -0.5, -0.5),   //v3
@@ -21,7 +21,7 @@ vec3 vertices[]= { vec3(0.5,0.5,-0.5),      //v0
                    vec3(-0.5, 0.5, 0.5),    //v6
                    vec3(-0.5, -0.5, 0.5)};  //v7
 
-GLuint indices[] = { 0,1,2, //front
+static GLuint indices[] = { 0,1,2, //front
                      0,2,3,
                      5,0,3, //right
                      5,3,4,
@@ -36,4 +36,28 @@ GLuint indices[] = { 0,1,2, //front
 
 Voxel::Voxel(glm::mat4 transform) : m_transform(transform), m_nverts(sizeof(vertices)/sizeof(vertices[0])), m_position(vertices), m_nindices(36), m_indices(indices)
 {
+}
+
+vec3 *Voxel::getVerts()
+{
+  return vertices;
+}
+
+GLuint Voxel::getnVerts()
+{
+  return m_nverts;
+}
+
+GLuint *Voxel::getIndices()
+{
+  return indices;
+}
+
+GLuint Voxel::getnIndices()
+{
+  return m_nindices;
+}
+mat4 Voxel::getTransform()
+{
+  return m_transform;
 }

@@ -8,6 +8,11 @@ class Voxel
 {
   public:
     Voxel(mat4 transform);
+    vec3 *getVerts();
+    GLuint getnVerts();
+    GLuint *getIndices();
+    GLuint getnIndices();
+    mat4 getTransform();
   private:
     mat4 m_transform;
 

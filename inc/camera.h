@@ -1,8 +1,9 @@
 #pragma once
 #include <glm/glm.hpp>
+#include "inc/input.h"
 using namespace glm;
 
-class Camera
+class Camera : public InputResponder
 {
   public:
     Camera(vec3 eye, vec2 pitchandyaw);
@@ -11,6 +12,9 @@ class Camera
     void updatePitchYaw(vec2 pitchyawdelta);
     void updateTranslation(vec2 translation);
     vec3 getPos();
+
+    void doMouseInput(double xpos, double ypos) override;
+    void doKeyboardInput(int key, int scancode, int action, int mods) override;
   private:
     vec2 pitchyaw;
     vec3 pos;

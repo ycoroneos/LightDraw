@@ -51,6 +51,8 @@ list (APPEND voxl_SRC
   src/chunk.cpp
   src/glt.cpp
   src/camera.cpp
+  src/scene.cpp
+  src/input.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -58,6 +60,8 @@ list (APPEND voxl_HEADER
   inc/chunk.h
   inc/glt.h
   inc/camera.h
+  inc/scene.h
+  inc/input.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})
