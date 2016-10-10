@@ -1,8 +1,56 @@
 #include <inc/glt.h>
-#include <inc/gl.h>
 #include <stdio.h>
 #include <cstdio>
 #include <cstring>
+
+GLFWwindow* createOpenGLWindow(int width, int height, const char* title) {
+    // GLFW creates a window and OpenGL context
+    // in a platform-independent manner.
+    GLFWwindow* window;
+    if (!glfwInit()) {
+        printf("Could not init glfw\n");
+        return nullptr;
+    }
+
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#else
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+    window = glfwCreateWindow(width, height, title, NULL, NULL);
+    if (!window) {
+        return nullptr;
+    }
+    // This must be called only once for each window
+    glfwMakeContextCurrent(window);
+
+    // You should be running an OpenGL 3.3 context
+    printOpenGLVersion();
+
+    // GLEW initializes the OpenGL functions
+    // Without this, only a small subset of OpenGL's
+    // functionality would be available
+#ifndef __APPLE__
+    GLenum err = glewInit();
+    if (GLEW_OK != err) {
+        //Problem: glewInit failed, something is wrong.
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+        return nullptr;
+    }
+#endif
+
+    // This line is optional, but very useful for debugging
+#ifndef __APPLE__
+    setupDebugPrint();
+#endif
+    return window;
+}
 
 static bool compileShader(GLuint handle, GLenum stype, const char* src)
 {
@@ -97,4 +145,13 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
 	glDeleteShader(vshader);
 	glDeleteShader(fshader);
 	return program;
+}
+
+void printOpenGLVersion()
+{
+    int major;
+    int minor;
+    glGetIntegerv(GL_MAJOR_VERSION, &major);
+    glGetIntegerv(GL_MINOR_VERSION, &minor);
+    printf("Running OpenGL %d.%d\n", major, minor);
 }
