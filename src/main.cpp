@@ -1,4 +1,4 @@
-#include <inc/gl.h>
+#include "inc/gl.h"
 #include "GLFW/glfw3.h"
 #include <glm/glm.hpp>
 #include "inc/voxel.h"
