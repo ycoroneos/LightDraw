@@ -76,7 +76,6 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         return;
     }
 
-    printf("camera: ");
     //printf("camera key input\n");
     // Special keys (arrows, CTRL, ...) are documented
     // here: http://www.glfw.org/docs/latest/group__keys.html
@@ -95,7 +94,7 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         updateTranslation(vec2(0.0f,-0.1f));
         break;
       default:
-        printf("unhandled key press %d\n", key);
+        printf("camera: unhandled key press %d\n", key);
         break;
     }
 }
