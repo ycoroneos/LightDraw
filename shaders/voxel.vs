@@ -16,3 +16,4 @@ void main () {
     normalize(ncolor);
     var_Color = ncolor;
 }
+

@@ -14,13 +14,14 @@ void window_size_callback(GLFWwindow* window, int width, int height)
 {
 
   // make sure the viewport is square-shaped.
-  if (width > height) {
-      int offsetx = (width - height) / 2;
-      glViewport(offsetx, 0, height, height);
-  } else {
-      int offsety = (height - width) / 2;
-      glViewport(0, offsety, width, width);
-  }
+//  if (width > height) {
+//      int offsetx = (width - height) / 2;
+//      glViewport(offsetx, 0, height, height);
+//  } else {
+//      int offsety = (height - width) / 2;
+//      glViewport(0, offsety, width, width);
+//  }
+  glViewport(0, 0, width, height);
   float fovy = 45.0;
   //float fovy = 3.1415/4.0;
   float nearz = 0.1f;
@@ -37,9 +38,9 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = createOpenGLWindow(640,480,"voxl");
+    window = createOpenGLWindow(500,500,"voxl");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    window_size_callback(window, 640, 480);
+    window_size_callback(window, 500, 500);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
