@@ -22,6 +22,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
       glViewport(0, offsety, width, width);
   }
   float fovy = 45.0;
+  //float fovy = 3.1415/4.0;
   float nearz = 0.1f;
   float farz = 100.0f;
   float aspect = float(width)/float(height);
@@ -37,6 +38,7 @@ int main(void)
         return -1;
 
     window = createOpenGLWindow(640,480,"voxl");
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, 640, 480);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
@@ -52,7 +54,7 @@ int main(void)
 
 
         //draw
-        drawScene(&Projection);
+        drawScene(Projection);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

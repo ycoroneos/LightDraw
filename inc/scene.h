@@ -3,6 +3,6 @@
 
 void initScene();
 
-void drawScene(glm::mat4 *Projection);
+void drawScene(glm::mat4 Projection);
 
 void cleanupScene();

@@ -12,6 +12,7 @@ class Camera : public InputResponder
     void updatePitchYaw(vec2 pitchyawdelta);
     void updateTranslation(vec2 translation);
     vec3 getPos();
+    void updateUniforms(mat4 P, unsigned program);
 
     void doMouseInput(double xpos, double ypos) override;
     void doKeyboardInput(int key, int scancode, int action, int mods) override;

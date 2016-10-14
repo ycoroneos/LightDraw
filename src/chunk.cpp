@@ -3,6 +3,9 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "stdio.h"
+#include "inc/cube.h"
+#include "inc/recorder.h"
 
 Chunk::Chunk()
 {
@@ -17,12 +20,12 @@ Chunk::Chunk()
 
   //upload indices
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, dummy.getnIndices() * sizeof(GLuint), dummy.getIndices(), GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, dummy.getnIndices() * sizeof(GLuint), dummy.getIndices(), GL_DYNAMIC_DRAW);
 
   // POSITION
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[0]);
   size_t position_nbytes = dummy.getnVerts() * sizeof(glm::vec3);
-  glBufferData(GL_ARRAY_BUFFER, position_nbytes, glm::value_ptr(dummy.getVerts()[0]), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, position_nbytes, dummy.getVerts(), GL_DYNAMIC_DRAW);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0,
       3,
@@ -34,7 +37,7 @@ Chunk::Chunk()
   // NORMALS
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[1]);
   size_t normal_nbytes = dummy.getnVerts() * sizeof(glm::vec3);
-  glBufferData(GL_ARRAY_BUFFER, normal_nbytes, glm::value_ptr(dummy.getVerts()[0]), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, normal_nbytes, dummy.getVerts(), GL_DYNAMIC_DRAW);
   glEnableVertexAttribArray(1);
   glVertexAttribPointer(1,
       3,
@@ -44,9 +47,10 @@ Chunk::Chunk()
       (void*)0);
 
   // Color
+  extern vec3 colors[];
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[2]);
   size_t color_nbytes = dummy.getnVerts() * sizeof(glm::vec3);
-  glBufferData(GL_ARRAY_BUFFER, normal_nbytes, glm::value_ptr(dummy.getVerts()[0]), GL_STATIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, color_nbytes, dummy.getVerts(), GL_DYNAMIC_DRAW);
   glEnableVertexAttribArray(2);
   glVertexAttribPointer(2,
       3,
@@ -84,7 +88,12 @@ void Chunk::addVoxel(Voxel newvox)
 
 void Chunk::setProgram(unsigned newprogram)
 {
-  program=program;
+  program=newprogram;
+}
+
+unsigned Chunk::getProgram()
+{
+  return program;
 }
 
 void Chunk::updateBuffers()
@@ -96,10 +105,11 @@ void Chunk::updateBuffers()
   {
     voxeltransforms.push_back(voxels[i].getTransform());
   }
+  fprintf(stderr, "have %d voxels\n", m_nvoxels);
   // Voxel matrices
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[3]);
   size_t mat_nbytes = voxeltransforms.size() * sizeof(glm::mat4);
-  glBufferData(GL_ARRAY_BUFFER, mat_nbytes, glm::value_ptr(voxeltransforms[0]), GL_DYNAMIC_DRAW);
+  glBufferData(GL_ARRAY_BUFFER, mat_nbytes, &voxeltransforms[0][0][0], GL_DYNAMIC_DRAW);
   GLsizei vec4Size = sizeof(glm::vec4);
   glEnableVertexAttribArray(3);
   glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * vec4Size, (GLvoid*)0);
@@ -125,10 +135,14 @@ void Chunk::draw()
     if (changed)
     {
       updateBuffers();
+      changed=false;
     }
     glUseProgram(program);
     glBindVertexArray(vertexarray);
-    glDrawElementsInstanced(GL_TRIANGLES, voxels[0].getnVerts(), GL_UNSIGNED_INT, 0, amount);
+    glDrawElementsInstanced(GL_TRIANGLES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, amount);
+    //glDrawElementsInstanced(GL_LINES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, amount);
+    //glDrawElements(GL_TRIANGLES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
     glUseProgram(0);
   }
 }

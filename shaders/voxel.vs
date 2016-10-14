@@ -11,5 +11,8 @@ uniform mat4 V;
 
 void main () {
     gl_Position = P * V * InstanceTransform * vec4(Position, 1);
-    var_Color = vec4(Color,1.0);
+    //gl_Position = P * V * vec4(Position, 1);
+    vec4 ncolor = vec4(Color, 1.0);
+    normalize(ncolor);
+    var_Color = ncolor;
 }

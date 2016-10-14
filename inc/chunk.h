@@ -16,6 +16,7 @@ class Chunk
     void addVoxel(Voxel newvox);
     std::vector<Voxel> *getVoxels();
     void setProgram(unsigned newprogram);
+    unsigned getProgram();
     void updateBuffers();
     void draw();
   protected:

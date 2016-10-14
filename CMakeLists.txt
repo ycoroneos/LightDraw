@@ -53,6 +53,7 @@ list (APPEND voxl_SRC
   src/camera.cpp
   src/scene.cpp
   src/input.cpp
+  src/recorder.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -62,6 +63,9 @@ list (APPEND voxl_HEADER
   inc/camera.h
   inc/scene.h
   inc/input.h
+  inc/teapot.h
+  inc/recorder.h
+  inc/cube.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

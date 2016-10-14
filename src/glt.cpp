@@ -66,7 +66,7 @@ static bool compileShader(GLuint handle, GLenum stype, const char* src)
 		glGetShaderInfoLog(handle, 2048, &nwritten, buff);
 
 		const char* typelabel = stype == GL_VERTEX_SHADER ? "vertex" : (stype == GL_FRAGMENT_SHADER ? "fragment" : "unknown");
-		printf("Error in %s shader\n%s\n", typelabel, buff);
+		fprintf(stderr,"Error in %s shader\n%s\n", typelabel, buff);
 		return false;
 	}
 	return true;
@@ -106,7 +106,7 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
   f_vshader = fopen(vshader_src_file, "rb");
   if (!f_vshader)
   {
-    printf("error reading vertex shader %s\n", vshader_src_file);
+    fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
     return 0;
   }
   fseek(f_vshader, 0, SEEK_END);
@@ -115,12 +115,13 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
   vshader_src = new char[length];
   fread(vshader_src, 1, length, f_vshader);
   fclose(f_vshader);
+  fprintf(stderr,"read vshader as:\n%s\n", vshader_src);
 
   //read fshader
   f_fshader = fopen(fshader_src_file, "rb");
   if (!f_fshader)
   {
-    printf("error reading fragment shader %s\n", fshader_src_file);
+    fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
     return 0;
   }
   fseek(f_fshader, 0, SEEK_END);
@@ -129,6 +130,7 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
   fshader_src = new char[length];
   fread(fshader_src, 1, length, f_fshader);
   fclose(f_fshader);
+  fprintf(stderr,"read fshader as:\n%s\n", fshader_src);
 
   //link program
 	GLuint program = glCreateProgram();
@@ -137,6 +139,7 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
 	if (!linkProgram(program, vshader, fshader)) {
 		glDeleteProgram(program);
 		program = 0;
+    fprintf(stderr, "killed program\n");
 	}
 	// once a program is linked
 	// shader objects should be deleted
