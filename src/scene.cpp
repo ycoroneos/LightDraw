@@ -2,6 +2,8 @@
 #include "inc/chunk.h"
 #include "inc/glt.h"
 #include <glm/glm.hpp>
+#include <glm/gtx/transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "inc/recorder.h"
 #include "inc/camera.h"
 #include "inc/teapot.h"
@@ -12,7 +14,10 @@ void drawTeapot();
 
 Camera camera = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
 VoxelGrid *vxg;
-//Chunk *ch;
+VoxelGrid *gnd;
+glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
+glm::mat4 ident;
+
 unsigned voxelprog;
 
 void initScene()
@@ -21,21 +26,25 @@ void initScene()
   voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   vxg = new VoxelGrid(10,10,10);
   vxg->setProgram(voxelprog);
-  //ch.setProgram(voxelprog);
-  //ch.addVoxel(Voxel(glm::mat4()));
-  //ch = new Chunk();
-  //ch->setProgram(voxelprog);
-  //ch->addVoxel(Voxel(glm::mat4()));
+  gnd = new VoxelGrid(100,1,100);
+  gnd->setProgram(voxelprog);
 }
 
 void drawScene(mat4 Projection)
 {
+  int loc = glGetUniformLocation(voxelprog, "M");
   camera.updateUniforms(Projection, voxelprog);
-  //glUseProgram(voxelprog);
+  glUseProgram(voxelprog);
+  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
+  gnd->draw();
+
+  glUseProgram(voxelprog);
+  if (loc<0)
+  {
+    fprintf(stderr, "M not found\n");
+  }
+  glUniformMatrix4fv(loc, 1, false, &ident[0][0]);
   vxg->draw();
-  //drawTeapot();
-  //ch->draw();
-  //glUseProgram(0);
 }
 
 void cleanupScene()

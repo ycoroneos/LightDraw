@@ -8,10 +8,10 @@ out vec4 var_Color;
 
 uniform mat4 P;
 uniform mat4 V;
+uniform mat4 M;
 
 void main () {
-    gl_Position = P * V * InstanceTransform * vec4(Position, 1);
-    //gl_Position = P * V * vec4(Position, 1);
+    gl_Position = P * V * M * InstanceTransform * vec4(Position, 1);
     vec4 ncolor = vec4(Color, 1.0);
     normalize(ncolor);
     var_Color = ncolor;
