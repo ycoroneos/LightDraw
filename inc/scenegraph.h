@@ -12,11 +12,11 @@ class Node
 {
   public:
   private:
-  char name[25];        //name
+  char name[25];        //name for debugging
   unsigned program;     //program to draw with
   glm::mat4 transform;  //transform relative to parent
 
-  std::vector<struct Node *> children;
+  std::vector<Node *> children;
 };
 
 class MeshNode : public Node

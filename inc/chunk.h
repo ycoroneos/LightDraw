@@ -18,7 +18,7 @@ class Chunk
     void setProgram(unsigned newprogram);
     unsigned getProgram();
     void updateBuffers();
-    void draw();
+    void draw(bool lines=false);
   protected:
     std::vector<Voxel> voxels;
     bool changed;

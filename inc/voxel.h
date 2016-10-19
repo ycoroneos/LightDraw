@@ -13,7 +13,11 @@ class Voxel
     GLuint *getIndices();
     GLuint getnIndices();
     mat4 getTransform();
+    bool getVisible();
+    void setVisible();
+    void setInvisible();
   private:
+    bool visible=true;
     mat4 m_transform;
 
     GLuint m_nverts;

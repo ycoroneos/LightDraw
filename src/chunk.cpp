@@ -103,9 +103,11 @@ void Chunk::updateBuffers()
   voxeltransforms.clear();
   for (unsigned int i=0; i<m_nvoxels; ++i)
   {
+    if (!voxels[i].getVisible())
+      continue;
     voxeltransforms.push_back(voxels[i].getTransform());
   }
-  fprintf(stderr, "have %d voxels\n", m_nvoxels);
+  fprintf(stderr, "have %d visible voxels\n", voxeltransforms.size());
   // Voxel matrices
   glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer[3]);
   size_t mat_nbytes = voxeltransforms.size() * sizeof(glm::mat4);
@@ -127,7 +129,7 @@ void Chunk::updateBuffers()
   glBindVertexArray(0);
 }
 
-void Chunk::draw()
+void Chunk::draw(bool lines)
 {
   unsigned amount = voxels.size();
   if (amount > 0)
@@ -137,11 +139,17 @@ void Chunk::draw()
       updateBuffers();
       changed=false;
     }
+    unsigned draw_amount = voxeltransforms.size();
     glUseProgram(program);
     glBindVertexArray(vertexarray);
-    glDrawElementsInstanced(GL_TRIANGLES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, amount);
-    //glDrawElementsInstanced(GL_LINES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, amount);
-    //glDrawElements(GL_TRIANGLES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0);
+    if (lines)
+    {
+      glDrawElementsInstanced(GL_LINES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, draw_amount);
+    }
+    else
+    {
+      glDrawElementsInstanced(GL_TRIANGLES, voxels[0].getnIndices(), GL_UNSIGNED_INT, 0, draw_amount);
+    }
     glBindVertexArray(0);
     glUseProgram(0);
   }
@@ -155,7 +163,12 @@ VoxelGrid::VoxelGrid(int length, int width, int height) : length(length), width(
     {
       for (int h=0; h<height; ++h)
       {
-        addVoxel(Voxel(glm::translate(glm::mat4(),glm::vec3(float(l),float(w),float(h)))));
+        Voxel newvoxel = Voxel(glm::translate(glm::mat4(),glm::vec3(float(l),float(w),float(h))));
+        if (l>4)
+        {
+          newvoxel.setInvisible();
+        }
+        addVoxel(newvoxel);
       }
     }
   }
