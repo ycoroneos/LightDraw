@@ -10,20 +10,19 @@
 
 glm::mat4 Projection;
 
+void setViewport(GLFWwindow* window)
+{
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+
+    glViewport(0,0,width, height);
+}
+
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
 
-  // make sure the viewport is square-shaped.
-//  if (width > height) {
-//      int offsetx = (width - height) / 2;
-//      glViewport(offsetx, 0, height, height);
-//  } else {
-//      int offsety = (height - width) / 2;
-//      glViewport(0, offsety, width, width);
-//  }
-  glViewport(0, 0, width, height);
+  setViewport(window);
   float fovy = 45.0;
-  //float fovy = 3.1415/4.0;
   float nearz = 0.1f;
   float farz = 100.0f;
   float aspect = float(width)/float(height);
@@ -38,9 +37,9 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = createOpenGLWindow(500,500,"voxl");
+    window = createOpenGLWindow(800,600,"voxl");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    window_size_callback(window, 500, 500);
+    window_size_callback(window, 800, 600);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
