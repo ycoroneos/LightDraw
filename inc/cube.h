@@ -7,6 +7,7 @@ using namespace glm;
 const int cube_num_vertices = 24;
 const int cube_num_indices = 36;
 const float scaling=2.0f;
+const vec3 centroid(0.0f, 0.0f, 0.0f);
 
 static unsigned int cube_indices[] = {
                        0,  1,  2,  0,  2,  3,   //front

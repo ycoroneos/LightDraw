@@ -47,7 +47,7 @@ int main(void)
     //glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    initScene();
+    initScene(Projection);
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
@@ -55,7 +55,7 @@ int main(void)
 
 
         //draw
-        drawScene(Projection);
+        drawScene();
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

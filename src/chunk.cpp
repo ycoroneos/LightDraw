@@ -164,12 +164,11 @@ VoxelGrid::VoxelGrid(int length, int width, int height) : length(length), width(
       for (int h=0; h<height; ++h)
       {
         Voxel newvoxel = Voxel(glm::translate(glm::mat4(),glm::vec3(float(l),float(w),float(h))));
-        if (l>4)
-        {
-          newvoxel.setInvisible();
-        }
         addVoxel(newvoxel);
       }
     }
   }
+  vec3 centroid = vec3(float(length), float(width), float(height));
+  centroid = centroid / 2.0f;
+  bounding_box = vec4(centroid, glm::length(centroid));
 }

@@ -6,11 +6,14 @@
 #include "stdio.h"
 using namespace glm;
 
-Camera::Camera(vec3 eye, vec2 pitchandyaw)
+Camera::Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection)
+  : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection))
 {
-  pos = eye;
-  pitchyaw=pitchandyaw;
+//  pos = eye;
+//  pitchyaw=pitchandyaw;
   computeViewMatrix();
+//  Projection = Projection;
+//  invProjection = glm::inverse(Projection);
 }
 
 void Camera::computeViewMatrix()
@@ -19,6 +22,11 @@ void Camera::computeViewMatrix()
   mat4 yawmatrix = rotate(pitchyaw[1], vec3(0,1.0,0));
   mat4 rotation = pitchmatrix * yawmatrix;
   View = rotation * translate(-1.0f*pos);
+}
+
+mat4 Camera::getProjectionMatrix()
+{
+  return Projection;
 }
 
 mat4 Camera::getViewMatrix()
@@ -31,7 +39,7 @@ vec3 Camera::getPos()
   return pos;
 }
 
-void Camera::updateUniforms(mat4 P, unsigned program)
+void Camera::updateUniforms(unsigned program)
 {
   assert(program != 0);
   glUseProgram(program);
@@ -42,7 +50,7 @@ void Camera::updateUniforms(mat4 P, unsigned program)
     perror("P not found\n");
   }
   //mat4 p = *P;
-  glUniformMatrix4fv(loc, 1, false, &P[0][0]);
+  glUniformMatrix4fv(loc, 1, false, &Projection[0][0]);
   //view matrix
   loc = glGetUniformLocation(program, "V");
   if (loc==-1)

@@ -12,7 +12,7 @@
 
 void drawTeapot();
 
-Camera camera = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
+Camera *camera;// = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
 VoxelGrid *vxg;
 VoxelGrid *gnd;
 glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
@@ -20,9 +20,10 @@ glm::mat4 ident;
 
 unsigned voxelprog;
 
-void initScene()
+void initScene(mat4 Projection)
 {
-  camera.enableInput();
+  camera = new Camera(vec3(0.0f,0.0f,10.0f), vec2(0.0f,0.0f), Projection);
+  camera->enableInput();
   voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   vxg = new VoxelGrid(10,10,10);
   vxg->setProgram(voxelprog);
@@ -30,10 +31,10 @@ void initScene()
   gnd->setProgram(voxelprog);
 }
 
-void drawScene(mat4 Projection)
+void drawScene()
 {
   int loc = glGetUniformLocation(voxelprog, "M");
-  camera.updateUniforms(Projection, voxelprog);
+  camera->updateUniforms(voxelprog);
   glUseProgram(voxelprog);
   glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
   gnd->draw();
@@ -50,6 +51,7 @@ void drawScene(mat4 Projection)
 void cleanupScene()
 {
   delete vxg;
+  delete camera;
 }
 
 

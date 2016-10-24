@@ -11,3 +11,17 @@ Chunk * MeshNode::getMesh()
 {
   return mesh;
 }
+
+SceneGraph::SceneGraph()
+{
+}
+
+void SceneGraph::addNode(Node *parent, Node newnode)
+{
+  if (parent == NULL)
+  {
+  }
+  else
+  {
+  }
+}

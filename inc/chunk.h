@@ -23,6 +23,9 @@ class Chunk
     std::vector<Voxel> voxels;
     bool changed;
 
+    //for culling <centroid, distance to corner>
+    vec4 bounding_box;
+
     //GL variables
     unsigned program=0;
     GLuint vertexarray;
