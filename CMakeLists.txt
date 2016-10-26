@@ -68,6 +68,7 @@ list (APPEND voxl_HEADER
   inc/recorder.h
   inc/cube.h
   inc/cull.h
+  inc/binvox.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

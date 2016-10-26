@@ -172,3 +172,86 @@ VoxelGrid::VoxelGrid(int length, int width, int height) : length(length), width(
   centroid = centroid / 2.0f;
   bounding_box = vec4(centroid, glm::length(centroid));
 }
+
+BinVox::BinVox(const char *filename)
+{
+  FILE *binvox;
+  char *binvox_data;
+  unsigned length=0;
+  float tx, ty, tz, scale;
+  //read binvox file
+  binvox = fopen(filename, "r");
+  if (!binvox)
+  {
+    fprintf(stderr,"error reading binvox file %s\n", filename);
+    return;
+  }
+  fseek(binvox, 0, SEEK_END);
+  length=ftell(binvox);
+  rewind(binvox);
+  binvox_data = (char *)malloc(length*sizeof(char));
+  fread(binvox_data, 1, length, binvox);
+  binvox_data[length]='\0';
+  fclose(binvox);
+  if (!(sscanf(binvox_data, "dim %d %d %d\n", &length, &width, &height)))
+  {
+    fprintf(stderr, "error reading binvox: cannot find dim field\n");
+    return;
+  }
+  if (!(sscanf(binvox_data, "translate %f %f %f\n", &tx, &ty, &tz)))
+  {
+    fprintf(stderr, "error reading binvox: cannot find translate field\n");
+    return;
+  }
+  if (!(sscanf(binvox_data, "scale %f\n", &scale)))
+  {
+    fprintf(stderr, "error reading binvox: cannot find scale field\n");
+    return;
+  }
+  char *data=NULL;
+  data = strstr(binvox_data, "data");
+  if (data == NULL)
+  {
+    fprintf(stderr, "error reading binvox: cannot find start of data section\n");
+    return;
+  }
+  //skip over the data string and the newline
+  data+=5;
+  struct voxdata *binvoxels = (struct voxdata *)(data);
+  char *voxbytes = (char *)malloc(length*width*height);
+
+  //first uncompress the binvox data
+  int index=0;
+  while (index<(length*width*height))
+  {
+    struct voxdata *thisvox = &binvoxels[index];
+    for (int i = index; i <index+thisvox->count; ++i)
+    {
+      voxbytes[i] = thisvox->present;
+    }
+    index+=thisvox->count;
+  }
+
+  //then use it
+  for (int l=0; l<length; ++l)
+  {
+    for (int w=0; w<width; ++w)
+    {
+      for (int h=0; h<height; ++h)
+      {
+        int index = l * (width*height) + w * width + h;
+        char visible = voxbytes[index];
+        mat4 objectpos = glm::translate(vec3(float(l), float(w), float(h)));
+        mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
+        Voxel newvoxel = Voxel(worldpos);
+        if (visible == 0)
+        {
+          newvoxel.setInvisible();
+        }
+        addVoxel(newvoxel);
+      }
+    }
+  }
+  free(voxbytes);
+  free(binvox_data);
+}

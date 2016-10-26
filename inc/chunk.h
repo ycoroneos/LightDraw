@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "inc/voxel.h"
+#include "inc/binvox.h"
 using namespace glm;
 
 class Chunk
@@ -42,4 +43,14 @@ class VoxelGrid : public Chunk
     VoxelGrid(int length, int width, int height);
   private:
     int length, width, height;
+};
+
+class BinVox : public Chunk
+{
+  public:
+    BinVox(const char *filename);
+  private:
+    int length, width, height;
+    mat4 translate;
+    mat4 scale;
 };
