@@ -110,7 +110,7 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         return;
     }
 
-    float sprint = 30.0f;
+    static float sprint = 1.0f;
     //printf("camera key input\n");
     // Special keys (arrows, CTRL, ...) are documented
     // here: http://www.glfw.org/docs/latest/group__keys.html

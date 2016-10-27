@@ -258,12 +258,15 @@ BinVox::BinVox(const char *filename)
   //then use it
   for (int l=0; l<length; ++l)
   {
+    fprintf(stderr, "                \r");
+    fprintf(stderr, "loading %d\r", unsigned(l*100)/(length));
     for (int w=0; w<width; ++w)
     {
       for (int h=0; h<height; ++h)
       {
-        int index = l * (width*height) + w * width + h;
-        char visible = voxbytes[index];
+        int vindex = l * (width*height) + w * width + h;
+
+        char visible = voxbytes[vindex];
         mat4 objectpos = glm::translate(vec3(float(l), float(w), float(h)));
         //mat4 rotated = glm::rotate(-90.0f, vec3(1.0f, 0.0f, 0.0f));
         mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
