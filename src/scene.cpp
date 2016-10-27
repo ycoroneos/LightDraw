@@ -31,7 +31,7 @@ void initScene(mat4 Projection)
   vxg->setProgram(voxelprog);
   gnd = new VoxelGrid(100,1,100);
   gnd->setProgram(voxelprog);
-  garg = new BinVox("../data/garg.binvox");
+  garg = new BinVox("../data/rungholt.binvox");
   garg->setProgram(voxelprog);
 }
 

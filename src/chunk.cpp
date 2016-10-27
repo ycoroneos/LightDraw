@@ -273,8 +273,8 @@ BinVox::BinVox(const char *filename)
         }
         mat4 objectpos = glm::translate(vec3(float(l), float(w), float(h)));
         //mat4 rotated = glm::rotate(-90.0f, vec3(1.0f, 0.0f, 0.0f));
-        mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
-        Voxel newvoxel = Voxel(worldpos);
+        //mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
+        Voxel newvoxel = Voxel(objectpos);
      //   if (visible == 0)
       //  {
       //    newvoxel.setInvisible();
