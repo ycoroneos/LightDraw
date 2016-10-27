@@ -9,12 +9,14 @@
 #include "inc/teapot.h"
 #include "inc/cube.h"
 #include "inc/voxel.h"
+#include "stdio.h"
 
 void drawTeapot();
 
 Camera *camera;// = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
 VoxelGrid *vxg;
 VoxelGrid *gnd;
+BinVox *garg;
 glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
 glm::mat4 ident;
 
@@ -29,6 +31,8 @@ void initScene(mat4 Projection)
   vxg->setProgram(voxelprog);
   gnd = new VoxelGrid(100,1,100);
   gnd->setProgram(voxelprog);
+  garg = new BinVox("../data/garg.binvox");
+  garg->setProgram(voxelprog);
 }
 
 void drawScene()
@@ -45,12 +49,15 @@ void drawScene()
     fprintf(stderr, "M not found\n");
   }
   glUniformMatrix4fv(loc, 1, false, &ident[0][0]);
-  vxg->draw();
+  //vxg->draw();
+  garg->draw();
 }
 
 void cleanupScene()
 {
   delete vxg;
+  delete gnd;
+  delete garg;
   delete camera;
 }
 

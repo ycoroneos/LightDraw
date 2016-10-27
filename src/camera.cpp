@@ -110,22 +110,26 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         return;
     }
 
+    float sprint = 30.0f;
     //printf("camera key input\n");
     // Special keys (arrows, CTRL, ...) are documented
     // here: http://www.glfw.org/docs/latest/group__keys.html
     switch (key)
     {
       case 'W':
-        updateTranslation(vec2(0.1f,0.0f));
+        updateTranslation(vec2(0.1f,0.0f)*sprint);
         break;
       case 'S':
-        updateTranslation(vec2(-0.1f,0.0f));
+        updateTranslation(vec2(-0.1f,0.0f)*sprint);
         break;
       case 'A':
-        updateTranslation(vec2(0.0f,0.1f));
+        updateTranslation(vec2(0.0f,0.1f)*sprint);
         break;
       case 'D':
-        updateTranslation(vec2(0.0f,-0.1f));
+        updateTranslation(vec2(0.0f,-0.1f)*sprint);
+        break;
+      case GLFW_KEY_LEFT_SHIFT:
+        sprint = 10.0f;
         break;
       default:
         printf("camera: unhandled key press %d\n", key);

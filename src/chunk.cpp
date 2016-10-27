@@ -177,38 +177,44 @@ BinVox::BinVox(const char *filename)
 {
   FILE *binvox;
   char *binvox_data;
-  unsigned length=0;
+  unsigned binlength=0;
   float tx, ty, tz, scale;
   //read binvox file
-  binvox = fopen(filename, "r");
+  binvox = fopen(filename, "rb");
   if (!binvox)
   {
     fprintf(stderr,"error reading binvox file %s\n", filename);
     return;
   }
   fseek(binvox, 0, SEEK_END);
-  length=ftell(binvox);
+  binlength=ftell(binvox);
   rewind(binvox);
   binvox_data = (char *)malloc(length*sizeof(char));
-  fread(binvox_data, 1, length, binvox);
-  binvox_data[length]='\0';
+  fread(binvox_data, 1, binlength, binvox);
+  binvox_data[binlength]='\0';
   fclose(binvox);
-  if (!(sscanf(binvox_data, "dim %d %d %d\n", &length, &width, &height)))
+  char *data=NULL;
+  fprintf(stderr,"read binvox as:\n%s\n", binvox_data);
+  fprintf(stderr,"binvox length:%d\n", binlength);
+  data = strstr(binvox_data, "dim");
+  if (data == NULL || !(sscanf(data, "dim %d %d %d", &length, &width, &height)))
   {
     fprintf(stderr, "error reading binvox: cannot find dim field\n");
+    fprintf(stderr, "\tlength %d width %d height %d\n", length, width, height);
     return;
   }
-  if (!(sscanf(binvox_data, "translate %f %f %f\n", &tx, &ty, &tz)))
+  data = strstr(binvox_data, "translate");
+  if (data == NULL || !(sscanf(data, "translate %f %f %f", &tx, &ty, &tz)))
   {
     fprintf(stderr, "error reading binvox: cannot find translate field\n");
     return;
   }
-  if (!(sscanf(binvox_data, "scale %f\n", &scale)))
+  data = strstr(binvox_data, "scale");
+  if (data == NULL || !(sscanf(data, "scale %f", &scale)))
   {
     fprintf(stderr, "error reading binvox: cannot find scale field\n");
     return;
   }
-  char *data=NULL;
   data = strstr(binvox_data, "data");
   if (data == NULL)
   {
@@ -217,20 +223,37 @@ BinVox::BinVox(const char *filename)
   }
   //skip over the data string and the newline
   data+=5;
-  struct voxdata *binvoxels = (struct voxdata *)(data);
+  //struct voxdata *binvoxels = (struct voxdata *)(data);
+  uint16_t *binvoxels = (uint16_t *)(data);
   char *voxbytes = (char *)malloc(length*width*height);
 
+  fprintf(stderr, "binvox: length %d width %d height %d \r\n", length, width, height);
+  fprintf(stderr, "binvox: binlength - data = %d \r\n", binlength - (data - binvox_data));
+  fprintf(stderr, "\t byte0: 0x%x, byte1: 0x%x\r\n", binvoxels[0]>>8, binvoxels[0]&0xFF);
+  for (int j=0; j<10; ++j)
+  {
+    fprintf(stderr, "\tbyte %d : 0x%x\r\n", j, *(data+j));
+  }
   //first uncompress the binvox data
-  int index=0;
+  unsigned index=0;
+  unsigned id=0;
+  fprintf(stderr, "binvox: uncompressing ");
   while (index<(length*width*height))
   {
-    struct voxdata *thisvox = &binvoxels[index];
-    for (int i = index; i <index+thisvox->count; ++i)
+    //fprintf(stderr, "index: %d max: %d\r\n", index, length*width*height);
+    //struct voxdata thisvox = binvoxels[index];
+    uint16_t thisvox = binvoxels[id];
+    //fprintf(stderr, "\t byte0: 0x%x, byte1: 0x%x\r\n", thisvox>>8, thisvox&0xFF);
+    for (unsigned i = index; i < (index+(thisvox>>8)); ++i)
     {
-      voxbytes[i] = thisvox->present;
+      voxbytes[i] = thisvox&0xFF;
+      //assert(voxbytes[i]<2);
     }
-    index+=thisvox->count;
+    index = index + unsigned(thisvox>>8);
+    ++id;
+    //getchar();
   }
+  fprintf(stderr, " done!\r\n");
 
   //then use it
   for (int l=0; l<length; ++l)
@@ -242,6 +265,7 @@ BinVox::BinVox(const char *filename)
         int index = l * (width*height) + w * width + h;
         char visible = voxbytes[index];
         mat4 objectpos = glm::translate(vec3(float(l), float(w), float(h)));
+        //mat4 rotated = glm::rotate(-90.0f, vec3(1.0f, 0.0f, 0.0f));
         mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
         Voxel newvoxel = Voxel(worldpos);
         if (visible == 0)

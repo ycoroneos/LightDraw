@@ -24,7 +24,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
   setViewport(window);
   float fovy = 45.0;
   float nearz = 0.1f;
-  float farz = 100.0f;
+  float farz = 10000.0f;
   float aspect = float(width)/float(height);
   Projection = glm::perspective(fovy, aspect, nearz, farz);
 }
@@ -37,9 +37,9 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = createOpenGLWindow(800,600,"voxl");
+    window = createOpenGLWindow(1024,768,"voxl");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    window_size_callback(window, 800, 600);
+    window_size_callback(window, 1024, 768);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
