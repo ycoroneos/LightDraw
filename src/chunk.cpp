@@ -229,11 +229,11 @@ BinVox::BinVox(const char *filename)
 
   fprintf(stderr, "binvox: length %d width %d height %d \r\n", length, width, height);
   fprintf(stderr, "binvox: binlength - data = %d \r\n", binlength - (data - binvox_data));
-  fprintf(stderr, "\t byte0: 0x%x, byte1: 0x%x\r\n", binvoxels[0]>>8, binvoxels[0]&0xFF);
-  for (int j=0; j<10; ++j)
-  {
-    fprintf(stderr, "\tbyte %d : 0x%x\r\n", j, *(data+j));
-  }
+//  fprintf(stderr, "\t byte0: 0x%x, byte1: 0x%x\r\n", binvoxels[0]>>8, binvoxels[0]&0xFF);
+//  for (int j=0; j<10; ++j)
+//  {
+//    fprintf(stderr, "\tbyte %d : 0x%x\r\n", j, *(data+j));
+//  }
   //first uncompress the binvox data
   unsigned index=0;
   unsigned id=0;
@@ -267,14 +267,18 @@ BinVox::BinVox(const char *filename)
         int vindex = l * (width*height) + w * width + h;
 
         char visible = voxbytes[vindex];
+        if (visible == 0)
+        {
+          continue;
+        }
         mat4 objectpos = glm::translate(vec3(float(l), float(w), float(h)));
         //mat4 rotated = glm::rotate(-90.0f, vec3(1.0f, 0.0f, 0.0f));
         mat4 worldpos = glm::translate(vec3(tx, ty, tz)) * objectpos;
         Voxel newvoxel = Voxel(worldpos);
-        if (visible == 0)
-        {
-          newvoxel.setInvisible();
-        }
+     //   if (visible == 0)
+      //  {
+      //    newvoxel.setInvisible();
+      //  }
         addVoxel(newvoxel);
       }
     }
