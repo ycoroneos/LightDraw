@@ -23,7 +23,8 @@ class Mesh
     //GL variables
     unsigned program=0;
     GLuint vertexarray;
-    GLuint vertexbuffer[4];
+    GLuint vertexbuffer;
     GLuint indexbuffer;
+    unsigned n_indices;
 };
 

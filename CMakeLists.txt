@@ -62,6 +62,9 @@ list (APPEND voxl_SRC
   src/input.cpp
   src/recorder.cpp
   src/cull.cpp
+  src/scenegraph.cpp
+  src/mesh.cpp
+  src/vertex.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -76,6 +79,9 @@ list (APPEND voxl_HEADER
   inc/cube.h
   inc/cull.h
   inc/binvox.h
+  inc/scenegraph.h
+  inc/mesh.h
+  inc/vertex.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

@@ -9,9 +9,9 @@ using namespace glm;
 class Vertex
 {
   public:
-    Vertex(vec3 pos_1, vec3 normal_1, vec3 texcoords_1);
-  private:
+    Vertex(vec3 pos_1, vec3 normal_1, vec2 texcoords_1);
     vec3 pos;
     vec3 normal;
     vec2 texcoords;
+  private:
 };

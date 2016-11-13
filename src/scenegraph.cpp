@@ -7,27 +7,44 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
+using namespace std;
+using namespace glm;
 
-MeshNode::MeshNode(Chunk *chunk) : mesh(chunk)
+void Node::addChild(Node *child)
 {
+  children.push_back(child);
 }
 
-Chunk * MeshNode::getMesh()
+void Node::setName(const char *newname)
 {
-  return mesh;
+  strncpy(name, newname, sizeof(name));
 }
 
-SceneGraph::SceneGraph()
+void Node::setTransform(mat4 transform_1)
 {
+  transform = transform_1;
+}
+
+void Node::setParent(Node *parent_1)
+{
+  parent = parent_1;
+}
+
+void Node::addMesh(Mesh *mesh)
+{
+  meshes.push_back(mesh);
 }
 
 void SceneGraph::addNode(Node *parent, Node newnode)
 {
   if (parent == NULL)
   {
+    fprintf(stderr, "parent cannot be null when adding node\r\n");
   }
   else
   {
+    nodes.push_back(newnode);
+    parent->addChild(&nodes[nodes.size()]);
   }
 }
 
@@ -42,14 +59,14 @@ static vec3 aiVec3toVec3(aiVector3D in)
   return vec3(in.x, in.y, in.z);
 }
 
-static aiMat4toMat4(aiMatrix4x4 in)
+static mat4 aiMat4toMat4(aiMatrix4x4 in)
 {
   mat4 out;
   for (int row=0; row<4; ++row)
   {
     for (int col=0; col<4; ++col)
     {
-      out[row][col] = in[4*row + col];
+      out[row][col] = in[row][col];
     }
   }
   return out;
@@ -62,13 +79,17 @@ AssimpGraph::AssimpGraph(const char *filename)
   const aiScene* scene = importer.ReadFile(filename, aiProcess_CalcTangentSpace|aiProcess_Triangulate|aiProcess_JoinIdenticalVertices|aiProcess_SortByPType);
   if (scene == NULL)
   {
-    fprintf(2, "error loading assimp scene\r\n");
+    fprintf(stderr, "error loading assimp scene\r\n");
     return;
   }
 
+  fprintf(stderr, "loading %s\r\n", filename);
+  fprintf(stderr, "\t %d meshes\r\n", scene->mNumMeshes);
   //load all meshes into the list
   for (unsigned i=0; i<scene->mNumMeshes; ++i)
   {
+    fprintf(stderr, "\r    \r");
+    fprintf(stderr, "%d", i);
     aiMesh* mesh = scene->mMeshes[i];
     int nfaces = mesh->mNumFaces;
     int mat_index = mesh->mMaterialIndex;
@@ -76,27 +97,20 @@ AssimpGraph::AssimpGraph(const char *filename)
     vector<Vertex> verts;
     vector<unsigned> indices;
     //vertices
-    for (unsigned j=0; j<mNumVertices; ++j)
+    for (unsigned j=0; j<mesh->mNumVertices; ++j)
     {
-      vec3 pos = aiVec3toVec3(mVertices[j]);
-      if (mesh->HasNormals())
-      {
-        vec3 normal = aiVec3toVec3(mNormals[j]);
-      }
-      else
-      {
-        vec3 normal = vec3(0.0f, 0.0f, 0.0f);
-      }
-      vec2 texcoords = aiVec3toVec3(mTextureCoords[0][j]).xy();
+      vec3 pos = aiVec3toVec3(mesh->mVertices[j]);
+      vec3 normal = mesh->HasNormals() ? aiVec3toVec3(mesh->mNormals[j]) : vec3(0.0f, 0.0f, 0.0f);
+      vec2 texcoords = mesh->HasTextureCoords(0) ? vec2(aiVec3toVec3(mesh->mTextureCoords[0][j])) : vec2(0.0f, 0.0f);
       verts.push_back(Vertex(pos, normal, texcoords));
     }
     //faces
-    for (unsigned j=0; j<mNumFaces; ++j)
+    for (unsigned j=0; j<nfaces; ++j)
     {
       aiFace face = mesh->mFaces[j];
       if (face.mNumIndices != 3)
       {
-        fprintf(2, "face is not a triangle, abort");
+        fprintf(stderr, "face is not a triangle, abort");
         return;
       }
       for (int f=0; f<3; ++f)
@@ -109,41 +123,43 @@ AssimpGraph::AssimpGraph(const char *filename)
     meshes.push_back(Mesh(verts, indices, name, mat_index));
   }
 
+  fprintf(stderr,"\t loading scene graph\r\n");
   Node root;
   aiNode *ainode=scene->mRootNode;
-  strcpy(root.name, ainode->mName.data, sizeof(root.name));
-  root.transform = aiMat4toMat4(ainode->mTransformation);
+  root.setName(ainode->mName.data);
+  root.setTransform(aiMat4toMat4(ainode->mTransformation));
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
-    root.meshes.push_back(&meshes[ainode->mMeshes[i]]);
+    root.addMesh(&meshes[ainode->mMeshes[i]]);
   }
-  root.parent=NULL;
   nodes.push_back(root);
-  Node * me = nodes.back();
+  Node * me = &nodes[nodes.size()];
   for (int i=0; i<ainode->mNumChildren; ++i)
   {
-    me->children.push_back(recursive_copy(ainode->mChildren[i], me));
+    me->addChild(recursive_copy(ainode->mChildren[i], me));
   }
 }
 
 
-Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent);
+Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
 {
   Node newnode;
   aiNode *ainode=curnode;
-  strcpy(newnode.name, ainode->mName.data, sizeof(newnode.name));
-  newnode.transform = aiMat4toMat4(ainode->mTransformation);
+  fprintf(stderr, "\t node %s\r\n", ainode->mName.data);
+  newnode.setName(ainode->mName.data);
+  newnode.setTransform(aiMat4toMat4(ainode->mTransformation));
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
-    newnode.meshes.push_back(&meshes[ainode->mMeshes[i]]);
+    newnode.addMesh(&meshes[ainode->mMeshes[i]]);
   }
-  newnode.parent=parent;
+  newnode.setParent(parent);
   nodes.push_back(newnode);
-  Node * me = nodes.back();
+  Node * me = &nodes[nodes.size()];
   for (int i=0; i<ainode->mNumChildren; ++i)
   {
-    me->children.push_back(recursive_copy(ainode->mChildren[i], me));
+    me->addChild(recursive_copy(ainode->mChildren[i], me));
   }
+  fprintf(stderr, "\tdone\r\n");
   return me;
 }
 
