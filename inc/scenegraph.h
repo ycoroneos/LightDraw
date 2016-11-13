@@ -25,6 +25,7 @@ class Node
     void setName(const char *newname);
     void setTransform(mat4 transform_1);
     void setParent(Node *parent_1);
+    glm::mat4 getTransform();
     void addMesh(Mesh *mesh);
   private:
   char name[25];        //name for debugging
@@ -39,6 +40,7 @@ class SceneGraph
   public:
     Node *getRoot();
     void addNode(Node *parent, Node newnode);
+    void drawScene(bool wireframe);
   protected:
     Node *root;
     std::vector<Node> nodes;
