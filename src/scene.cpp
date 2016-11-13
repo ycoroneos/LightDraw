@@ -23,12 +23,14 @@ glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
 glm::mat4 ident;
 
 unsigned voxelprog;
+unsigned default_mesh_prog;
 
 void initScene(mat4 Projection)
 {
   camera = new Camera(vec3(0.0f,0.0f,10.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
   voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
+  default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
   vxg = new VoxelGrid(10,10,10);
   vxg->setProgram(voxelprog);
   gnd = new VoxelGrid(100,1,100);
@@ -36,6 +38,7 @@ void initScene(mat4 Projection)
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
   sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
+  //sgr->printGraph();
 }
 
 void drawScene()
@@ -46,14 +49,16 @@ void drawScene()
   glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
   gnd->draw();
 
-  glUseProgram(voxelprog);
-  if (loc<0)
-  {
-    fprintf(stderr, "M not found\n");
-  }
-  glUniformMatrix4fv(loc, 1, false, &ident[0][0]);
-  //vxg->draw();
-  //garg->draw();
+  sgr->drawScene(camera, false);
+//
+//  glUseProgram(voxelprog);
+//  if (loc<0)
+//  {
+//    fprintf(stderr, "M not found\n");
+//  }
+//  glUniformMatrix4fv(loc, 1, false, &ident[0][0]);
+//  //vxg->draw();
+//  //garg->draw();
 }
 
 void cleanupScene()

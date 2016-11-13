@@ -8,6 +8,8 @@
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
 
+extern unsigned default_mesh_prog;
+
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, unsigned material)
 {
   glGenVertexArrays(1, &vertexarray);
@@ -28,10 +30,17 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
   glEnableVertexAttribArray(2);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertices.size(), (void*)offsetof(Vertex, pos));
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, vertices.size(), (void*)offsetof(Vertex, normal));
-  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, vertices.size(), (void*)offsetof(Vertex, texcoords));
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, pos));
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+  glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoords));
   glBindVertexArray(0);
+  program = default_mesh_prog;
+  M_loc = glGetUniformLocation(program, "M");
+  if (M_loc<0)
+  {
+    fprintf(stderr, "error binding mesh: could not find M matrix location\r\n");
+    return;
+  }
 }
 
 Mesh::~Mesh()
@@ -41,10 +50,17 @@ Mesh::~Mesh()
   glDeleteVertexArrays(1, &vertexarray);
 }
 
-void Mesh::draw(bool lines)
+unsigned Mesh::getProgram()
+{
+  return program;
+}
+
+void Mesh::draw(bool lines, GLfloat *M)
 {
   glUseProgram(program);
   glBindVertexArray(vertexarray);
+  glUniformMatrix4fv(M_loc, 1, false, M);
+  //update shading uniforms for the material
   if (lines)
   {
      glDrawElements(GL_LINES, n_indices, GL_UNSIGNED_INT, 0);

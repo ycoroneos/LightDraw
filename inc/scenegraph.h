@@ -8,6 +8,7 @@
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flag
+#include <inc/camera.h>
 /*
  * Scenegraph will traverse the graph and generate deferred draw calls that contain all of the transforms required for the chunk to draw correctly.
  * Before drawing, the deferred draw calls will be sorted by centroid distance from the camera. This will allow the gl depth test to quickly throw out some vertices.
@@ -23,10 +24,13 @@ class Node
   public:
     void addChild(Node *child);
     void setName(const char *newname);
+    const char* getName();
     void setTransform(mat4 transform_1);
     void setParent(Node *parent_1);
     glm::mat4 getTransform();
     void addMesh(Mesh *mesh);
+    std::vector<Node *> getChildren();
+    std::vector<Mesh *> getMeshes();
   private:
   char name[25];        //name for debugging
   glm::mat4 transform;  //transform relative to parent
@@ -40,11 +44,13 @@ class SceneGraph
   public:
     Node *getRoot();
     void addNode(Node *parent, Node newnode);
-    void drawScene(bool wireframe);
+    void drawScene(Camera *camera, bool wireframe);
+    void printGraph();
   protected:
+    Node * allocNode();
     Node *root;
-    std::vector<Node> nodes;
-    std::vector<Mesh> meshes;
+    std::vector<Node*> nodes;
+    std::vector<Mesh*> meshes;
 };
 
 class AssimpGraph : public SceneGraph

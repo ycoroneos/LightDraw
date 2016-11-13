@@ -9,11 +9,7 @@ using namespace glm;
 Camera::Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection)
   : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection))
 {
-//  pos = eye;
-//  pitchyaw=pitchandyaw;
   computeViewMatrix();
-//  Projection = Projection;
-//  invProjection = glm::inverse(Projection);
 }
 
 void Camera::computeViewMatrix()

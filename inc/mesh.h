@@ -12,7 +12,7 @@ class Mesh
     ~Mesh();
     void setProgram(unsigned newprogram);
     unsigned getProgram();
-    void draw(bool lines=false);
+    void draw(bool lines=false, GLfloat *M=NULL);
   private:
     //for personality
     char name[25];
@@ -26,5 +26,7 @@ class Mesh
     GLuint vertexbuffer;
     GLuint indexbuffer;
     unsigned n_indices;
+
+    int M_loc;
 };
 

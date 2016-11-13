@@ -7,6 +7,7 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
+#include <inc/camera.h>
 using namespace std;
 using namespace glm;
 
@@ -40,47 +41,90 @@ mat4 Node::getTransform()
   return transform;
 }
 
+
+vector<Node *> Node::getChildren()
+{
+  return children;
+}
+
+vector<Mesh *> Node::getMeshes()
+{
+  return meshes;
+}
+
+const char *Node::getName()
+{
+  return (const char *)name;
+}
+
+
 void SceneGraph::addNode(Node *parent, Node newnode)
 {
-  if (parent == NULL)
+//  if (parent == NULL)
+//  {
+//    fprintf(stderr, "parent cannot be null when adding node\r\n");
+//  }
+//  else
+//  {
+//    nodes.push_back(newnode);
+//    parent->addChild(&nodes[nodes.size()-1]);
+//  }
+}
+
+void SceneGraph::printGraph()
+{
+  for (int i=0; i<nodes.size(); ++i)
   {
-    fprintf(stderr, "parent cannot be null when adding node\r\n");
-  }
-  else
-  {
-    nodes.push_back(newnode);
-    parent->addChild(&nodes[nodes.size()-1]);
+    fprintf(stderr, "node %s\r\n", nodes[i]->getName());
+    fprintf(stderr, "\tchildren: ");
+    vector<Node *> children = nodes[i]->getChildren();
+    for (int j=0; j<children.size(); ++j)
+    {
+      fprintf(stderr, "%s ", children[j]->getName());
+    }
   }
 }
 
-void SceneGraph::drawScene(bool wireframe)
+void SceneGraph::drawScene(Camera *camera, bool wireframe)
 {
   // do DFS with a while loop so its faster
   struct state_variables
   {
     Node *N;
-    Matrix4f M;
+    mat4 M;
   };
   vector <struct state_variables> Nstack;
-  Jstack.push_back((struct state_variables){root, root->getTransform()});
-  while (Jstack.size()>0)
+  Nstack.push_back((struct state_variables){root, root->getTransform()});
+  while (Nstack.size()>0)
   {
     struct state_variables cur_depth = Nstack.back();
     Nstack.pop_back();
     Node *curN = cur_depth.N;
-    Matrix4f M = cur_depth.M;
-    camera.SetUniforms(program, M);
+    mat4 M = cur_depth.M;
     vector<Mesh*> meshes = curN->getMeshes();
     for (unsigned i=0; i<meshes.size(); ++i)
     {
-      meshes[i].draw(wireframe);
+      int program = meshes[i]->getProgram();
+      camera->updateUniforms(program);
+      if (strncmp(curN->getName(), "dragon", 6)==0)
+      {
+        meshes[i]->draw(wireframe, &M[0][0]);
+      }
     }
 
-    for (unsigned i=0; i<curJ->children.size(); ++i)
+    vector<Node *> children = curN->getChildren();
+    for (unsigned i=0; i<children.size(); ++i)
     {
-      Jstack.push_back((struct state_variables){curJ->children[i], M * curJ->children[i]->transform});
+      Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
     }
   }
+}
+
+Node *SceneGraph::allocNode()
+{
+  Node *newnode = new Node();
+  nodes.push_back(newnode);
+  return newnode;
 }
 
 /////////////////////////////////////////////////////////////////
@@ -155,46 +199,42 @@ AssimpGraph::AssimpGraph(const char *filename)
     }
     //do textures later
     //insert it
-    meshes.push_back(Mesh(verts, indices, name, mat_index));
+    meshes.push_back(new Mesh(verts, indices, name, mat_index));
   }
 
   fprintf(stderr,"\t loading scene graph\r\n");
-  Node root;
+  root = allocNode();
   aiNode *ainode=scene->mRootNode;
-  fprintf(stderr, "\t node %s\r\n", ainode->mName.data);
-  root.setName(ainode->mName.data);
-  root.setTransform(aiMat4toMat4(ainode->mTransformation));
+  fprintf(stderr, "\t root node %s\r\n", ainode->mName.data);
+  root->setName(ainode->mName.data);
+  root->setTransform(aiMat4toMat4(ainode->mTransformation));
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
-    root.addMesh(&meshes[ainode->mMeshes[i]]);
+    root->addMesh(meshes[ainode->mMeshes[i]]);
   }
-  nodes.push_back(root);
-  Node * me = &nodes[nodes.size()-1];
   for (int i=0; i<ainode->mNumChildren; ++i)
   {
-    me->addChild(recursive_copy(ainode->mChildren[i], me));
+    root->addChild(recursive_copy(ainode->mChildren[i], root));
   }
 }
 
 
 Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
 {
-  Node newnode;
+  Node *newnode = allocNode();
   aiNode *ainode=curnode;
-  fprintf(stderr, "\t node %s\r\n", ainode->mName.data);
-  newnode.setName(ainode->mName.data);
-  newnode.setTransform(aiMat4toMat4(ainode->mTransformation));
+  newnode->setName(ainode->mName.data);
+  fprintf(stderr, "\t node %s, parent %s\r\n", newnode->getName(), parent->getName());
+  newnode->setTransform(aiMat4toMat4(ainode->mTransformation));
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
-    newnode.addMesh(&meshes[ainode->mMeshes[i]]);
+    newnode->addMesh(meshes[ainode->mMeshes[i]]);
   }
-  newnode.setParent(parent);
-  nodes.push_back(newnode);
-  Node * me = &nodes[nodes.size()-1];
+  newnode->setParent(parent);
   for (int i=0; i<ainode->mNumChildren; ++i)
   {
-    me->addChild(recursive_copy(ainode->mChildren[i], me));
+    newnode->addChild(recursive_copy(ainode->mChildren[i], newnode));
   }
-  return me;
+  return newnode;
 }
 
