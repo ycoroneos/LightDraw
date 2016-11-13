@@ -106,10 +106,10 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
     {
       int program = meshes[i]->getProgram();
       camera->updateUniforms(program);
-      if (strncmp(curN->getName(), "dragon", 6)==0)
-      {
+      //if (strncmp(curN->getName(), "dragon", 6)==0)
+     // {
         meshes[i]->draw(wireframe, &M[0][0]);
-      }
+     // }
     }
 
     vector<Node *> children = curN->getChildren();
@@ -157,7 +157,26 @@ AssimpGraph::AssimpGraph(const char *filename)
   nodes.clear();
   meshes.clear();
   Assimp::Importer importer;
-  const aiScene* scene = importer.ReadFile(filename, aiProcess_CalcTangentSpace|aiProcess_Triangulate|aiProcess_JoinIdenticalVertices|aiProcess_SortByPType);
+  unsigned int ppsteps = aiProcess_CalcTangentSpace | // calculate tangents and bitangents if possible
+    aiProcess_JoinIdenticalVertices    | // join identical vertices/ optimize indexing
+    aiProcess_ValidateDataStructure    | // perform a full validation of the loader's output
+    aiProcess_ImproveCacheLocality     | // improve the cache locality of the output vertices
+   // aiProcess_RemoveRedundantMaterials | // remove redundant materials
+   // aiProcess_FindDegenerates          | // remove degenerated polygons from the import
+    aiProcess_FindInvalidData          | // detect invalid model data, such as invalid normal vectors
+    aiProcess_GenUVCoords              | // convert spherical, cylindrical, box and planar mapping to proper UVs
+    aiProcess_TransformUVCoords        | // preprocess UV transformations (scaling, translation ...)
+  //  aiProcess_FindInstances            | // search for instanced meshes and remove them by references to one master
+    aiProcess_LimitBoneWeights         | // limit bone weights to 4 per vertex
+    aiProcess_OptimizeMeshes           | // join small meshes, if possible;
+    aiProcess_SplitByBoneCount         | // split meshes with too many bones. Necessary for our (limited) hardware skinning shader
+    aiProcess_GenSmoothNormals         | // generate smooth normal vectors if not existing
+    aiProcess_SplitLargeMeshes         | // split large, unrenderable meshes into submeshes
+    aiProcess_Triangulate              | // triangulate polygons with more than 3 edges
+    aiProcess_SortByPType              | // make 'clean' meshes which consist of a single typ of primitives
+    0;
+  fprintf(stderr, "assimp loading ...");
+  const aiScene* scene = importer.ReadFile(filename,ppsteps);
   if (scene == NULL)
   {
     fprintf(stderr, "error loading assimp scene\r\n");
@@ -175,6 +194,13 @@ AssimpGraph::AssimpGraph(const char *filename)
     const char *name = mesh->mName.C_Str();
     vector<Vertex> verts;
     vector<unsigned> indices;
+    for (int j=0; j<mesh->GetNumUVChannels(); ++j)
+    {
+      if (mesh->HasTextureCoords(j))
+      {
+        fprintf(stderr, "texture coordinates on %s -> %d\r\n", name, j);
+      }
+    }
     //vertices
     for (unsigned j=0; j<mesh->mNumVertices; ++j)
     {

@@ -51,6 +51,7 @@ class SceneGraph
     Node *root;
     std::vector<Node*> nodes;
     std::vector<Mesh*> meshes;
+   // std::vector<Material*> materials;
 };
 
 class AssimpGraph : public SceneGraph

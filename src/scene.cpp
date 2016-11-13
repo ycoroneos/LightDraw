@@ -37,19 +37,22 @@ void initScene(mat4 Projection)
   gnd->setProgram(voxelprog);
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
-  sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
+  //sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
+  sgr = new AssimpGraph("../data/sponza/sponza.blend");
+  //sgr = new AssimpGraph("../data/dragon.obj");
+  //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
   //sgr->printGraph();
 }
 
 void drawScene()
 {
-  int loc = glGetUniformLocation(voxelprog, "M");
-  camera->updateUniforms(voxelprog);
-  glUseProgram(voxelprog);
-  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
-  gnd->draw();
+//  int loc = glGetUniformLocation(voxelprog, "M");
+//  camera->updateUniforms(voxelprog);
+//  glUseProgram(voxelprog);
+//  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
+//  gnd->draw();
 
-  sgr->drawScene(camera, false);
+  sgr->drawScene(camera, true);
 //
 //  glUseProgram(voxelprog);
 //  if (loc<0)
