@@ -45,6 +45,13 @@ endif()
 list(APPEND voxl_INCLUDES 3rd_party/glm)
 list(APPEND voxl_INCLUDES .)
 
+#ASSIMP
+set(ASSIMP_BUILD_ASSIMP_TOOLS OFF)
+set(ASSIMP_BUILD_TESTS OFF)
+add_subdirectory(3rd_party/assimp)
+list(APPEND voxl_LIBS assimp)
+list(APPEND voxl_INCLUDES 3rd_party/assimp/include)
+
 list (APPEND voxl_SRC
   src/main.cpp
   src/voxel.cpp

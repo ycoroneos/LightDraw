@@ -3,6 +3,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "inc/chunk.h"
+#include "inc/mesh.h"
 #include <vector>
 /*
  * Scenegraph will traverse the graph and generate deferred draw calls that contain all of the transforms required for the chunk to draw correctly.
@@ -19,19 +20,10 @@ class Node
   public:
   private:
   char name[25];        //name for debugging
-  unsigned program;     //program to draw with
   glm::mat4 transform;  //transform relative to parent
-
+  Node *parent;
   std::vector<Node *> children;
-};
-
-class MeshNode : public Node
-{
-  public:
-    MeshNode(Chunk *chunk);
-    Chunk * getMesh();
-  private:
-    Chunk *mesh;
+  std::vector<Mesh *> meshes;
 };
 
 class SceneGraph
@@ -39,8 +31,16 @@ class SceneGraph
   public:
     Node *getRoot();
     void addNode(Node *parent, Node newnode);
-  private:
+  protected:
     Node *root;
-    std::vector<Node> graphnodes;
+    std::vector<Node> nodes;
+    std::vector<Mesh> meshes;
 };
 
+class AssimpGraph : public SceneGraph
+{
+  public:
+    AssimpGraph(const char *filename);
+  private:
+    Node *recursive_copy(aiNode *curnode, Node *parent);
+};
