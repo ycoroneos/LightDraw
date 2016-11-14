@@ -227,6 +227,22 @@ AssimpGraph::AssimpGraph(const char *filename)
     //insert it
     meshes.push_back(new Mesh(verts, indices, name, mat_index));
   }
+  int nTextures = scene->mNumTextures;
+  if (nTextures == 0)
+  {
+    fprintf(stderr, "no textures found\r\n");
+  }
+  for(int i=0; i<nTextures; ++i)
+  {
+    if (scene->mTextures[i]->mHeight == 0)
+    {
+      fprintf(stderr, "texture %d is compressed\r\n", i);
+    }
+    else
+    {
+      fprintf(stderr, "tex width: %d height: %d\r\n", scene->mTextures[i]->mWidth, scene->mTextures[i]->mHeight);
+    }
+  }
 
   fprintf(stderr,"\t loading scene graph\r\n");
   root = allocNode();
