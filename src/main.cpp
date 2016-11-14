@@ -37,12 +37,15 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = createOpenGLWindow(1024,768,"voxl");
+    int width = 1920;
+    int height = 1080;
+    window = createOpenGLWindow(width, height,"voxl");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    window_size_callback(window, 1024, 768);
+    window_size_callback(window, width, height);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
+    glfwSetWindowPos(window, 0, 0);
     glEnable(GL_DEPTH_TEST);
     //glEnable(GL_CULL_FACE);
 
