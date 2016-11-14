@@ -27,7 +27,7 @@ unsigned default_mesh_prog;
 
 void initScene(mat4 Projection)
 {
-  camera = new Camera(vec3(0.0f,0.0f,10.0f), vec2(0.0f,0.0f), Projection);
+  camera = new Camera(vec3(10.0f,10.0f,10.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
   voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
@@ -38,7 +38,7 @@ void initScene(mat4 Projection)
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
   //sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
-  sgr = new AssimpGraph("../data/sponza/sponza.blend");
+  sgr = new AssimpGraph("../data/sponza/sponza.fbx");
   //sgr = new AssimpGraph("../data/dragon.obj");
   //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
   //sgr->printGraph();
@@ -52,7 +52,7 @@ void drawScene()
 //  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
 //  gnd->draw();
 
-  sgr->drawScene(camera, true);
+  sgr->drawScene(camera, false);
 //
 //  glUseProgram(voxelprog);
 //  if (loc<0)
