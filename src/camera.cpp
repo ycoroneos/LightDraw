@@ -7,7 +7,7 @@
 using namespace glm;
 
 Camera::Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection)
-  : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection))
+  : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection)), wireframe(false)
 {
   computeViewMatrix();
 }
@@ -58,6 +58,11 @@ void Camera::updateUniforms(unsigned program)
   glUniformMatrix4fv(loc, 1, false, &View[0][0]);
   //glUniformMatrix4fv(loc, 1, false, &newview[0][0]);
   glUseProgram(0);
+}
+
+bool Camera::viewWire()
+{
+  return wireframe;
 }
 
 // <w, s, a, d>
@@ -126,6 +131,9 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         break;
       case GLFW_KEY_LEFT_SHIFT:
         sprint = 10.0f;
+        break;
+      case 'V':
+        wireframe=!wireframe;
         break;
       default:
         printf("camera: unhandled key press %d\n", key);

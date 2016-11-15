@@ -14,6 +14,7 @@ class Camera : public InputResponder
     void updateTranslation(vec2 translation);
     vec3 getPos();
     void updateUniforms(unsigned program);
+    bool viewWire();
 
     void doMouseInput(double xpos, double ypos) override;
     void doKeyboardInput(int key, int scancode, int action, int mods) override;
@@ -23,4 +24,5 @@ class Camera : public InputResponder
     mat4 View;
     mat4 Projection;
     mat4 invProjection;
+    bool wireframe;
 };

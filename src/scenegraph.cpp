@@ -185,6 +185,33 @@ AssimpGraph::AssimpGraph(const char *filename)
 
   fprintf(stderr, "loading %s\r\n", filename);
   fprintf(stderr, "\t %d meshes\r\n", scene->mNumMeshes);
+  const char *cwdspot = strrchr(filename, '/');
+  int len = cwdspot - filename + 1;
+  char *cwd = new char[len+1];
+  memcpy(cwd, filename, len);
+  cwd[len]=0;
+  fprintf(stderr, "cwd is %s\r\n", cwd);
+  //do materials first
+  for (unsigned int i = 0 ; i < scene->mNumMaterials ; i++)
+  {
+      const aiMaterial* pMaterial = scene->mMaterials[i];
+      if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
+          aiString Path;
+
+          if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
+            fprintf(stderr, "diffuse texture %s \r\n", Path.data);
+            //I hope its never this big
+            char filename[256];
+            strcpy(filename, cwd);
+            strcat(filename, Path.data);
+            materials.push_back(new Material(filename));
+          }
+      }
+      else
+      {
+        materials.push_back(new DummyMat());
+      }
+  }
   //load all meshes into the list
   for (unsigned i=0; i<scene->mNumMeshes; ++i)
   {
@@ -194,6 +221,10 @@ AssimpGraph::AssimpGraph(const char *filename)
     const char *name = mesh->mName.C_Str();
     vector<Vertex> verts;
     vector<unsigned> indices;
+    if (mesh->HasVertexColors(0))
+    {
+      fprintf(stderr, "colors on %s\r\n", name);
+    }
     for (int j=0; j<mesh->GetNumUVChannels(); ++j)
     {
       if (mesh->HasTextureCoords(j))
@@ -223,9 +254,13 @@ AssimpGraph::AssimpGraph(const char *filename)
         indices.push_back(face.mIndices[f]);
       }
     }
-    //do textures later
     //insert it
-    meshes.push_back(new Mesh(verts, indices, name, mat_index));
+    if ((mat_index)>(materials.size()-1) || mat_index<0)
+    {
+      fprintf(stderr, "mat index %d but size is %d\r\n", mat_index, materials.size());
+      return;
+    }
+    meshes.push_back(new Mesh(verts, indices, name, materials[mat_index]));
   }
   int nTextures = scene->mNumTextures;
   if (nTextures == 0)
@@ -258,6 +293,7 @@ AssimpGraph::AssimpGraph(const char *filename)
   {
     root->addChild(recursive_copy(ainode->mChildren[i], root));
   }
+  delete cwd;
 }
 
 

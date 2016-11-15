@@ -10,7 +10,7 @@
 
 extern unsigned default_mesh_prog;
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, unsigned material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material)
 {
   glGenVertexArrays(1, &vertexarray);
   glGenBuffers(1, &vertexbuffer);
@@ -41,6 +41,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
     fprintf(stderr, "error binding mesh: could not find M matrix location\r\n");
     return;
   }
+  drawmaterial = material;
+  drawmaterial->incRef();
 }
 
 Mesh::~Mesh()
@@ -61,6 +63,7 @@ void Mesh::draw(bool lines, GLfloat *M)
   glBindVertexArray(vertexarray);
   glUniformMatrix4fv(M_loc, 1, false, M);
   //update shading uniforms for the material
+  drawmaterial->Use();
   if (lines)
   {
      glDrawElements(GL_LINES, n_indices, GL_UNSIGNED_INT, 0);

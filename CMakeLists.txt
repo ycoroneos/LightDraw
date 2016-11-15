@@ -52,6 +52,9 @@ add_subdirectory(3rd_party/assimp)
 list(APPEND voxl_LIBS assimp)
 list(APPEND voxl_INCLUDES 3rd_party/assimp/include)
 
+#SOIL
+list(APPEND voxl_LIBS SOIL)
+
 list (APPEND voxl_SRC
   src/main.cpp
   src/voxel.cpp
@@ -65,6 +68,7 @@ list (APPEND voxl_SRC
   src/scenegraph.cpp
   src/mesh.cpp
   src/vertex.cpp
+  src/material.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -82,6 +86,7 @@ list (APPEND voxl_HEADER
   inc/scenegraph.h
   inc/mesh.h
   inc/vertex.h
+  inc/material.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

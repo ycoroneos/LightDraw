@@ -4,6 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "inc/chunk.h"
 #include "inc/mesh.h"
+#include "inc/material.h"
 #include <vector>
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
@@ -51,7 +52,7 @@ class SceneGraph
     Node *root;
     std::vector<Node*> nodes;
     std::vector<Mesh*> meshes;
-   // std::vector<Material*> materials;
+    std::vector<Material*> materials;
 };
 
 class AssimpGraph : public SceneGraph

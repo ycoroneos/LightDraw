@@ -52,7 +52,7 @@ void drawScene()
 //  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
 //  gnd->draw();
 
-  sgr->drawScene(camera, false);
+  sgr->drawScene(camera, camera->viewWire());
 //
 //  glUseProgram(voxelprog);
 //  if (loc<0)

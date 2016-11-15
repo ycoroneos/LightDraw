@@ -3,12 +3,13 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <inc/vertex.h>
+#include <inc/material.h>
 using namespace glm;
 
 class Mesh
 {
   public:
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, unsigned material);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material);
     ~Mesh();
     void setProgram(unsigned newprogram);
     unsigned getProgram();
@@ -28,5 +29,8 @@ class Mesh
     unsigned n_indices;
 
     int M_loc;
+
+    //material
+    Material *drawmaterial;
 };
 
