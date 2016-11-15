@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-
+cmake_policy(SET CMP0015 NEW)
 project(voxl)
 
 find_package(OpenGL REQUIRED)
@@ -53,7 +53,16 @@ list(APPEND voxl_LIBS assimp)
 list(APPEND voxl_INCLUDES 3rd_party/assimp/include)
 
 #SOIL
-list(APPEND voxl_LIBS SOIL)
+include_directories("3rd_party/soil/inc")
+add_subdirectory(3rd_party/soil)
+list(APPEND voxl_LIBS soil)
+#include_directories("3rd_party/soil/src")
+#link_directories(3rd_party/soil/lib)
+#if (APPLE)
+#  list(APPEND voxl_LIBS SOILmac)
+#elseif(UNIX)
+#  list(APPEND voxl_LIBS SOIL)
+#endif()
 
 list (APPEND voxl_SRC
   src/main.cpp

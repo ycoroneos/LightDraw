@@ -11,7 +11,7 @@ class Material
     Material();
     Material(const char *filename);
     ~Material();
-    virtual void Use();
+    virtual void Use(int program);
     void incRef();
     void decRef();
   private:
@@ -24,5 +24,5 @@ class DummyMat : public Material
 {
   public:
   DummyMat();
-  void Use() override;
+  void Use(int program) override;
 };

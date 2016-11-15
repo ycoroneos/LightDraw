@@ -63,7 +63,7 @@ void Mesh::draw(bool lines, GLfloat *M)
   glBindVertexArray(vertexarray);
   glUniformMatrix4fv(M_loc, 1, false, M);
   //update shading uniforms for the material
-  drawmaterial->Use();
+  drawmaterial->Use(program);
   if (lines)
   {
      glDrawElements(GL_LINES, n_indices, GL_UNSIGNED_INT, 0);

@@ -13,7 +13,7 @@ INCDIR = ../../src
 OBJDIR = obj
 
 CXX = gcc
-CXXFLAGS = -O2 -s -Wall
+CXXFLAGS = -O2 -s -Wall -arch i386 -arch x86_64
 DELETER = rm -f
 COPIER = cp
 

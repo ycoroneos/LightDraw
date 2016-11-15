@@ -37,8 +37,8 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    int width = 1920;
-    int height = 1080;
+    int width = 1024;
+    int height = 768;
     window = createOpenGLWindow(width, height,"voxl");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, width, height);

@@ -1,11 +1,13 @@
-#version 420
+#version 410
+
 in vec2 var_texcoords;
 
 layout(location=0) out vec4 out_Color;
-layout(binding=0) uniform sampler2D texture_obj;
+uniform sampler2D texture_obj;
 
 
 void main () {
     out_Color = texture(texture_obj, var_texcoords);
+    //out_Color = vec4(var_texcoords, 0.0f, 1.0f);
 }
 
