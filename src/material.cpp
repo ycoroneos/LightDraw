@@ -26,14 +26,23 @@ Material::Material(const char *filename)
     fprintf(stderr,"failed to load texture\r\n");
     return;
   }
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+  //invert image along y axis
+  unsigned short *flipped = (unsigned short*) malloc(width*height*sizeof(unsigned short)*3);
+  for (int h=0; h<height; ++h)
+  {
+    for (int w=0; w<width; ++w)
+    {
+      for (int color=0; color<3; ++color)
+      {
+        int index = h*height + w;
+        int flipped_index = (h)*height + w;
+        flipped[flipped_index*3 + color]=image[index*3 + color];
+      }
+    }
+  }
   SOIL_free_image_data(image);
-//  texID = SOIL_load_OGL_texture(filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-//  if (texID<0)
-//  {
-//    fprintf(stderr, "failed to load texture %s\r\n", filename);
-//    return;
-//  }
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)flipped);
+  free(flipped);
   fprintf(stderr, "loaded texture %s\r\n", filename);
   refcount=0;
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

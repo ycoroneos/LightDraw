@@ -54,20 +54,13 @@ list(APPEND voxl_INCLUDES 3rd_party/assimp/include)
 
 #SOIL
 if (APPLE)
-  include(3rd_party/soil/CMakeLists.txt)
+  #include(3rd_party/soil/CMakeLists.txt)
   include_directories("3rd_party/soil/inc")
   add_subdirectory(3rd_party/soil)
   list(APPEND voxl_LIBS soil)
 elseif(UNIX)
   list(APPEND voxl_LIBS SOIL)
 endif()
-#include_directories("3rd_party/soil/src")
-#link_directories(3rd_party/soil/lib)
-#if (APPLE)
-#  list(APPEND voxl_LIBS SOILmac)
-#elseif(UNIX)
-#  list(APPEND voxl_LIBS SOIL)
-#endif()
 
 list (APPEND voxl_SRC
   src/main.cpp
