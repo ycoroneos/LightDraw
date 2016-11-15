@@ -212,6 +212,10 @@ AssimpGraph::AssimpGraph(const char *filename)
         materials.push_back(new DummyMat());
       }
   }
+
+  //load lights
+  fprintf(stderr, "%d lights\r\n", scene->mNumLights);
+
   //load all meshes into the list
   for (unsigned i=0; i<scene->mNumMeshes; ++i)
   {
