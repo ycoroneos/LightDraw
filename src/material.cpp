@@ -8,6 +8,13 @@
 #include "SOIL/SOIL.h"
 using namespace glm;
 
+struct color
+{
+  unsigned char r;
+  unsigned char g;
+  unsigned char b;
+};
+
 Material::Material()
 {
 }
@@ -27,21 +34,21 @@ Material::Material(const char *filename)
     return;
   }
   //invert image along y axis
-  unsigned short *flipped = (unsigned short*) malloc(width*height*sizeof(unsigned short)*3);
-  for (int h=0; h<height; ++h)
+  struct color *flipped = (struct color*) malloc(width*height*sizeof(struct color));
+//  memcpy(flipped, image, width*height*3);
+  fprintf(stderr, "size of color is %d\r\n", sizeof(struct color));
+  for (int w=0; w<width; ++w)
   {
-    for (int w=0; w<width; ++w)
+    for (int h=0; h<height; ++h)
     {
-      for (int color=0; color<3; ++color)
-      {
-        int index = h*height + w;
-        int flipped_index = (h)*height + w;
-        flipped[flipped_index*3 + color]=image[index*3 + color];
-      }
+      int index = h*width + w;
+      int flipped_index = (height-h-1)*width + w;
+      struct color *cast = (struct color *)image;
+      flipped[flipped_index]=cast[index];
     }
   }
-  SOIL_free_image_data(image);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)flipped);
+  SOIL_free_image_data(image);
   free(flipped);
   fprintf(stderr, "loaded texture %s\r\n", filename);
   refcount=0;
