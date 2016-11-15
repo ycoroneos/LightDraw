@@ -297,7 +297,7 @@ AssimpGraph::AssimpGraph(const char *filename)
   {
     root->addChild(recursive_copy(ainode->mChildren[i], root));
   }
-  delete cwd;
+  delete[] cwd;
 }
 
 

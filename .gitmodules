@@ -1,3 +1,6 @@
 [submodule "3rd_party/assimp"]
 	path = 3rd_party/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "3rd_party/soil"]
+	path = 3rd_party/soil
+	url = https://github.com/DeVaukz/SOIL.git
