@@ -38,7 +38,7 @@ void initScene(mat4 Projection)
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
   //sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
-  sgr = new AssimpGraph("../data/crytek-sponza/sponza.dae");
+  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   //sgr = new AssimpGraph("../data/dragon.obj");
   //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
   //sgr->printGraph();
