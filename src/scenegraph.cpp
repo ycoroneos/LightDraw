@@ -18,6 +18,11 @@ void Node::addChild(Node *child)
   children.push_back(child);
 }
 
+void Node::addLight(Light *light)
+{
+  lights.push_back(light);
+}
+
 void Node::setName(const char *newname)
 {
   strncpy(name, newname, sizeof(name));
@@ -52,6 +57,11 @@ vector<Node *> Node::getChildren()
 vector<Mesh *> Node::getMeshes()
 {
   return meshes;
+}
+
+vector<Light *> Node::getLights()
+{
+  return lights;
 }
 
 const char *Node::getName()
@@ -97,7 +107,7 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
     Node *N;
     mat4 M;
   };
-  for (unsigned i=0; i<lights.size(); ++i)
+  for (unsigned lnum=0; lnum<lights.size(); ++lnum)
   {
     vector <struct state_variables> Nstack;
     Nstack.push_back((struct state_variables){root, root->getTransform()});
@@ -109,18 +119,31 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
       mat4 M = cur_depth.M;
       vector<Mesh*> meshes = curN->getMeshes();
       int oldProgram = -1;
+      vector<Light*> Nlights = curN->getLights();
+      for (int i=0; i<Nlights.size(); ++i)
+      {
+        vec4 t = M*vec4(0,0,0,1);
+        fprintf(stderr, "%f %f %f\r\n", t.x, t.y, t.z);
+//        const float *p = &M[0][0];
+//        fprintf(stderr, "here");
+//        for (int j=0; j<16; ++j)
+//        {
+//          fprintf(stderr, "%f ", p[j]);
+//        }
+        Nlights[i]->updatePos(&M);
+      }
       for (unsigned i=0; i<meshes.size(); ++i)
       {
         int program = meshes[i]->getProgram();
         glUseProgram(program);
         //fprintf(stderr, "update camera");
         camera->updateUniforms(program);
-        if (program != oldProgram)
-        {
+        //if (program != oldProgram)
+        //{
           //fprintf(stderr, "update lights");
-          lights[i]->updateUniforms(program);
-          oldProgram = program;
-        }
+          lights[lnum]->updateUniforms(program);
+          //oldProgram = program;
+        //}
         mat3 N = transpose(inverse(glm::mat3(M)));
         //fprintf(stderr, "draw mesh");
         meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
@@ -184,7 +207,7 @@ AssimpGraph::AssimpGraph(const char *filename)
     aiProcess_ValidateDataStructure    | // perform a full validation of the loader's output
     aiProcess_ImproveCacheLocality     | // improve the cache locality of the output vertices
    // aiProcess_RemoveRedundantMaterials | // remove redundant materials
-   // aiProcess_FindDegenerates          | // remove degenerated polygons from the import
+    aiProcess_FindDegenerates          | // remove degenerated polygons from the import
     aiProcess_FindInvalidData          | // detect invalid model data, such as invalid normal vectors
     aiProcess_GenUVCoords              | // convert spherical, cylindrical, box and planar mapping to proper UVs
     aiProcess_TransformUVCoords        | // preprocess UV transformations (scaling, translation ...)
@@ -243,8 +266,14 @@ AssimpGraph::AssimpGraph(const char *filename)
     switch(asslight->mType)
     {
       case aiLightSource_DIRECTIONAL:
+        fprintf(stderr, "Directional light\r\n");
         lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
               aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        break;
+      case aiLightSource_POINT:
+        fprintf(stderr, "Point light\r\n");
+        lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular)));
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);
@@ -272,7 +301,7 @@ AssimpGraph::AssimpGraph(const char *filename)
     {
       if (mesh->HasTextureCoords(j))
       {
-        fprintf(stderr, "texture coordinates on %s -> %d\r\n", name, j);
+        //fprintf(stderr, "texture coordinates on %s -> %d\r\n", name, j);
       }
     }
     //vertices
@@ -289,8 +318,9 @@ AssimpGraph::AssimpGraph(const char *filename)
       aiFace face = mesh->mFaces[j];
       if (face.mNumIndices != 3)
       {
-        fprintf(stderr, "face is not a triangle, abort");
-        return;
+        fprintf(stderr, "face is not a triangle, abort: %d, %s\r\n", face.mNumIndices, name);
+        continue;
+        //return;
       }
       for (int f=0; f<3; ++f)
       {
@@ -332,6 +362,16 @@ AssimpGraph::AssimpGraph(const char *filename)
   {
     root->addMesh(meshes[ainode->mMeshes[i]]);
   }
+
+  for (int i=0; i<lights.size(); ++i)
+  {
+    if (strcmp(lights[i]->getName(), root->getName())==0)
+    {
+      fprintf(stderr, "root has light\r\n");
+      root->addLight(lights[i]);
+    }
+  }
+
   for (int i=0; i<ainode->mNumChildren; ++i)
   {
     root->addChild(recursive_copy(ainode->mChildren[i], root));
@@ -345,11 +385,20 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   Node *newnode = allocNode();
   aiNode *ainode=curnode;
   newnode->setName(ainode->mName.data);
-  fprintf(stderr, "\t node %s, parent %s\r\n", newnode->getName(), parent->getName());
-  newnode->setTransform(aiMat4toMat4(ainode->mTransformation));
+  mat4 transform = aiMat4toMat4(ainode->mTransformation);
+  newnode->setTransform(transform);
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
     newnode->addMesh(meshes[ainode->mMeshes[i]]);
+  }
+  for (int i=0; i<lights.size(); ++i)
+  {
+    if (strcmp(lights[i]->getName(), newnode->getName())==0)
+    {
+      fprintf(stderr, "%s has light\r\n", newnode->getName());
+      newnode->addLight(lights[i]);
+      //lights[i]->updatePos(M);
+    }
   }
   newnode->setParent(parent);
   for (int i=0; i<ainode->mNumChildren; ++i)

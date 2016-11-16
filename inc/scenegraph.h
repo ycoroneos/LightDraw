@@ -25,6 +25,7 @@ class Node
 {
   public:
     void addChild(Node *child);
+    void addLight(Light *light);
     void setName(const char *newname);
     const char* getName();
     void setTransform(mat4 transform_1);
@@ -33,12 +34,14 @@ class Node
     void addMesh(Mesh *mesh);
     std::vector<Node *> getChildren();
     std::vector<Mesh *> getMeshes();
+    std::vector<Light *> getLights();
   private:
   char name[25];        //name for debugging
   glm::mat4 transform;  //transform relative to parent
   Node *parent;
   std::vector<Node *> children;
   std::vector<Mesh *> meshes;
+  std::vector<Light *> lights;
 };
 
 class SceneGraph

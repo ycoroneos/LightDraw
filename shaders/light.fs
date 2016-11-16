@@ -16,7 +16,13 @@ vec3 blinn_phong(vec3 kd) {
     vec4 pos_world = vec4(var_Position, 1);
     vec3 normal_world = normalize(var_Normal);
     pos_world /= pos_world.w;
-    vec3 light_dir = normalize(lightPos.xyz);
+    vec3 light_dir = vec3(0,0,0);
+    if (lightPos.w == 0) {
+      light_dir = normalize(lightPos.xyz);
+    }
+    else {
+      light_dir = normalize(lightPos.xyz - pos_world.xyz);
+    }
     vec3 cam_dir = camPos - pos_world.xyz;
     cam_dir = normalize(cam_dir);
 
@@ -33,7 +39,8 @@ vec3 blinn_phong(vec3 kd) {
 }
 
 void main () {
-    out_Color = vec4(lightAmbient+blinn_phong(texture(texture_obj, var_texcoords).xyz), 1);
+    vec4 tex_samp = texture(texture_obj, var_texcoords);
+    out_Color = vec4(lightAmbient+blinn_phong(tex_samp.xyz), tex_samp.w);
 }
 
 
