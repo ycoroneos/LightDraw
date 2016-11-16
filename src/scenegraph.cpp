@@ -240,16 +240,37 @@ AssimpGraph::AssimpGraph(const char *filename)
   for (unsigned int i = 0 ; i < scene->mNumMaterials ; i++)
   {
       const aiMaterial* pMaterial = scene->mMaterials[i];
+      aiString mname;
+      pMaterial->Get(AI_MATKEY_NAME, mname);
+      int shadingModel;
+      pMaterial->Get(AI_MATKEY_SHADING_MODEL, shadingModel);
+      if (shadingModel != aiShadingMode_Phong && shadingModel != aiShadingMode_Gouraud)
+      {
+          fprintf(stderr, "This mesh's shading model is not implemented in this loader, setting to default material");
+          mname = "DefaultMaterial";
+          materials.push_back(new DummyMat());
+          continue;
+      }
+      aiColor3D dif(0.f,0.f,0.f);
+      aiColor3D amb(0.f,0.f,0.f);
+      aiColor3D spec(0.f,0.f,0.f);
+      float shine = 0.0;
+
+      pMaterial->Get(AI_MATKEY_COLOR_AMBIENT, amb);
+      pMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, dif);
+      pMaterial->Get(AI_MATKEY_COLOR_SPECULAR, spec);
+      pMaterial->Get(AI_MATKEY_SHININESS, shine);
+
+      char diffuse_texture[256];
       if (pMaterial->GetTextureCount(aiTextureType_DIFFUSE) > 0) {
           aiString Path;
 
           if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
             fprintf(stderr, "diffuse texture %s \r\n", Path.data);
             //I hope its never this big
-            char filename[256];
-            strcpy(filename, cwd);
-            strcat(filename, Path.data);
-            materials.push_back(new Material(filename));
+            strcpy(diffuse_texture, cwd);
+            strcat(diffuse_texture, Path.data);
+            materials.push_back(new Material(mname.C_Str(), aiColor3toVec3(dif), aiColor3toVec3(amb), aiColor3toVec3(spec), shine, diffuse_texture));
           }
       }
       else

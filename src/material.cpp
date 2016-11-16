@@ -19,15 +19,17 @@ Material::Material()
 {
 }
 
-Material::Material(const char *filename)
+Material::Material(const char *name_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float shininess_1, const char *diffuse_texture)
+  : ambient(ambient_1), diffuse(diffuse_1), specular(specular_1), shininess(shininess_1)
 {
-  strncpy(name, filename, sizeof(name));
-  fprintf(stderr, "loading texture %s\r\n", filename);
+  strncpy(name, name_1, sizeof(name));
+  fprintf(stderr, "loading material %s\r\n", name);
+  fprintf(stderr, "loading texture %s\r\n", diffuse_texture);
   glGenTextures(1,&texID);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texID);
   int width, height;
-  unsigned char *image = SOIL_load_image(filename, &width, &height, 0, SOIL_LOAD_RGB);
+  unsigned char *image = SOIL_load_image(diffuse_texture, &width, &height, 0, SOIL_LOAD_RGB);
   if (image == NULL)
   {
     fprintf(stderr,"failed to load texture\r\n");
@@ -50,7 +52,7 @@ Material::Material(const char *filename)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)flipped);
   SOIL_free_image_data(image);
   free(flipped);
-  fprintf(stderr, "loaded texture %s\r\n", filename);
+  fprintf(stderr, "loaded texture %s\r\n", diffuse_texture);
   refcount=0;
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -78,7 +80,16 @@ void Material::Use(int program)
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-  //glGenerateMipmap(GL_TEXTURE_2D);
+
+  //I hate doing this. Too bad apple doesn't support OGL4.3
+  int ambient_loc = glGetUniformLocation(program, "matAmbient");
+  int diffuse_loc = glGetUniformLocation(program, "matDiffuse");
+  int specular_loc = glGetUniformLocation(program, "matSpecular");
+  int shiny_loc = glGetUniformLocation(program, "matShininess");
+  glUniform3fv(ambient_loc, 1, &ambient[0]);
+  glUniform3fv(diffuse_loc, 1, &diffuse[0]);
+  glUniform3fv(specular_loc, 1, &specular[0]);
+  glUniform1fv(shiny_loc, 1, &shininess);
 }
 
 DummyMat::DummyMat()
