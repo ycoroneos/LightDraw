@@ -13,7 +13,10 @@ class Mesh
     ~Mesh();
     void setProgram(unsigned newprogram);
     unsigned getProgram();
+    void setQuickProgram(unsigned newprogram);
+    unsigned getQuickProgram();
     void draw(bool lines=false, GLfloat *M=NULL, GLfloat *N=NULL);
+    void quickdraw(GLfloat *M=NULL);
   private:
     //for personality
     char name[25];
@@ -23,6 +26,7 @@ class Mesh
 
     //GL variables
     unsigned program=0;
+    unsigned quickprogram=0;
     GLuint vertexarray;
     GLuint vertexbuffer;
     GLuint indexbuffer;

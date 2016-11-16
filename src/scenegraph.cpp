@@ -97,10 +97,46 @@ void SceneGraph::printGraph()
   }
 }
 
+
+//cast shadows for the first 2 lights in the lights list
+//Ill do more for the final project
+void SceneGraph::zPre(Camera *camera, int program)
+{
+  // do DFS with a while loop so its faster
+  struct state_variables
+  {
+    Node *N;
+    mat4 M;
+  };
+  for (unsigned lnum=0; lnum<lights.size() && lnum < 2; ++lnum)
+  {
+    Light *dislight = lights[lnum];
+    dislight->shadowMap(program);
+    vector <struct state_variables> Nstack;
+    Nstack.push_back((struct state_variables){root, root->getTransform()});
+    while (Nstack.size()>0)
+    {
+      struct state_variables cur_depth = Nstack.back();
+      Nstack.pop_back();
+      Node *curN = cur_depth.N;
+      mat4 M = cur_depth.M;
+      for (unsigned i=0; i<meshes.size(); ++i)
+      {
+        meshes[i]->quickdraw(&M[0][0]);
+      }
+
+      vector<Node *> children = curN->getChildren();
+      for (unsigned i=0; i<children.size(); ++i)
+      {
+        Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+      }
+    }
+    dislight->restore();
+  }
+}
+
 void SceneGraph::drawScene(Camera *camera, bool wireframe)
 {
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_ONE, GL_ONE);
   // do DFS with a while loop so its faster
   struct state_variables
   {
@@ -123,29 +159,15 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
       for (int i=0; i<Nlights.size(); ++i)
       {
         vec4 t = M*vec4(0,0,0,1);
-        //fprintf(stderr, "%f %f %f\r\n", t.x, t.y, t.z);
-//        const float *p = &M[0][0];
-//        fprintf(stderr, "here");
-//        for (int j=0; j<16; ++j)
-//        {
-//          fprintf(stderr, "%f ", p[j]);
-//        }
         Nlights[i]->updatePos(&M);
       }
       for (unsigned i=0; i<meshes.size(); ++i)
       {
         int program = meshes[i]->getProgram();
         glUseProgram(program);
-        //fprintf(stderr, "update camera");
         camera->updateUniforms(program);
-        //if (program != oldProgram)
-        //{
-          //fprintf(stderr, "update lights");
-          lights[lnum]->updateUniforms(program);
-          //oldProgram = program;
-        //}
+        lights[lnum]->updateUniforms(program);
         mat3 N = transpose(inverse(glm::mat3(M)));
-        //fprintf(stderr, "draw mesh");
         meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
         glUseProgram(0);
       }
@@ -157,7 +179,6 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
       }
     }
   }
-  //glDisable(GL_BLEND);
 }
 
 Node *SceneGraph::allocNode()

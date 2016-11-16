@@ -10,11 +10,16 @@
 
 glm::mat4 Projection;
 
+int window_width;
+int window_height;
+
 void setViewport(GLFWwindow* window)
 {
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
 
+    window_width=width;
+    window_height=height;
     glViewport(0,0,width, height);
 }
 

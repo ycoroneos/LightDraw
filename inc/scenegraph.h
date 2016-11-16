@@ -49,6 +49,7 @@ class SceneGraph
   public:
     Node *getRoot();
     void addNode(Node *parent, Node newnode);
+    void zPre(Camera *camera, int program);
     void drawScene(Camera *camera, bool wireframe);
     void printGraph();
   protected:
