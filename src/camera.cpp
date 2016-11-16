@@ -38,26 +38,27 @@ vec3 Camera::getPos()
 void Camera::updateUniforms(unsigned program)
 {
   assert(program != 0);
-  glUseProgram(program);
+//  glUseProgram(program);
   //projection matrix
   int loc = glGetUniformLocation(program, "P");
   if (loc==-1)
   {
     perror("P not found\n");
   }
-  //mat4 p = *P;
   glUniformMatrix4fv(loc, 1, false, &Projection[0][0]);
-  //view matrix
   loc = glGetUniformLocation(program, "V");
   if (loc==-1)
   {
     perror("V not found\n");
   }
-
-  //mat4 newview = lookAt(vec3(0.0f, 0.0f, 10.0f), vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.0f, 0.0f));
   glUniformMatrix4fv(loc, 1, false, &View[0][0]);
-  //glUniformMatrix4fv(loc, 1, false, &newview[0][0]);
-  glUseProgram(0);
+  loc = glGetUniformLocation(program, "camPos");
+  if (loc==-1)
+  {
+    perror("camPos not found\n");
+  }
+  glUniform3fv(loc, 1, &pos[0]);
+  //glUseProgram(0);
 }
 
 bool Camera::viewWire()

@@ -10,6 +10,7 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flag
 #include <inc/camera.h>
+#include <inc/light.h>
 /*
  * Scenegraph will traverse the graph and generate deferred draw calls that contain all of the transforms required for the chunk to draw correctly.
  * Before drawing, the deferred draw calls will be sorted by centroid distance from the camera. This will allow the gl depth test to quickly throw out some vertices.
@@ -53,6 +54,7 @@ class SceneGraph
     std::vector<Node*> nodes;
     std::vector<Mesh*> meshes;
     std::vector<Material*> materials;
+    std::vector<Light *> lights;
 };
 
 class AssimpGraph : public SceneGraph

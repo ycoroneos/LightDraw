@@ -41,6 +41,12 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
     fprintf(stderr, "error binding mesh: could not find M matrix location\r\n");
     return;
   }
+  N_loc = glGetUniformLocation(program, "N");
+  if (N_loc<0)
+  {
+    fprintf(stderr, "error binding mesh: could not find N matrix location\r\n");
+    return;
+  }
   drawmaterial = material;
   drawmaterial->incRef();
 }
@@ -57,11 +63,12 @@ unsigned Mesh::getProgram()
   return program;
 }
 
-void Mesh::draw(bool lines, GLfloat *M)
+void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
 {
-  glUseProgram(program);
+  //glUseProgram(program);
   glBindVertexArray(vertexarray);
   glUniformMatrix4fv(M_loc, 1, false, M);
+  glUniformMatrix3fv(N_loc, 1, false, N);
   //update shading uniforms for the material
   drawmaterial->Use(program);
   if (lines)
@@ -73,5 +80,5 @@ void Mesh::draw(bool lines, GLfloat *M)
      glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0);
   }
   glBindVertexArray(0);
-  glUseProgram(0);
+  //glUseProgram(0);
 }

@@ -47,7 +47,7 @@ int main(void)
     glfwSetCursorPosCallback(window, mouseCallback);
     glfwSetWindowPos(window, 0, 0);
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
+    glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
     initScene(Projection);

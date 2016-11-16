@@ -29,12 +29,13 @@ void initScene(mat4 Projection)
 {
   camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
-  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
-  default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
-  vxg = new VoxelGrid(10,10,10);
-  vxg->setProgram(voxelprog);
-  gnd = new VoxelGrid(100,1,100);
-  gnd->setProgram(voxelprog);
+//  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
+  //default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
+  default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
+//  vxg = new VoxelGrid(10,10,10);
+//  vxg->setProgram(voxelprog);
+//  gnd = new VoxelGrid(100,1,100);
+//  gnd->setProgram(voxelprog);
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
   //sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
@@ -66,8 +67,8 @@ void drawScene()
 
 void cleanupScene()
 {
-  delete vxg;
-  delete gnd;
+//  delete vxg;
+//  delete gnd;
   //delete garg;
   delete camera;
   delete sgr;

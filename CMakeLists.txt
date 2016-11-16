@@ -76,6 +76,7 @@ list (APPEND voxl_SRC
   src/mesh.cpp
   src/vertex.cpp
   src/material.cpp
+  src/light.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -94,6 +95,7 @@ list (APPEND voxl_HEADER
   inc/mesh.h
   inc/vertex.h
   inc/material.h
+  inc/light.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

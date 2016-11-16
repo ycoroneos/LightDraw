@@ -8,6 +8,8 @@
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
 #include <inc/camera.h>
+#include <inc/light.h>
+//#include <glm/gtx/inverse_transpose.hpp>
 using namespace std;
 using namespace glm;
 
@@ -87,37 +89,52 @@ void SceneGraph::printGraph()
 
 void SceneGraph::drawScene(Camera *camera, bool wireframe)
 {
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_ONE, GL_ONE);
   // do DFS with a while loop so its faster
   struct state_variables
   {
     Node *N;
     mat4 M;
   };
-  vector <struct state_variables> Nstack;
-  Nstack.push_back((struct state_variables){root, root->getTransform()});
-  while (Nstack.size()>0)
+  for (unsigned i=0; i<lights.size(); ++i)
   {
-    struct state_variables cur_depth = Nstack.back();
-    Nstack.pop_back();
-    Node *curN = cur_depth.N;
-    mat4 M = cur_depth.M;
-    vector<Mesh*> meshes = curN->getMeshes();
-    for (unsigned i=0; i<meshes.size(); ++i)
+    vector <struct state_variables> Nstack;
+    Nstack.push_back((struct state_variables){root, root->getTransform()});
+    while (Nstack.size()>0)
     {
-      int program = meshes[i]->getProgram();
-      camera->updateUniforms(program);
-      //if (strncmp(curN->getName(), "dragon", 6)==0)
-     // {
-        meshes[i]->draw(wireframe, &M[0][0]);
-     // }
-    }
+      struct state_variables cur_depth = Nstack.back();
+      Nstack.pop_back();
+      Node *curN = cur_depth.N;
+      mat4 M = cur_depth.M;
+      vector<Mesh*> meshes = curN->getMeshes();
+      int oldProgram = -1;
+      for (unsigned i=0; i<meshes.size(); ++i)
+      {
+        int program = meshes[i]->getProgram();
+        glUseProgram(program);
+        //fprintf(stderr, "update camera");
+        camera->updateUniforms(program);
+        if (program != oldProgram)
+        {
+          //fprintf(stderr, "update lights");
+          lights[i]->updateUniforms(program);
+          oldProgram = program;
+        }
+        mat3 N = transpose(inverse(glm::mat3(M)));
+        //fprintf(stderr, "draw mesh");
+        meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
+        glUseProgram(0);
+      }
 
-    vector<Node *> children = curN->getChildren();
-    for (unsigned i=0; i<children.size(); ++i)
-    {
-      Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+      vector<Node *> children = curN->getChildren();
+      for (unsigned i=0; i<children.size(); ++i)
+      {
+        Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+      }
     }
   }
+  //glDisable(GL_BLEND);
 }
 
 Node *SceneGraph::allocNode()
@@ -136,6 +153,11 @@ Node *SceneGraph::allocNode()
 static vec3 aiVec3toVec3(aiVector3D in)
 {
   return vec3(in.x, in.y, in.z);
+}
+
+static vec3 aiColor3toVec3(aiColor3D in)
+{
+  return vec3(in.r, in.g, in.b);
 }
 
 static mat4 aiMat4toMat4(aiMatrix4x4 in)
@@ -215,6 +237,23 @@ AssimpGraph::AssimpGraph(const char *filename)
 
   //load lights
   fprintf(stderr, "%d lights\r\n", scene->mNumLights);
+  for (int i=0; i<scene->mNumLights; ++i)
+  {
+    aiLight *asslight = scene->mLights[i];
+    switch(asslight->mType)
+    {
+      case aiLightSource_DIRECTIONAL:
+        lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        break;
+      default:
+        fprintf(stderr, "unknown light %d\r\n", asslight->mType);
+        lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        //lights.push_back(new DummyLight());
+        break;
+    }
+  }
 
   //load all meshes into the list
   for (unsigned i=0; i<scene->mNumMeshes; ++i)

@@ -13,7 +13,7 @@ class Mesh
     ~Mesh();
     void setProgram(unsigned newprogram);
     unsigned getProgram();
-    void draw(bool lines=false, GLfloat *M=NULL);
+    void draw(bool lines=false, GLfloat *M=NULL, GLfloat *N=NULL);
   private:
     //for personality
     char name[25];
@@ -29,6 +29,7 @@ class Mesh
     unsigned n_indices;
 
     int M_loc;
+    int N_loc;
 
     //material
     Material *drawmaterial;
