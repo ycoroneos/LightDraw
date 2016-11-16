@@ -123,7 +123,7 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
       for (int i=0; i<Nlights.size(); ++i)
       {
         vec4 t = M*vec4(0,0,0,1);
-        fprintf(stderr, "%f %f %f\r\n", t.x, t.y, t.z);
+        //fprintf(stderr, "%f %f %f\r\n", t.x, t.y, t.z);
 //        const float *p = &M[0][0];
 //        fprintf(stderr, "here");
 //        for (int j=0; j<16; ++j)

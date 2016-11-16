@@ -13,7 +13,6 @@ struct color
   unsigned char r;
   unsigned char g;
   unsigned char b;
-  unsigned char a;
 };
 
 Material::Material()
@@ -28,7 +27,7 @@ Material::Material(const char *filename)
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texID);
   int width, height;
-  unsigned char *image = SOIL_load_image(filename, &width, &height, 0, SOIL_LOAD_RGBA);
+  unsigned char *image = SOIL_load_image(filename, &width, &height, 0, SOIL_LOAD_RGB);
   if (image == NULL)
   {
     fprintf(stderr,"failed to load texture\r\n");
@@ -48,7 +47,7 @@ Material::Material(const char *filename)
       flipped[flipped_index]=cast[index];
     }
   }
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void*)flipped);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)flipped);
   SOIL_free_image_data(image);
   free(flipped);
   fprintf(stderr, "loaded texture %s\r\n", filename);

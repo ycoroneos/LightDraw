@@ -23,7 +23,8 @@ void PointLight::updatePos(mat4 *M)
 {
   //vec4 base = *M * vec4(0.0f, 0.0f, 0.0f, 1.0f);
   //worldpos = vec3(base) + pos;
-  worldpos = vec3(*M * vec4(pos, 1.0f));
+  //worldpos = vec3(*M * vec4(pos, 1.0f));
+  worldpos = vec3(5.0f, 5.0f, 0.0f);
 }
 
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)

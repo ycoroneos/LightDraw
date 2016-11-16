@@ -40,7 +40,7 @@ vec3 blinn_phong(vec3 kd) {
 
 void main () {
     vec4 tex_samp = texture(texture_obj, var_texcoords);
-    out_Color = vec4(lightAmbient+blinn_phong(tex_samp.xyz), tex_samp.w);
+    out_Color = vec4(lightAmbient+blinn_phong(tex_samp.xyz), 1.0f);
 }
 
 
