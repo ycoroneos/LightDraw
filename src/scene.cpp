@@ -6,14 +6,12 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "inc/recorder.h"
 #include "inc/camera.h"
-#include "inc/teapot.h"
 #include "inc/cube.h"
 #include "inc/voxel.h"
 #include "stdio.h"
 #include "inc/scenegraph.h"
 #include <time.h>
 
-void drawTeapot();
 
 Camera *camera;// = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
 VoxelGrid *vxg;
@@ -85,21 +83,3 @@ void cleanupScene()
 }
 
 
-//debug
-void drawTeapot()
-{
-    // set the required buffer size exactly.
-    GeometryRecorder rec(teapot_num_faces * 3);
-    for (int idx : teapot_indices) {
-        vec3 position(teapot_positions[idx * 3 + 0],
-            teapot_positions[idx * 3 + 1],
-            teapot_positions[idx * 3 + 2]);
-
-        vec3 normal(teapot_normals[idx * 3 + 0],
-            teapot_normals[idx * 3 + 1],
-            teapot_normals[idx * 3 + 2]);
-
-        rec.record(position, normal);
-    }
-    rec.draw();
-}
