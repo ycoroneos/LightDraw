@@ -49,9 +49,12 @@ class SceneGraph
   public:
     Node *getRoot();
     void addNode(Node *parent, Node newnode);
+    void bake();
     void zPre();
+    void zPreBaked();
     void drawScene(Camera *camera, bool wireframe);
     void drawSceneShadowed(Camera *camera, bool wireframe);
+    void drawBaked(Camera *camera, bool wireframe);
     void printGraph();
   protected:
     Node * allocNode();

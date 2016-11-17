@@ -11,6 +11,8 @@ class Mesh
   public:
     Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material);
     ~Mesh();
+    void setWorldPos(mat4 pos);
+    mat4 getWorldPos();
     void setProgram(unsigned newprogram);
     unsigned getProgram();
     void setQuickProgram(unsigned newprogram);
@@ -37,5 +39,8 @@ class Mesh
 
     //material
     Material *drawmaterial;
+
+    //for baking
+    mat4 worldpos;
 };
 

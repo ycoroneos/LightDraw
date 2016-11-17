@@ -98,6 +98,76 @@ void SceneGraph::printGraph()
 }
 
 
+//bake world transforms into the meshes
+void SceneGraph::bake()
+{
+  // do DFS with a while loop so its faster
+  struct state_variables
+  {
+    Node *N;
+    mat4 M;
+  };
+  vector <struct state_variables> Nstack;
+  Nstack.push_back((struct state_variables){root, root->getTransform()});
+  while (Nstack.size()>0)
+  {
+    struct state_variables cur_depth = Nstack.back();
+    Nstack.pop_back();
+    Node *curN = cur_depth.N;
+    mat4 M = cur_depth.M;
+    vector<Mesh*> meshes = curN->getMeshes();
+    vector<Light*> Nlights = curN->getLights();
+    for (int i=0; i<Nlights.size(); ++i)
+    {
+      vec4 t = M*vec4(0,0,0,1);
+      Nlights[i]->updatePos(&M);
+    }
+    for (unsigned i=0; i<meshes.size(); ++i)
+    {
+      meshes[i]->setWorldPos(M);
+    }
+
+    vector<Node *> children = curN->getChildren();
+    for (unsigned i=0; i<children.size(); ++i)
+    {
+      Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+    }
+  }
+}
+
+void SceneGraph::drawBaked(Camera *camera, bool wireframe)
+{
+  for (int lnum=0; lnum<lights.size(); ++lnum)
+  {
+    for (int i=0; i<meshes.size(); ++i)
+    {
+      int program = meshes[i]->getProgram();
+      glUseProgram(program);
+      camera->updateUniforms(program);
+      lights[lnum]->updateUniforms(program);
+      mat4 M = meshes[i]->getWorldPos();
+      mat3 N = transpose(inverse(glm::mat3(M)));
+      meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
+      glUseProgram(0);
+    }
+  }
+}
+
+void SceneGraph::zPreBaked()
+{
+  for (int lnum=0; lnum<lights.size(); ++lnum)
+  {
+    Light *dislight = lights[lnum];
+    int program = dislight->shadowMap();
+    for (int i=0; i<meshes.size(); ++i)
+    {
+      mat4 M = meshes[i]->getWorldPos();
+      meshes[i]->quickdraw(&M[0][0]);
+    }
+    dislight->restore();
+  }
+}
+
 //cast shadows for the first 2 lights in the lights list
 //Ill do more for the final project
 void SceneGraph::zPre()

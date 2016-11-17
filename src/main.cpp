@@ -45,7 +45,7 @@ int main(void)
     int width = 1024;
     int height = 768;
     window = createOpenGLWindow(width, height,"voxl");
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, width, height);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);

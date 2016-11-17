@@ -58,6 +58,16 @@ Mesh::~Mesh()
   glDeleteVertexArrays(1, &vertexarray);
 }
 
+void Mesh::setWorldPos(mat4 pos)
+{
+  worldpos = pos;
+}
+
+mat4 Mesh::getWorldPos()
+{
+  return worldpos;
+}
+
 void Mesh::setProgram(unsigned newprogram)
 {
   program = newprogram;

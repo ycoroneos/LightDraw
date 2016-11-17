@@ -11,6 +11,7 @@
 #include "inc/voxel.h"
 #include "stdio.h"
 #include "inc/scenegraph.h"
+#include <time.h>
 
 void drawTeapot();
 
@@ -34,7 +35,7 @@ void initScene(mat4 Projection)
 //  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   //default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
-  pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
+  //pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
   directionlight_shadowmap_program = compileProgram("../shaders/point_shadow.vs", "../shaders/shadow.fs");
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
@@ -47,6 +48,7 @@ void initScene(mat4 Projection)
   //sgr = new AssimpGraph("../data/dragon.obj");
   //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
   //sgr->printGraph();
+  sgr->bake();
 }
 
 void drawScene()
@@ -57,8 +59,10 @@ void drawScene()
 //  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
 //  gnd->draw();
 
-  sgr->zPre();
-  sgr->drawScene(camera, camera->viewWire());
+  sgr->zPreBaked();
+  sgr->drawBaked(camera, camera->viewWire());
+  //sgr->zPre();
+  //sgr->drawScene(camera, camera->viewWire());
   //sgr->drawSceneShadowed(camera, camera->viewWire());
 //
 //  glUseProgram(voxelprog);
