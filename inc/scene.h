@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-void initScene(glm::mat4 Projection);
+int initScene(glm::mat4 Projection);
 
 void drawScene();
 

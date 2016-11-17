@@ -7,8 +7,8 @@
 #include "string.h"
 using namespace glm;
 
-#define SHADOW_WIDTH 2
-#define SHADOW_HEIGHT 2
+#define SHADOW_WIDTH 1024
+#define SHADOW_HEIGHT 1024
 
 extern int window_width;
 extern int window_height;
@@ -38,6 +38,7 @@ void PointLight::updatePos(mat4 *M)
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)
   : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1)
 {
+  fprintf(stderr, "point light named %s\r\n", name);
   worldpos = vec3(5.0f, 5.0f, 0.0f);
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
@@ -80,14 +81,12 @@ void PointLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
-  int cone_loc = glGetUniformLocation(program, "lightCone");
   vec4 lpos = vec4(worldpos, 1.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
-  glUniform3fv(specular_loc, 1, &specular[0]);
-  float trash = 360.0f;
-  glUniform1fv(cone_loc, 1, &trash);
+  vec4 combined = vec4(specular, 0.0f);
+  glUniform4fv(specular_loc, 1, &combined[0]);
 }
 
 int PointLight::shadowMap()

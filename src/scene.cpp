@@ -26,14 +26,14 @@ unsigned default_mesh_prog;
 unsigned pointlight_shadowmap_program;
 unsigned directionlight_shadowmap_program;
 
-void initScene(mat4 Projection)
+int initScene(mat4 Projection)
 {
   camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
 //  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   //default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
-  //pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
+  pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
   directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
@@ -47,6 +47,7 @@ void initScene(mat4 Projection)
   //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
   //sgr->printGraph();
   sgr->bake();
+  return 0;
 }
 
 void drawScene()

@@ -22,7 +22,6 @@ uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
 uniform vec4 lightSpecular;
 uniform vec3 lightConeDirection;
-uniform float lightCone;
 
 
 vec3 ambient()
@@ -65,21 +64,19 @@ void main () {
 
     vec3 coneDirection = normalize(lightConeDirection);
     vec3 rayDirection = -L;
-    float att = clamp(dot(rayDirection, coneDirection), 0.1f, 1.0f);
-    //float lightToSurfaceAngle = degrees(acos(dot(rayDirection, coneDirection)));
+    float att=1;
+    if (lightSpecular.a>0)
+    {
+      att = clamp(dot(rayDirection, coneDirection), 0.1f, 1.0f);
+    }
 
     vec3 Iamb = vec3(0.0f);
     vec3 Idif = vec3(0.0f);
     vec3 Ispe = vec3(0.0f);
-    //if(lightToSurfaceAngle < lightSpecular.a)
-    //{
 
-    // get Blinn-Phong reflectance components
     Iamb = ambient();
     Idif = diffuse(N, L);
     Ispe = specular(N, L, V);
-    //}
-    // diffuse color of the object from texture
     vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
 
     // combination of all components and diffuse color of the object

@@ -42,10 +42,10 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    int width = 1024;
-    int height = 768;
+    int width = 1920;
+    int height = 1080;
     window = createOpenGLWindow(width, height,"voxl");
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, width, height);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
@@ -55,7 +55,12 @@ int main(void)
     glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    initScene(Projection);
+    if (initScene(Projection)<0)
+    {
+      cleanupScene();
+      glfwTerminate();
+      return -1;
+    }
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
