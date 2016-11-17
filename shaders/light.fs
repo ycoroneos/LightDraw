@@ -62,7 +62,7 @@ void main () {
     pos_world /= pos_world.w;
     vec3 L;
      if (lightPos.w == 0) {
-       L = normalize(lightPos.xyz * -1);
+       L = normalize(lightPos.xyz* -1);
      }
      else {
        L = normalize(lightPos.xyz - pos_world.xyz);
@@ -92,8 +92,8 @@ void main () {
     shadow_att = 0;
     // combination of all components and diffuse color of the object
     out_Color.xyz = (Iamb + (1.0 - shadow_att) * (Idif + Ispe)) * diffuseColor * att;
-    //out_Color.xyz = diffuseColor * (Iamb + Idif + Ispe) * att;
-    out_Color.a = 0;
+    //out_Color.xyz = diffuseColor;
+    out_Color.a = 1.0f;
 }
 
 

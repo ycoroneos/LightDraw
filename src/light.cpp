@@ -130,7 +130,7 @@ int PointLight::shadowMap()
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
   glDrawBuffer(GL_NONE);
   glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -340,6 +340,8 @@ DirectionLight::~DirectionLight()
 
 void DirectionLight::updatePos(mat4 *M)
 {
+  direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
+  fprintf(stderr, "sun direction: %f %f %f\r\n", direction.x, direction.y, direction.z);
 }
 
 void DirectionLight::updateUniforms(unsigned program)

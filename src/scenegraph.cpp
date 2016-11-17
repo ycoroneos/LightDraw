@@ -119,7 +119,6 @@ void SceneGraph::bake()
     vector<Light*> Nlights = curN->getLights();
     for (int i=0; i<Nlights.size(); ++i)
     {
-      vec4 t = M*vec4(0,0,0,1);
       Nlights[i]->updatePos(&M);
     }
     for (unsigned i=0; i<meshes.size(); ++i)
@@ -137,8 +136,6 @@ void SceneGraph::bake()
 
 void SceneGraph::drawBaked(Camera *camera, bool wireframe)
 {
-  //glEnable(GL_BLEND);
-  //glBlendFunc(GL_ZERO, GL_ZERO);
   for (int lnum=0; lnum<lights.size(); ++lnum)
   {
     for (int i=0; i<meshes.size(); ++i)
@@ -151,13 +148,8 @@ void SceneGraph::drawBaked(Camera *camera, bool wireframe)
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
       glUseProgram(0);
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      lights[lnum]->renderQuad();
-      glDisable(GL_BLEND);
     }
   }
-  //glDisable(GL_BLEND);
 }
 
 void SceneGraph::zPreBaked()
@@ -436,8 +428,8 @@ AssimpGraph::AssimpGraph(const char *filename)
     {
       case aiLightSource_DIRECTIONAL:
         fprintf(stderr, "Directional light\r\n");
-        lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        //lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
         break;
       case aiLightSource_POINT:
         fprintf(stderr, "Point light\r\n");

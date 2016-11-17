@@ -17,7 +17,7 @@ float LinearizeDepth(float depth)
 
 void main()
 {
-   vec4 color1 = texture2D(t,texcoord);
+   vec4 color1 = texture(t,texcoord);
    out_color = vec4(vec3(LinearizeDepth(color1.r) / far_plane), 1.0);
    //out_color = vec4(0.1f, 0.0f, 0.0f, 1.0f);
 }
