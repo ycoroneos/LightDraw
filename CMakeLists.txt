@@ -94,7 +94,6 @@ list (APPEND voxl_HEADER
   inc/camera.h
   inc/scene.h
   inc/input.h
-  inc/teapot.h
   inc/recorder.h
   inc/cube.h
   inc/cull.h
