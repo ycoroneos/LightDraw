@@ -14,12 +14,14 @@ extern int window_width;
 extern int window_height;
 extern unsigned pointlight_shadowmap_program;
 extern unsigned directionlight_shadowmap_program;
+extern unsigned default_quad_program;
 
 Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)
   : pos(pos_1), ambient(ambient_1), diffuse(diffuse_1), specular(specular_1)
 {
   strncpy(name, name_1, sizeof(name));
   worldpos = pos;
+  quad_program = default_quad_program;
 }
 
 const char *Light::getName()
@@ -81,12 +83,25 @@ void PointLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
+  int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
+  if (farplane_loc < 0)
+  {
+    fprintf(stderr, "cant find farplane loc\r\n");
+  }
   vec4 lpos = vec4(worldpos, 1.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
   vec4 combined = vec4(specular, 0.0f);
   glUniform4fv(specular_loc, 1, &combined[0]);
+  GLfloat far = 250.0f;
+  glUniform1fv(farplane_loc, 1, &far);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
 int PointLight::shadowMap()
@@ -94,7 +109,7 @@ int PointLight::shadowMap()
   glUseProgram(shadowmap_program);
   GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
   GLfloat near = 1.0f;
-  GLfloat far = 25.0f;
+  GLfloat far = 250.0f;
   mat4 P = glm::perspective(90.0f, aspect, near, far);
   cubemats[0] = P* glm::lookAt(pos, pos + vec3(1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
   cubemats[1] = P* glm::lookAt(pos, pos + vec3(-1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
@@ -129,13 +144,17 @@ void PointLight::restore()
   glUseProgram(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, window_width, window_height);
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_BACK);
 }
 
 unsigned PointLight::getType()
 {
   return POINT_LIGHT;
+}
+
+void PointLight::renderQuad()
+{
 }
 
 ////////////////////////////////////////////////////
@@ -228,6 +247,7 @@ void SpotLight::updateUniforms(unsigned program)
   glUniform4fv(specular_loc, 1, &combined[0]);
   //glUniform1fv(cone_loc, 1, &angle);
   glUniform3fv(conedir_loc, 1, &direction[0]);
+  glBindTexture(GL_TEXTURE_2D, depth_map);
 }
 
 int SpotLight::shadowMap()
@@ -235,7 +255,7 @@ int SpotLight::shadowMap()
   glUseProgram(shadowmap_program);
   GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
   GLfloat near = 1.0f;
-  GLfloat far = 25.0f;
+  GLfloat far = 250.0f;
   mat4 P = glm::perspective(90.0f, aspect, near, far);
   shadowmat = P * glm::lookAt(pos, pos+direction, vec3(0.0f, 1.0f, 0.0f));
   int PV_loc = glGetUniformLocation(shadowmap_program, "PV");
@@ -253,7 +273,7 @@ int SpotLight::shadowMap()
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
   glDrawBuffer(GL_NONE);
   glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);
@@ -267,13 +287,35 @@ void SpotLight::restore()
   glUseProgram(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, window_width, window_height);
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_BACK);
 }
 
 unsigned SpotLight::getType()
 {
   return SPOT_LIGHT;
+}
+
+void SpotLight::renderQuad()
+{
+  glUseProgram(quad_program);
+  GLfloat near = 1.0f;
+  GLfloat far = 250.0f;
+  int near_loc = glGetUniformLocation(quad_program, "near_plane");
+  int far_loc = glGetUniformLocation(quad_program, "far_plane");
+  glUniform1fv(near_loc, 1, &near);
+  glUniform1fv(far_loc, 1, &far);
+  glDisable(GL_DEPTH_TEST);
+  //glViewport(0, 0, window_width/4, window_height/4);
+  glBindTexture(GL_TEXTURE_2D, depth_map);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  glDrawArrays(GL_POINTS, 0, 1);
+  glEnable(GL_DEPTH_TEST);
+  glUseProgram(0);
 }
 
 ////////////////////////////////////////////////////
@@ -356,6 +398,10 @@ unsigned DirectionLight::getType()
   return DIRECTION_LIGHT;
 }
 
+void DirectionLight::renderQuad()
+{
+}
+
 //////////////////////////////////////////////////////
 void DummyLight::updatePos(mat4 *M)
 {
@@ -382,4 +428,8 @@ void DummyLight::updateUniforms(unsigned program)
 unsigned DummyLight::getType()
 {
   return DUMMY_LIGHT;
+}
+
+void DummyLight::renderQuad()
+{
 }

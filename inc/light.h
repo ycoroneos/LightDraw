@@ -19,6 +19,7 @@ class Light
     virtual int shadowMap()=0;
     virtual void restore()=0;
     virtual unsigned getType()=0;
+    virtual void renderQuad()=0;
   protected:
     char name[25];
     vec3 pos;
@@ -32,6 +33,9 @@ class Light
     GLuint depth_map;
     mat4 VP;
     int shadowmap_program;
+
+    //for debugging
+    int quad_program;
 };
 
 class PointLight : public Light
@@ -44,6 +48,7 @@ class PointLight : public Light
     int shadowMap() override;
     void restore() override;
     unsigned getType() override;
+    void renderQuad() override;
   private:
     mat4 cubemats[6];
 };
@@ -58,6 +63,7 @@ class SpotLight : public Light
     int shadowMap() override;
     void restore() override;
     unsigned getType() override;
+    void renderQuad() override;
   private:
     float angle;
     vec3 direction;
@@ -74,6 +80,7 @@ class DirectionLight : public Light
     int shadowMap() override;
     void restore() override;
     unsigned getType() override;
+    void renderQuad() override;
   private:
     vec3 direction;
 };
@@ -87,5 +94,6 @@ class DummyLight : public Light
     int shadowMap() override;
     void restore() override;
     unsigned getType() override;
+    void renderQuad() override;
   private:
 };

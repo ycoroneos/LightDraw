@@ -137,6 +137,8 @@ void SceneGraph::bake()
 
 void SceneGraph::drawBaked(Camera *camera, bool wireframe)
 {
+  //glEnable(GL_BLEND);
+  //glBlendFunc(GL_ZERO, GL_ZERO);
   for (int lnum=0; lnum<lights.size(); ++lnum)
   {
     for (int i=0; i<meshes.size(); ++i)
@@ -149,8 +151,13 @@ void SceneGraph::drawBaked(Camera *camera, bool wireframe)
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
       glUseProgram(0);
+      glEnable(GL_BLEND);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      lights[lnum]->renderQuad();
+      glDisable(GL_BLEND);
     }
   }
+  //glDisable(GL_BLEND);
 }
 
 void SceneGraph::zPreBaked()
@@ -434,13 +441,13 @@ AssimpGraph::AssimpGraph(const char *filename)
         break;
       case aiLightSource_POINT:
         fprintf(stderr, "Point light\r\n");
-        lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular)));
+        //lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+        //      aiColor3toVec3(asslight->mColorSpecular)));
         break;
       case aiLightSource_SPOT:
         fprintf(stderr, "Spot light\r\n");
-        //lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
+        lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);

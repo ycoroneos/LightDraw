@@ -25,6 +25,7 @@ unsigned voxelprog;
 unsigned default_mesh_prog;
 unsigned pointlight_shadowmap_program;
 unsigned directionlight_shadowmap_program;
+unsigned default_quad_program;
 
 int initScene(mat4 Projection)
 {
@@ -35,6 +36,11 @@ int initScene(mat4 Projection)
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
   pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
   directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
+  default_quad_program = compileGProgram("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
+  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program)
+  {
+    return -1;
+  }
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
 //  gnd = new VoxelGrid(100,1,100);
