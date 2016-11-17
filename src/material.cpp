@@ -86,6 +86,10 @@ void Material::Use(int program)
   int diffuse_loc = glGetUniformLocation(program, "matDiffuse");
   int specular_loc = glGetUniformLocation(program, "matSpecular");
   int shiny_loc = glGetUniformLocation(program, "matShininess");
+  if (shiny_loc <0)
+  {
+    fprintf(stderr, "material %s : couldnt find shiny loc\r\n", name);
+  }
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
   glUniform3fv(specular_loc, 1, &specular[0]);

@@ -195,14 +195,39 @@ void SpotLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
-  int cone_loc = glGetUniformLocation(program, "lightCone");
+  //int cone_loc = glGetUniformLocation(program, "lightCone");
   int conedir_loc = glGetUniformLocation(program, "lightConeDirection");
+  if (lightpos_loc<0)
+  {
+    fprintf(stderr, "spot light: couldn't find lightpos uniform\r\n");
+  }
+  if (ambient_loc<0)
+  {
+    fprintf(stderr, "spot light: couldn't find ambient uniform\r\n");
+  }
+  if (diffuse_loc<0)
+  {
+    fprintf(stderr, "spot light: couldn't find diffuse uniform\r\n");
+  }
+  if (specular_loc<0)
+  {
+    fprintf(stderr, "spot light: couldn't find specular uniform\r\n");
+  }
+ // if (cone_loc<0)
+ // {
+ //   fprintf(stderr, "spot light: couldn't find cone uniform\r\n");
+ // }
+  if (conedir_loc<0)
+  {
+    fprintf(stderr, "spot light: couldn't find cone dir uniform\r\n");
+  }
   vec4 lpos = vec4(worldpos, 1.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
-  glUniform3fv(specular_loc, 1, &specular[0]);
-  glUniform1fv(cone_loc, 1, &angle);
+  vec4 combined = vec4(specular, angle);
+  glUniform4fv(specular_loc, 1, &combined[0]);
+  //glUniform1fv(cone_loc, 1, &angle);
   glUniform3fv(conedir_loc, 1, &direction[0]);
 }
 

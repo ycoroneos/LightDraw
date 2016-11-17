@@ -34,7 +34,7 @@ void initScene(mat4 Projection)
   //default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
   //pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
-  directionlight_shadowmap_program = compileProgram("../shaders/point_shadow.vs", "../shaders/shadow.fs");
+  directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
 //  gnd = new VoxelGrid(100,1,100);

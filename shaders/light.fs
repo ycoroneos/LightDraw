@@ -20,7 +20,7 @@ uniform vec3 camPos;
 uniform vec4 lightPos;
 uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
-uniform vec3 lightSpecular;
+uniform vec4 lightSpecular;
 uniform vec3 lightConeDirection;
 uniform float lightCone;
 
@@ -45,7 +45,7 @@ vec3 specular(vec3 N, vec3 L, vec3 V)
       vec3 H = normalize(L + V);
       specularTerm = pow(dot(N, H), matShininess);
    }
-   return matSpecular * lightSpecular * specularTerm;
+   return matSpecular * vec3(lightSpecular) * specularTerm;
 }
 
 
@@ -71,7 +71,7 @@ void main () {
     vec3 Iamb = vec3(0.0f);
     vec3 Idif = vec3(0.0f);
     vec3 Ispe = vec3(0.0f);
-    //if(lightToSurfaceAngle < lightCone)
+    //if(lightToSurfaceAngle < lightSpecular.a)
     //{
 
     // get Blinn-Phong reflectance components
