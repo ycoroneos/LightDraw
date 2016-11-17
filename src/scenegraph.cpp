@@ -100,7 +100,7 @@ void SceneGraph::printGraph()
 
 //cast shadows for the first 2 lights in the lights list
 //Ill do more for the final project
-void SceneGraph::zPre(Camera *camera, int program)
+void SceneGraph::zPre()
 {
   // do DFS with a while loop so its faster
   struct state_variables
@@ -108,10 +108,10 @@ void SceneGraph::zPre(Camera *camera, int program)
     Node *N;
     mat4 M;
   };
-  for (unsigned lnum=0; lnum<lights.size() && lnum < 2; ++lnum)
+  for (unsigned lnum=0; lnum<lights.size(); ++lnum)
   {
     Light *dislight = lights[lnum];
-    dislight->shadowMap(program);
+    int program = dislight->shadowMap();
     vector <struct state_variables> Nstack;
     Nstack.push_back((struct state_variables){root, root->getTransform()});
     while (Nstack.size()>0)
@@ -122,7 +122,11 @@ void SceneGraph::zPre(Camera *camera, int program)
       mat4 M = cur_depth.M;
       for (unsigned i=0; i<meshes.size(); ++i)
       {
-        meshes[i]->quickdraw(&M[0][0]);
+        meshes[i]->quickdraw(&M[0][0], program);
+        //int program = meshes[i]->getProgram();
+        //glUseProgram(program);
+        //meshes[i]->draw(false, &M[0][0], &M[0][0]);
+        //glUseProgram(0);
       }
 
       vector<Node *> children = curN->getChildren();
@@ -132,6 +136,52 @@ void SceneGraph::zPre(Camera *camera, int program)
       }
     }
     dislight->restore();
+  }
+}
+
+void SceneGraph::drawSceneShadowed(Camera *camera, bool wireframe)
+{
+  // do DFS with a while loop so its faster
+  struct state_variables
+  {
+    Node *N;
+    mat4 M;
+  };
+  for (unsigned lnum=0; lnum<lights.size(); ++lnum)
+  {
+    Light *dislight = lights[lnum];
+    vector <struct state_variables> Nstack;
+    Nstack.push_back((struct state_variables){root, root->getTransform()});
+    while (Nstack.size()>0)
+    {
+      struct state_variables cur_depth = Nstack.back();
+      Nstack.pop_back();
+      Node *curN = cur_depth.N;
+      mat4 M = cur_depth.M;
+      vector<Mesh*> meshes = curN->getMeshes();
+      int shadowprog = dislight->shadowMap();
+      for (unsigned i=0; i<meshes.size(); ++i)
+      {
+        meshes[i]->quickdraw(&M[0][0]);
+      }
+      dislight->restore();
+      for (unsigned i=0; i<meshes.size(); ++i)
+      {
+        int program = meshes[i]->getProgram();
+        glUseProgram(program);
+        camera->updateUniforms(program);
+        lights[lnum]->updateUniforms(program);
+        mat3 N = transpose(inverse(glm::mat3(M)));
+        meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
+        glUseProgram(0);
+      }
+
+      vector<Node *> children = curN->getChildren();
+      for (unsigned i=0; i<children.size(); ++i)
+      {
+        Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+      }
+    }
   }
 }
 
@@ -314,8 +364,13 @@ AssimpGraph::AssimpGraph(const char *filename)
         break;
       case aiLightSource_POINT:
         fprintf(stderr, "Point light\r\n");
-        lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular)));
+        //lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+        //      aiColor3toVec3(asslight->mColorSpecular)));
+        break;
+      case aiLightSource_SPOT:
+        fprintf(stderr, "Spot light\r\n");
+        lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);

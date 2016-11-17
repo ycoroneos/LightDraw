@@ -16,7 +16,7 @@ class Mesh
     void setQuickProgram(unsigned newprogram);
     unsigned getQuickProgram();
     void draw(bool lines=false, GLfloat *M=NULL, GLfloat *N=NULL);
-    void quickdraw(GLfloat *M=NULL);
+    void quickdraw(GLfloat *M=NULL, int quickprog=0);
   private:
     //for personality
     char name[25];

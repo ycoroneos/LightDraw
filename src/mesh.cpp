@@ -100,12 +100,11 @@ void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
 
 
 //used for Z pre pass
-void Mesh::quickdraw(GLfloat *M)
+void Mesh::quickdraw(GLfloat *M, int quickprog)
 {
-  //glUseProgram(program);
   glBindVertexArray(vertexarray);
-  glUniformMatrix4fv(M_loc, 1, false, M);
+  int this_M_loc = glGetUniformLocation(quickprog, "M");
+  glUniformMatrix4fv(this_M_loc, 1, false, M);
   glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0);
   glBindVertexArray(0);
-  //glUseProgram(0);
 }

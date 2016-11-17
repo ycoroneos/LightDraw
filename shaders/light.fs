@@ -21,32 +21,9 @@ uniform vec4 lightPos;
 uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
 uniform vec3 lightSpecular;
+uniform vec3 lightConeDirection;
+uniform float lightCone;
 
-//vec3 blinn_phong(vec3 kd) {
-//    vec4 pos_world = vec4(var_Position, 1);
-//    vec3 normal_world = normalize(var_Normal);
-//    pos_world /= pos_world.w;
-//    vec3 light_dir = vec3(0,0,0);
-//    if (lightPos.w == 0) {
-//      light_dir = normalize(lightPos.xyz);
-//    }
-//    else {
-//      light_dir = normalize(lightPos.xyz - pos_world.xyz);
-//    }
-//    vec3 cam_dir = camPos - pos_world.xyz;
-//    cam_dir = normalize(cam_dir);
-//
-//    float ndotl = max(dot(normal_world, light_dir), 0.0);
-//    vec3 diffContrib = lightDiffuse * kd * ndotl;
-//
-//    vec3 R = reflect( -light_dir, normal_world );
-//    float eyedotr = max(dot(cam_dir, R), 0.0);
-//    vec3 specContrib = pow(eyedotr, 3.0f) *
-//                       1.0f * lightDiffuse;
-//
-//    return diffContrib + specContrib;
-//    //return  + vec4(diffContrib + specContrib, alpha);
-//}
 
 vec3 ambient()
 {
@@ -85,16 +62,28 @@ void main () {
     vec3 V = normalize(camPos - pos_world.xyz);
     vec3 N = normalize(var_Normal);
 
-    // get Blinn-Phong reflectance components
-    vec3 Iamb = ambient();
-    vec3 Idif = diffuse(N, L);
-    vec3 Ispe = specular(N, L, V);
 
+    vec3 coneDirection = normalize(lightConeDirection);
+    vec3 rayDirection = -L;
+    float att = clamp(dot(rayDirection, coneDirection), 0.1f, 1.0f);
+    //float lightToSurfaceAngle = degrees(acos(dot(rayDirection, coneDirection)));
+
+    vec3 Iamb = vec3(0.0f);
+    vec3 Idif = vec3(0.0f);
+    vec3 Ispe = vec3(0.0f);
+    //if(lightToSurfaceAngle < lightCone)
+    //{
+
+    // get Blinn-Phong reflectance components
+    Iamb = ambient();
+    Idif = diffuse(N, L);
+    Ispe = specular(N, L, V);
+    //}
     // diffuse color of the object from texture
     vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
 
     // combination of all components and diffuse color of the object
-    out_Color.xyz = diffuseColor * (Iamb + Idif + Ispe);
+    out_Color.xyz = diffuseColor * (Iamb + Idif + Ispe) * att;
     out_Color.a = 1;
 }
 

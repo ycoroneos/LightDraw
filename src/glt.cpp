@@ -98,6 +98,24 @@ static bool linkProgram(GLuint handle, GLuint vshader, GLuint fshader)
 	return true;
 }
 
+static bool linkProgramGShader(GLuint handle, GLuint vshader, GLuint gshader, GLuint fshader)
+{
+	glAttachShader(handle, vshader);
+  glAttachShader(handle, gshader);
+	glAttachShader(handle, fshader);
+	glLinkProgram(handle);
+	int success;
+	glGetProgramiv(handle, GL_LINK_STATUS, &success);
+	if (!success) {
+		char buff[2048];
+		int nwritten;
+		glGetProgramInfoLog(handle, 2048, &nwritten, buff);
+		fprintf(stderr, "Program link error:\n%s\n", buff);
+		return false;
+	}
+	return true;
+}
+
 unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_file)
 {
   FILE *f_vshader, *f_fshader;
@@ -149,6 +167,80 @@ unsigned compileProgram(const char* vshader_src_file, const char* fshader_src_fi
   free(vshader_src);
   free(fshader_src);
 	glDeleteShader(vshader);
+	glDeleteShader(fshader);
+	return program;
+}
+
+unsigned compileGProgram(const char* vshader_src_file, const char* gshader_src_file, const char* fshader_src_file)
+{
+  FILE *f_vshader, *f_fshader, *f_gshader;
+  char *vshader_src, *fshader_src, *gshader_src;
+  unsigned length=0;
+  //read vshader
+  f_vshader = fopen(vshader_src_file, "r");
+  if (!f_vshader)
+  {
+    fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
+    return 0;
+  }
+  fseek(f_vshader, 0, SEEK_END);
+  length=ftell(f_vshader);
+  rewind(f_vshader);
+  vshader_src = (char *)malloc(length*sizeof(char));
+  fread(vshader_src, 1, length, f_vshader);
+  fclose(f_vshader);
+  vshader_src[length]='\0';
+  fprintf(stderr,"read vshader as:\n%s\n", vshader_src);
+
+  //read gshader
+  f_gshader = fopen(gshader_src_file, "r");
+  if (!f_gshader)
+  {
+    fprintf(stderr,"error reading geometry shader %s\n", gshader_src_file);
+    return 0;
+  }
+  fseek(f_gshader, 0, SEEK_END);
+  length=ftell(f_gshader);
+  rewind(f_gshader);
+  gshader_src = (char *)malloc(length*sizeof(char));
+  fread(gshader_src, 1, length, f_gshader);
+  fclose(f_gshader);
+  gshader_src[length]='\0';
+  fprintf(stderr,"read vshader as:\n%s\n", gshader_src);
+
+  //read fshader
+  f_fshader = fopen(fshader_src_file, "r");
+  if (!f_fshader)
+  {
+    fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
+    return 0;
+  }
+  fseek(f_fshader, 0, SEEK_END);
+  length=ftell(f_fshader);
+  rewind(f_fshader);
+  fshader_src = (char *)malloc(length*sizeof(char));
+  fread(fshader_src, 1, length, f_fshader);
+  fclose(f_fshader);
+  fshader_src[length]='\0';
+  fprintf(stderr,"read fshader as:\n%s\n", fshader_src);
+
+  //link program
+	GLuint program = glCreateProgram();
+	GLuint vshader = compileShader(GL_VERTEX_SHADER, vshader_src);
+	GLuint gshader = compileShader(GL_GEOMETRY_SHADER, gshader_src);
+	GLuint fshader = compileShader(GL_FRAGMENT_SHADER, fshader_src);
+	if (!linkProgramGShader(program, vshader, gshader, fshader)) {
+		glDeleteProgram(program);
+		program = 0;
+    fprintf(stderr, "killed program\n");
+	}
+	// once a program is linked
+	// shader objects should be deleted
+  free(vshader_src);
+  free(gshader_src);
+  free(fshader_src);
+	glDeleteShader(vshader);
+	glDeleteShader(gshader);
 	glDeleteShader(fshader);
 	return program;
 }
