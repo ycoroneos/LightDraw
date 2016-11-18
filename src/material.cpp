@@ -37,7 +37,6 @@ Material::Material(const char *name_1, vec3 ambient_1, vec3 diffuse_1, vec3 spec
   }
   //invert image along y axis
   struct color *flipped = (struct color*) malloc(width*height*sizeof(struct color));
-//  memcpy(flipped, image, width*height*3);
   fprintf(stderr, "size of color is %d\r\n", sizeof(struct color));
   for (int w=0; w<width; ++w)
   {

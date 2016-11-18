@@ -3,6 +3,7 @@
 in vec3 var_Normal;
 in vec2 var_texcoords;
 in vec3 var_Position;
+in vec4 var_shadowCoords;
 
 layout(location=0) out vec4 out_Color;
 
@@ -24,6 +25,7 @@ uniform vec4 lightSpecular;
 uniform vec3 lightConeDirection;
 uniform samplerCube depthMap;
 uniform float far_plane;
+uniform sampler2D single_depthMap;
 
 vec3 ambient()
 {
@@ -70,6 +72,11 @@ void main () {
     vec3 V = normalize(camPos - pos_world.xyz);
     vec3 N = normalize(var_Normal);
 
+    float visibility = 1.0;
+    if ( texture( single_depthMap, var_shadowCoords.xy ).z  <  var_shadowCoords.z)
+    {
+        visibility = 0.5;
+    }
     float shadow_att = shadowcalc(lightPos.xyz - pos_world.xyz);
 
     vec3 coneDirection = normalize(lightConeDirection);
@@ -91,7 +98,7 @@ void main () {
 
     shadow_att = 0;
     // combination of all components and diffuse color of the object
-    out_Color.xyz = (Iamb + (1.0 - shadow_att) * (Idif + Ispe)) * diffuseColor * att;
+    out_Color.xyz = (Iamb + (1.0 - shadow_att) * (Idif + Ispe)) * diffuseColor * att*visibility;
     //out_Color.xyz = diffuseColor;
     out_Color.a = 1.0f;
 }

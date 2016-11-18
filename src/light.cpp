@@ -215,6 +215,12 @@ void SpotLight::updateUniforms(unsigned program)
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
   //int cone_loc = glGetUniformLocation(program, "lightCone");
   int conedir_loc = glGetUniformLocation(program, "lightConeDirection");
+  int shadow_loc = glGetUniformLocation(program, "single_depthMap");
+  if (shadow_loc < 0)
+    fprintf(stderr, "shadow map loc missing\r\n");
+  int BPV_loc = glGetUniformLocation(program, "BPV");
+  if (BPV_loc < 0)
+    fprintf(stderr, "BPV loc missing\r\n");
   if (lightpos_loc<0)
   {
     fprintf(stderr, "spot light: couldn't find lightpos uniform\r\n");
@@ -247,6 +253,17 @@ void SpotLight::updateUniforms(unsigned program)
   glUniform4fv(specular_loc, 1, &combined[0]);
   //glUniform1fv(cone_loc, 1, &angle);
   glUniform3fv(conedir_loc, 1, &direction[0]);
+  glUniform1i(shadow_loc, 4);
+  glActiveTexture(GL_TEXTURE0 + 4);
+  glBindTexture(GL_TEXTURE_2D, depth_map);
+  glm::mat4 biasMatrix(
+  0.5, 0.0, 0.0, 0.0,
+  0.0, 0.5, 0.0, 0.0,
+  0.0, 0.0, 0.5, 0.0,
+  0.5, 0.5, 0.5, 1.0
+  );
+  glm::mat4 BPV = biasMatrix*PV;
+  glUniform4fv(BPV_loc, 1, &BPV[0][0]);
   glBindTexture(GL_TEXTURE_2D, depth_map);
 }
 
@@ -325,11 +342,20 @@ DirectionLight::DirectionLight(const char *name_1, vec3 pos_1, vec3 ambient_1, v
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
   glBindTexture(GL_TEXTURE_2D, depth_map);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
+  glDrawBuffer(GL_NONE);
+  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+  {
+    fprintf(stderr, "%s fbo is incomplete\r\n", name);
+  }
+  glBindTexture(GL_TEXTURE_2D, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  shadowmap_program = directionlight_shadowmap_program;
 }
 
 DirectionLight::~DirectionLight()
@@ -352,34 +378,51 @@ void DirectionLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
+  int shadow_loc = glGetUniformLocation(program, "single_depthMap");
+  if (shadow_loc < 0)
+    fprintf(stderr, "shadow map loc missing\r\n");
+  int BPV_loc = glGetUniformLocation(program, "BPV");
+  if (BPV_loc < 0)
+    fprintf(stderr, "BPV loc missing\r\n");
   vec4 lpos = vec4(direction*-1.0f, 0.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
   glUniform3fv(specular_loc, 1, &specular[0]);
+  glUniform1i(shadow_loc, 4);
+  glActiveTexture(GL_TEXTURE0 + 4);
+  glBindTexture(GL_TEXTURE_2D, depth_map);
+  glm::mat4 biasMatrix(
+  0.5, 0.0, 0.0, 0.0,
+  0.0, 0.5, 0.0, 0.0,
+  0.0, 0.0, 0.5, 0.0,
+  0.5, 0.5, 0.5, 1.0
+  );
+  glm::mat4 BPV = biasMatrix*PV;
+  glUniform4fv(BPV_loc, 1, &BPV[0][0]);
 }
 
 int DirectionLight::shadowMap()
 {
   glUseProgram(shadowmap_program);
-  mat4 V = glm::lookAt(direction*-1.0f, vec3(0,0,0), vec3(0.0f, 1.0f, 0.0f));
+  mat4 V = glm::lookAt(direction, vec3(0,0,0), vec3(0.0f, 1.0f, 0.0f));
 
   //this will be wrong
-  mat4 P = glm::ortho<float>(-10,10,-10,10,-10,20);
+  mat4 P = glm::ortho<float>(-100,100,-100,100,-100,100);
 
 
-  VP = V * P;
-  int VP_loc = glGetUniformLocation(shadowmap_program, "VP");
-  glUniform4fv(VP_loc, 1, &VP[0][0]);
+  PV = P*V;
+  int PV_loc = glGetUniformLocation(shadowmap_program, "PV");
+  glUniform4fv(PV_loc, 1, &PV[0][0]);
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-  glBindTexture(GL_TEXTURE_2D, depth_map);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+//  glBindTexture(GL_TEXTURE_2D, depth_map);
+//  glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+//  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+//  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
   glDrawBuffer(GL_NONE);
   glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);

@@ -31,7 +31,7 @@ class Light
     //GL things for shadows
     GLuint depth_fbo;
     GLuint depth_map;
-    mat4 VP;
+    mat4 PV;
     int shadowmap_program;
 
     //for debugging
