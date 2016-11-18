@@ -340,7 +340,8 @@ DirectionLight::~DirectionLight()
 
 void DirectionLight::updatePos(mat4 *M)
 {
-  direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
+  //direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
+  direction = vec3(-1.0f, -1.0f, -1.0f);
   fprintf(stderr, "sun direction: %f %f %f\r\n", direction.x, direction.y, direction.z);
 }
 
@@ -351,7 +352,7 @@ void DirectionLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
-  vec4 lpos = vec4(direction, 0.0f);
+  vec4 lpos = vec4(direction*-1.0f, 0.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);

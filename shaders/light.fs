@@ -62,7 +62,7 @@ void main () {
     pos_world /= pos_world.w;
     vec3 L;
      if (lightPos.w == 0) {
-       L = normalize(lightPos.xyz* -1);
+       L = normalize(lightPos.xyz);
      }
      else {
        L = normalize(lightPos.xyz - pos_world.xyz);
