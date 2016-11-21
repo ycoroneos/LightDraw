@@ -407,7 +407,7 @@ AssimpGraph::AssimpGraph(const char *filename)
           aiString Path;
 
           if (pMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) {
-            fprintf(stderr, "diffuse texture %s \r\n", Path.data);
+            //fprintf(stderr, "diffuse texture %s \r\n", Path.data);
             //I hope its never this big
             strcpy(diffuse_texture, cwd);
             strcat(diffuse_texture, Path.data);
@@ -444,8 +444,8 @@ AssimpGraph::AssimpGraph(const char *filename)
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);
-        lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        //lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
         //lights.push_back(new DummyLight());
         break;
     }
@@ -543,6 +543,7 @@ AssimpGraph::AssimpGraph(const char *filename)
   {
     root->addChild(recursive_copy(ainode->mChildren[i], root));
   }
+  fprintf(stderr, "scene loaded %d lights\r\n", lights.size());
   delete[] cwd;
 }
 

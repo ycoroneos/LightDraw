@@ -69,11 +69,11 @@ void main () {
       att = clamp(dot(rayDirection, coneDirection), 0.1f, 1.0f);
     }
 
-    vec3 Iamb = vec3(0.0f);
+    //vec3 Iamb = vec3(0.0f);
     vec3 Idif = vec3(0.0f);
     vec3 Ispe = vec3(0.0f);
 
-    Iamb = ambient();
+    vec3 Iamb = ambient();
     Idif = diffuse(N, L);
     Ispe = specular(N, L, V);
     vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
@@ -81,7 +81,7 @@ void main () {
     // combination of all components and diffuse color of the object
     att=1.0f;
     out_Color.xyz = (Iamb * (Idif + Ispe)) * diffuseColor * att;
-    out_Color.a = 1.0f;
+    //out_Color.a = 1.0f;
 }
 
 

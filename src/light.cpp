@@ -22,6 +22,14 @@ Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec
   strncpy(name, name_1, sizeof(name));
   worldpos = pos;
   quad_program = default_quad_program;
+  if (ambient == vec3(0.0f, 0.0f, 0.0f))
+  {
+    ambient = vec3(1.0f, 1.0f, 1.0f);
+  }
+  fprintf(stderr, "light %s\r\n", name);
+  fprintf(stderr, "\t amb %f %f %f\r\n", ambient.x, ambient.y, ambient.z);
+  fprintf(stderr, "\t diff %f %f %f", diffuse.x, diffuse.y, diffuse.z);
+  fprintf(stderr, "\t spec %f %f %f\r\n", specular.x, specular.y, specular.z);
 }
 
 const char *Light::getName()
@@ -83,6 +91,10 @@ void PointLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
+  if (ambient_loc<0)
+  {
+    fprintf(stderr, "cant find ambient loc for light %s\r\n", name);
+  }
   //int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
  /// if (farplane_loc < 0)
  // {

@@ -46,7 +46,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
   if (N_loc<0)
   {
     fprintf(stderr, "error binding mesh: could not find N matrix location\r\n");
-    return;
+  //  return;
   }
   glUseProgram(0);
   drawmaterial = material;
