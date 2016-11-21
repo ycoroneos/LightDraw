@@ -8,7 +8,7 @@
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
 
-extern unsigned default_mesh_prog;
+extern int default_mesh_prog;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material)
 {
@@ -35,6 +35,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoords));
   glBindVertexArray(0);
   program = default_mesh_prog;
+  glUseProgram(program);
   M_loc = glGetUniformLocation(program, "M");
   if (M_loc<0)
   {
@@ -47,6 +48,7 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
     fprintf(stderr, "error binding mesh: could not find N matrix location\r\n");
     return;
   }
+  glUseProgram(0);
   drawmaterial = material;
   drawmaterial->incRef();
 }
@@ -91,11 +93,13 @@ unsigned Mesh::getQuickProgram()
 void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
 {
   //glUseProgram(program);
+  //fprintf(stderr, "draw mesh\r\n");
   glBindVertexArray(vertexarray);
   glUniformMatrix4fv(M_loc, 1, false, M);
   glUniformMatrix3fv(N_loc, 1, false, N);
   //update shading uniforms for the material
   drawmaterial->Use(program);
+  //fprintf(stderr, "draw elements\r\n");
   if (lines)
   {
      glDrawElements(GL_LINES, n_indices, GL_UNSIGNED_INT, 0);
@@ -105,6 +109,7 @@ void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
      glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0);
   }
   glBindVertexArray(0);
+  //fprintf(stderr, "done draw elements\r\n");
   //glUseProgram(0);
 }
 

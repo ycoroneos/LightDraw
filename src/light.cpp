@@ -12,9 +12,9 @@ using namespace glm;
 
 extern int window_width;
 extern int window_height;
-extern unsigned pointlight_shadowmap_program;
-extern unsigned directionlight_shadowmap_program;
-extern unsigned default_quad_program;
+extern int  pointlight_shadowmap_program;
+extern int  directionlight_shadowmap_program;
+extern int  default_quad_program;
 
 Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)
   : pos(pos_1), ambient(ambient_1), diffuse(diffuse_1), specular(specular_1)
@@ -44,29 +44,29 @@ PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diff
   worldpos = vec3(5.0f, 5.0f, 0.0f);
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
-  for (short i=0; i<6; ++i)
-  {
-    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-  }
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-  glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
-
-  //check for completeness
-  GLenum fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-  if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
-  {
-    fprintf(stderr, "shadowmap FBO for %s is incomplete\r\n", name);
-  }
-  glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+//  for (short i=0; i<6; ++i)
+//  {
+//    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+//  }
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+//  glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
+//  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
+//  glDrawBuffer(GL_NONE);
+//  glReadBuffer(GL_NONE);
+//
+//  //check for completeness
+//  GLenum fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+//  if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
+//  {
+//    fprintf(stderr, "shadowmap FBO for %s is incomplete\r\n", name);
+//  }
+//  glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+//  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   shadowmap_program = pointlight_shadowmap_program;
 }
 
@@ -83,25 +83,25 @@ void PointLight::updateUniforms(unsigned program)
   int ambient_loc = glGetUniformLocation(program, "lightAmbient");
   int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
-  int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
-  if (farplane_loc < 0)
-  {
-    fprintf(stderr, "cant find farplane loc\r\n");
-  }
+  //int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
+ /// if (farplane_loc < 0)
+ // {
+ //   fprintf(stderr, "cant find farplane loc\r\n");
+ // }
   vec4 lpos = vec4(worldpos, 1.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
   glUniform3fv(diffuse_loc, 1, &diffuse[0]);
   vec4 combined = vec4(specular, 0.0f);
   glUniform4fv(specular_loc, 1, &combined[0]);
-  GLfloat far = 250.0f;
-  glUniform1fv(farplane_loc, 1, &far);
-  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  //GLfloat far = 250.0f;
+  //glUniform1fv(farplane_loc, 1, &far);
+//  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
 int PointLight::shadowMap()

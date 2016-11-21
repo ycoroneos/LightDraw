@@ -21,11 +21,11 @@ AssimpGraph *sgr;
 glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
 glm::mat4 ident;
 
-unsigned voxelprog;
-unsigned default_mesh_prog;
-unsigned pointlight_shadowmap_program;
-unsigned directionlight_shadowmap_program;
-unsigned default_quad_program;
+int voxelprog;
+int default_mesh_prog;
+int pointlight_shadowmap_program;
+int directionlight_shadowmap_program;
+int default_quad_program;
 
 int initScene(mat4 Projection)
 {

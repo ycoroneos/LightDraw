@@ -4,6 +4,7 @@
 #include <cstring>
 #include "stdlib.h"
 
+
 GLFWwindow* createOpenGLWindow(int width, int height, const char* title) {
     // GLFW creates a window and OpenGL context
     // in a platform-independent manner.
@@ -48,10 +49,42 @@ GLFWwindow* createOpenGLWindow(int width, int height, const char* title) {
 
     // This line is optional, but very useful for debugging
 #ifndef __APPLE__
-//    setupDebugPrint();
+    setupDebugPrint();
 #endif
     return window;
 }
+
+#ifndef __APPLE__
+static void GLAPIENTRY gl_dbg_callback(GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam)
+{
+   const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
+   fprintf(stderr, msg, type, id, severity, message);
+   //exit(-1);
+//    if (severity > GL_DEBUG_SEVERITY_NOTIFICATION) {
+//        // below some spammy ids that you might want to filter 
+//        //id != 131204 && id != 131076 && id != 131184 && 
+//        //id != 131186 && id != 131188 && id != 131154
+//        if (id != 131076) {
+//            const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
+//            fprintf(stderr, msg, type, id, severity, message);
+//        }
+//    }
+}
+
+void setupDebugPrint()
+{
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE,
+        GL_DONT_CARE, 0, nullptr, GL_TRUE);
+    glDebugMessageCallback(gl_dbg_callback, nullptr);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+}
+#endif
 
 static char *read_file(const char *fn)
 {
@@ -162,40 +195,6 @@ int compileProgram(const char* vshader_src_file, const char* fshader_src_file)
   }
   fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 
-//  FILE *f_vshader, *f_fshader;
-//  char *vshader_src, *fshader_src;
-//  unsigned length=0;
-//  //read vshader
-//  f_vshader = fopen(vshader_src_file, "r");
-//  if (!f_vshader)
-//  {
-//    fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
-//    return 0;
-//  }
-//  fseek(f_vshader, 0, SEEK_END);
-//  length=ftell(f_vshader);
-//  rewind(f_vshader);
-//  vshader_src = (char *)malloc(length*sizeof(char));
-//  fread(vshader_src, 1, length, f_vshader);
-//  fclose(f_vshader);
-//  vshader_src[length]='\0';
-//  fprintf(stderr,"read vshader as:\n%s\n", vshader_src);
-//
-//  //read fshader
-//  f_fshader = fopen(fshader_src_file, "r");
-//  if (!f_fshader)
-//  {
-//    fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
-//    return 0;
-//  }
-//  fseek(f_fshader, 0, SEEK_END);
-//  length=ftell(f_fshader);
-//  rewind(f_fshader);
-//  fshader_src = (char *)malloc(length*sizeof(char));
-//  fread(fshader_src, 1, length, f_fshader);
-//  fclose(f_fshader);
-//  fshader_src[length]='\0';
-//  fprintf(stderr,"read fshader as:\n%s\n", fshader_src);
 
   //link program
 	GLuint program = glCreateProgram();
@@ -241,58 +240,6 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
   }
   fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 
-//
-//
-//  FILE *f_vshader, *f_fshader, *f_gshader;
-//  char *vshader_src, *fshader_src, *gshader_src;
-//  unsigned length=0;
-//  //read vshader
-//  f_vshader = fopen(vshader_src_file, "r");
-//  if (!f_vshader)
-//  {
-//    fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
-//    return 0;
-//  }
-//  fseek(f_vshader, 0, SEEK_END);
-//  length=ftell(f_vshader);
-//  rewind(f_vshader);
-//  vshader_src = (char *)malloc(length*sizeof(char));
-//  fread(vshader_src, 1, length, f_vshader);
-//  fclose(f_vshader);
-//  vshader_src[length]='\0';
-//  fprintf(stderr,"read vshader as:\n%s\n", vshader_src);
-//
-//  //read gshader
-//  f_gshader = fopen(gshader_src_file, "r");
-//  if (!f_gshader)
-//  {
-//    fprintf(stderr,"error reading geometry shader %s\n", gshader_src_file);
-//    return 0;
-//  }
-//  fseek(f_gshader, 0, SEEK_END);
-//  length=ftell(f_gshader);
-//  rewind(f_gshader);
-//  gshader_src = (char *)malloc(length*sizeof(char));
-//  fread(gshader_src, 1, length, f_gshader);
-//  fclose(f_gshader);
-//  gshader_src[length]='\0';
-//  fprintf(stderr,"read vshader as:\n%s\n", gshader_src);
-//
-//  //read fshader
-//  f_fshader = fopen(fshader_src_file, "r");
-//  if (!f_fshader)
-//  {
-//    fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
-//    return 0;
-//  }
-//  fseek(f_fshader, 0, SEEK_END);
-//  length=ftell(f_fshader);
-//  rewind(f_fshader);
-//  fshader_src = (char *)malloc(length*sizeof(char));
-//  fread(fshader_src, 1, length, f_fshader);
-//  fclose(f_fshader);
-//  fshader_src[length]='\0';
-//  fprintf(stderr,"read fshader as:\n%s\n", fshader_src);
 
   //link program
 	GLuint program = glCreateProgram();
