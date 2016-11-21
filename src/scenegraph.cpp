@@ -152,6 +152,7 @@ void SceneGraph::drawBaked(Camera *camera, bool wireframe)
   }
 }
 
+
 void SceneGraph::zPreBaked()
 {
   for (int lnum=0; lnum<lights.size(); ++lnum)
@@ -433,13 +434,13 @@ AssimpGraph::AssimpGraph(const char *filename)
         break;
       case aiLightSource_POINT:
         fprintf(stderr, "Point light\r\n");
-        //lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-        //      aiColor3toVec3(asslight->mColorSpecular)));
+        lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular)));
         break;
       case aiLightSource_SPOT:
         fprintf(stderr, "Spot light\r\n");
-        lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
+        //lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);

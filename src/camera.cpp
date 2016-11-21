@@ -7,7 +7,7 @@
 using namespace glm;
 
 Camera::Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection)
-  : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection)), wireframe(false)
+  : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection)), wireframe(false), sprint(false)
 {
   computeViewMatrix();
 }
@@ -112,26 +112,30 @@ void Camera::doKeyboardInput(int key, int scancode, int action, int mods)
         return;
     }
 
-    static float sprint = 1.0f;
+    float sprint_speed=1.0f;
+    if (sprint)
+    {
+      sprint_speed = 2.0f;
+    }
     //printf("camera key input\n");
     // Special keys (arrows, CTRL, ...) are documented
     // here: http://www.glfw.org/docs/latest/group__keys.html
     switch (key)
     {
       case 'W':
-        updateTranslation(vec2(0.1f,0.0f)*sprint);
+        updateTranslation(vec2(0.1f,0.0f)*sprint_speed);
         break;
       case 'S':
-        updateTranslation(vec2(-0.1f,0.0f)*sprint);
+        updateTranslation(vec2(-0.1f,0.0f)*sprint_speed);
         break;
       case 'A':
-        updateTranslation(vec2(0.0f,0.1f)*sprint);
+        updateTranslation(vec2(0.0f,0.1f)*sprint_speed);
         break;
       case 'D':
-        updateTranslation(vec2(0.0f,-0.1f)*sprint);
+        updateTranslation(vec2(0.0f,-0.1f)*sprint_speed);
         break;
       case GLFW_KEY_LEFT_SHIFT:
-        sprint = 10.0f;
+        sprint = !sprint;
         break;
       case 'V':
         wireframe=!wireframe;

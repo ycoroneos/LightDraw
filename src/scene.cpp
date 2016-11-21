@@ -64,7 +64,8 @@ void drawScene()
 //  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
 //  gnd->draw();
 
-  sgr->zPreBaked();
+//  sgr->zPreBaked();
+// / sgr->drawBaked(camera, camera->viewWire());
   sgr->drawBaked(camera, camera->viewWire());
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());

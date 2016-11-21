@@ -25,4 +25,5 @@ class Camera : public InputResponder
     mat4 Projection;
     mat4 invProjection;
     bool wireframe;
+    bool sprint;
 };
