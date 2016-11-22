@@ -20,6 +20,8 @@ class Light
     virtual void restore()=0;
     virtual unsigned getType()=0;
     virtual void renderQuad()=0;
+    vec3 getWorldPos();
+    float getRadius();
   protected:
     char name[25];
     vec3 pos;

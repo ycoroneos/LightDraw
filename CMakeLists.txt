@@ -85,6 +85,7 @@ list (APPEND voxl_SRC
   src/vertex.cpp
   src/material.cpp
   src/light.cpp
+  src/assimpgraph.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h

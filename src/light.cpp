@@ -36,6 +36,16 @@ const char *Light::getName()
 {
   return name;
 }
+
+vec3 Light::getWorldPos()
+{
+  return worldpos;
+}
+
+float Light::getRadius()
+{
+  return 5.0f;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {

@@ -18,6 +18,7 @@ VoxelGrid *vxg;
 VoxelGrid *gnd;
 BinVox *garg;
 AssimpGraph *sgr;
+LIDR *lidr;
 glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
 glm::mat4 ident;
 
@@ -26,6 +27,8 @@ int default_mesh_prog;
 int pointlight_shadowmap_program;
 int directionlight_shadowmap_program;
 int default_quad_program;
+int lidr_z_program;
+int lidr_lightvolume_program;
 
 int initScene(mat4 Projection)
 {
@@ -37,21 +40,20 @@ int initScene(mat4 Projection)
   pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
   directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
   default_quad_program = compileGProgram("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
+  lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
+  lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
   if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program)
   {
     return -1;
   }
+  lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
 //  gnd = new VoxelGrid(100,1,100);
 //  gnd->setProgram(voxelprog);
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
-  //sgr = new AssimpGraph("../data/sponza/sponza_norm.obj");
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
-  //sgr = new AssimpGraph("../data/dragon.obj");
-  //sgr = new AssimpGraph("../data/hellknight/hellknight.md5mesh");
-  //sgr->printGraph();
   sgr->bake();
   return 0;
 }
@@ -66,6 +68,8 @@ void drawScene()
 
 //  sgr->zPreBaked();
 // / sgr->drawBaked(camera, camera->viewWire());
+  int zprog = lidr->ZPrePass(camera);
+  sgr->zPreBaked(zprog);
   sgr->drawBaked(camera, camera->viewWire());
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());
@@ -88,6 +92,7 @@ void cleanupScene()
   //delete garg;
   delete camera;
   delete sgr;
+  delete lidr;
 }
 
 

@@ -47,11 +47,13 @@ class Node
 class SceneGraph
 {
   public:
+    SceneGraph();
+    ~SceneGraph();
     Node *getRoot();
-    void addNode(Node *parent, Node newnode);
     void bake();
     void zPre();
     void zPreBaked();
+    void drawLightVolumes(int lightvolme_program);
     void drawScene(Camera *camera, bool wireframe);
     void drawSceneShadowed(Camera *camera, bool wireframe);
     void drawBaked(Camera *camera, bool wireframe);
@@ -63,6 +65,9 @@ class SceneGraph
     std::vector<Mesh*> meshes;
     std::vector<Material*> materials;
     std::vector<Light *> lights;
+  private:
+    int lightvolume_vao;
+    int lightvolume_vertex_buffer;
 };
 
 class AssimpGraph : public SceneGraph
