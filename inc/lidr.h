@@ -1,6 +1,7 @@
 #pragma once
 #include <inc/gl.h>
 #include <inc/camera.h>
+#include <inc/light.h>
 
 //LIDR has 3 steps
 //1. Z pre pass into a depth buffer texture
@@ -12,6 +13,14 @@
 //   other notes: do everything in screen space?
 
 
+//each lights has
+//    vec3 ambient;
+//    vec3 diffuse;
+//    vec3 specular;
+//    vec3 worldpos;
+// this can be stored in RGBA32 texture
+// 1d texture with length 256
+
 class LIDR
 {
   public:
@@ -20,12 +29,15 @@ class LIDR
     int ZPrePass(Camera *camera);
     int LightVolumes();
     void LightVolumesEnd();
+    void packLightTextures(std::vector<Light *> lights);
     void cornerWindow();
-    //Forward();
   private:
     GLuint depth_fbo;
     GLuint depth_map;
     GLuint volume_map;
+    GLuint light_map;
     int z_program;
     int lightvolume_program;
+
+    int maxlights=256;
 };

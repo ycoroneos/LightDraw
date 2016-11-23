@@ -1,5 +1,6 @@
 #include <inc/gl.h>
 #include <inc/lidr.h>
+#include <inc/light.h>
 #include <inc/camera.h>
 #include "stdio.h"
 #include "string.h"
@@ -14,6 +15,12 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
   glGenTextures(1, &volume_map);
+  glGenTextures(1, &light_map);
+
+  //first generate light lookup map
+  glBindTexture(GL_TEXTURE_1D, light_map);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, maxlights*sizeof(vec4), 0, GL_RGBA, GL_FLOAT, 0);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
   //depth
   glBindTexture(GL_TEXTURE_2D, depth_map);
@@ -44,6 +51,7 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
 
 LIDR::~LIDR()
 {
+  glDeleteTextures(1, &light_map);
   glDeleteTextures(1, &volume_map);
   glDeleteTextures(1, &depth_map);
   glDeleteFramebuffers(1, &depth_fbo);
@@ -83,6 +91,11 @@ void LIDR::LightVolumesEnd()
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glDepthMask(GL_TRUE);
+}
+
+
+void LIDR::packLightTextures(std::vector<Light *> lights)
+{
 }
 
 void LIDR::cornerWindow()

@@ -18,7 +18,7 @@ void main()
 //    {
 //      out_Color = vec4(0.1f, 0.0f, 0.0f, 0.0f);
 //    }
-    if (length(vec2(lightpos) - gl_FragCoord.xy)<lightradius)
+    if (length(vec2(lightpos) - gl_FragCoord.xy)<lightradius && scenedepth>lightdepth && lightdepth>0.001f)
     {
       out_Color = vec4(1.0f, 0.0f, 0.0f, 0.0f);
     }
