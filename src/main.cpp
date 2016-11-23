@@ -29,7 +29,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
   setViewport(window);
   float fovy = 45.0;
   float nearz = 0.1f;
-  float farz = 10000.0f;
+  float farz = 1000.0f;
   float aspect = float(width)/float(height);
   Projection = glm::perspective(fovy, aspect, nearz, farz);
 }
@@ -45,7 +45,7 @@ int main(void)
     int width = 1920;
     int height = 1080;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
-//    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, width, height);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glfwSetKeyCallback(window, keyCallback);
