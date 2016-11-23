@@ -240,27 +240,21 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
 void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
 {
   camera->updateUniforms(lightvolume_program);
-  vec4 *lightprops = new vec4[lights.size()];
-  for (int i=0; i<lights.size(); ++i)
-  {
-    lightprops[i] = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
-  }
   glBindVertexArray(lightvolume_vao);
   int lightposition_loc = glGetUniformLocation(lightvolume_program, "light_position_radius");
   if (lightposition_loc < 0)
   {
     perror("cant find light position loc\r\n");
   }
-  int nlights_loc = glGetUniformLocation(lightvolume_program, "nlights");
-  if (nlights_loc < 0)
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+  for (int i=0; i<lights.size(); ++i)
   {
-    perror("cant find nlights loc \r\n");
+    vec4 lightprop = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
+    glUniform4fv(lightposition_loc, 1, &lightprop[0]);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
   }
-  int nlights = lights.size();
-  glUniform1iv(nlights_loc, 1, &nlights);
-  glUniform4fv(lightposition_loc, lights.size(), &lightprops[0][0]);
-  delete[] lightprops;
-  glDrawArrays(GL_TRIANGLES, 0, 3);
+  glDisable(GL_BLEND);
 }
 
 Node *SceneGraph::allocNode()

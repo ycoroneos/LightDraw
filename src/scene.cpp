@@ -30,6 +30,7 @@ int directionlight_shadowmap_program;
 int default_quad_program;
 int lidr_z_program;
 int lidr_lightvolume_program;
+int viewport_program;
 
 int initScene(mat4 Projection)
 {
@@ -43,7 +44,8 @@ int initScene(mat4 Projection)
   default_quad_program = compileGProgram("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
   lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
   lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
-  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program)
+  viewport_program = compileProgram("../shaders/viewport.vs", "../shaders/viewport.fs");
+  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program)
   {
     return -1;
   }
@@ -81,6 +83,7 @@ void drawScene()
   lidr->LightVolumesEnd();
 
   sgr->drawBaked(camera, camera->viewWire());
+  lidr->cornerWindow();
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());
   //sgr->drawSceneShadowed(camera, camera->viewWire());

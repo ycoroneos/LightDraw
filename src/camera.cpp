@@ -45,19 +45,28 @@ void Camera::updateUniforms(unsigned program)
   {
     perror("P not found\n");
   }
-  glUniformMatrix4fv(loc, 1, false, &Projection[0][0]);
+  else
+  {
+    glUniformMatrix4fv(loc, 1, false, &Projection[0][0]);
+  }
   loc = glGetUniformLocation(program, "V");
   if (loc==-1)
   {
     perror("V not found\n");
   }
-  glUniformMatrix4fv(loc, 1, false, &View[0][0]);
+  else
+  {
+    glUniformMatrix4fv(loc, 1, false, &View[0][0]);
+  }
   loc = glGetUniformLocation(program, "camPos");
   if (loc==-1)
   {
-    perror("camPos not found\n");
+    //perror("camPos not found\n");
   }
-  glUniform3fv(loc, 1, &pos[0]);
+  else
+  {
+    glUniform3fv(loc, 1, &pos[0]);
+  }
   //glUseProgram(0);
 }
 

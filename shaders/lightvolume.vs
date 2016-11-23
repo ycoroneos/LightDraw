@@ -4,17 +4,28 @@
 
 
 out vec2 var_texcoords;
-out vec4 var_position_radius_screen[127];
-flat out int var_nlights;
+out vec4 var_position_radius_screen;
+
+//input from LIDR
+uniform vec2 screenres;
 
 //input from scene graph
-uniform vec4 light_position_radius[127];
-uniform int nlights;
+uniform vec4 light_position_radius;
 
 
 //input from camera
 uniform mat4 P;
 uniform mat4 V;
+
+
+// [-1,1] -> [0, width]
+// [-1,1] -> [0, height]
+vec2 ndc2screen(vec2 ndc)
+{
+  float x = (ndc.x+1.0f) * (screenres.x/2.0f);
+  float y = (ndc.y+1.0f) * (screenres.y/2.0f);
+  return vec2(x,y);
+}
 
 void main ()
 {
@@ -23,16 +34,14 @@ void main ()
     var_texcoords.x = (x+1.0)*0.5;
     var_texcoords.y = (y+1.0)*0.5;
 
-    for (int i=0; i<nlights; i++)
-    {
-    vec4 screenpos_center = P*V*vec4(light_position_radius[i].xyz, 1.0f);
+    vec4 screenpos_center = P*V*vec4(light_position_radius.xyz, 1.0f);
     screenpos_center = screenpos_center/screenpos_center.w;
-    vec4 screenpos_edge = P*V*vec4(vec3(light_position_radius[i].x+light_position_radius[i].w, light_position_radius[i].yz), 1.0f);
+    screenpos_center.xy = ndc2screen(screenpos_center.xy);
+    vec4 screenpos_edge = P*V*vec4(vec3(light_position_radius.x+light_position_radius.w, light_position_radius.yz), 1.0f);
     screenpos_edge = screenpos_edge/screenpos_edge.w;
-    float screenradius = length(screenpos_edge.xyz - screenpos_center.xyz);
-    var_position_radius_screen[i] = vec4(screenpos_center.xyz, screenradius);
-    }
+    screenpos_edge.xy = ndc2screen(screenpos_edge.xy);
+    float screenradius = length(screenpos_edge.xy - screenpos_center.xy);
+    var_position_radius_screen = vec4(screenpos_center.xyz, screenradius);
 
-    var_nlights=nlights;
     gl_Position = vec4(x, y, 0, 1);
 }

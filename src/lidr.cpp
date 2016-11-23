@@ -6,6 +6,7 @@
 #include "stdlib.h"
 extern int window_width;
 extern int window_height;
+extern int viewport_program;
 
 LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   :z_program(z_program_1), lightvolume_program(lightvolume_program_1)
@@ -18,6 +19,8 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   glBindTexture(GL_TEXTURE_2D, depth_map);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, window_width, window_height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  //bind it
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
 
@@ -25,6 +28,9 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   glBindTexture(GL_TEXTURE_2D, volume_map);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width, window_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+  //bind it
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, volume_map, 0);
 
   //check status
   GLenum fbostatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -59,14 +65,49 @@ int LIDR::LightVolumes()
   glUseProgram(lightvolume_program);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, depth_map);
+  glDepthMask(GL_FALSE);
+  int screenres_loc = glGetUniformLocation(lightvolume_program, "screenres");
+  if (screenres_loc < 0)
+  {
+    perror("lidr cant find screenres loc\r\n");
+  }
+  else
+  {
+    vec2 screenres = vec2(1.0f*window_width, 1.0f*window_height);
+    glUniform2fv(screenres_loc, 1, &screenres[0]);
+  }
   return lightvolume_program;
 }
 
 void LIDR::LightVolumesEnd()
 {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glDepthMask(GL_TRUE);
 }
 
 void LIDR::cornerWindow()
 {
+  int smallwidth = window_width/4;
+  int smallheight = window_height/4;
+
+  //setup state
+  glUseProgram(viewport_program);
+  glDisable(GL_DEPTH_TEST);
+
+  //draw the z buffer
+  glViewport(0, 0, smallwidth, smallheight);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, depth_map);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+
+  //draw the light volumes
+  glViewport(smallwidth, 0, smallwidth, smallheight);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, volume_map);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+
+  //restore state
+  glEnable(GL_DEPTH_TEST);
+  glUseProgram(0);
+  glViewport(0, 0, window_width, window_height);
 }
