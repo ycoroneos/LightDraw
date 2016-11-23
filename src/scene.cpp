@@ -8,6 +8,7 @@
 #include "inc/camera.h"
 #include "inc/cube.h"
 #include "inc/voxel.h"
+#include "inc/lidr.h"
 #include "stdio.h"
 #include "inc/scenegraph.h"
 #include <time.h>
@@ -42,7 +43,7 @@ int initScene(mat4 Projection)
   default_quad_program = compileGProgram("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
   lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
   lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
-  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program)
+  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program)
   {
     return -1;
   }
@@ -68,8 +69,17 @@ void drawScene()
 
 //  sgr->zPreBaked();
 // / sgr->drawBaked(camera, camera->viewWire());
+
+
+  //first fill the z buffer
   int zprog = lidr->ZPrePass(camera);
   sgr->zPreBaked(zprog);
+
+  //draw lightvolumes
+  int lightvolume_prog = lidr->LightVolumes();
+  sgr->drawLightVolumes(lightvolume_prog, camera);
+  lidr->LightVolumesEnd();
+
   sgr->drawBaked(camera, camera->viewWire());
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());

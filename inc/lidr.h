@@ -18,7 +18,9 @@ class LIDR
     LIDR(int z_program_1, int lightvolume_program_1);
     ~LIDR();
     int ZPrePass(Camera *camera);
-    int LightVolumes(Camera *camera);
+    int LightVolumes();
+    void LightVolumesEnd();
+    void cornerWindow();
     //Forward();
   private:
     GLuint depth_fbo;

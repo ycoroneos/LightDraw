@@ -86,6 +86,8 @@ list (APPEND voxl_SRC
   src/material.cpp
   src/light.cpp
   src/assimpgraph.cpp
+  src/node.cpp
+  src/lidr.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -104,6 +106,7 @@ list (APPEND voxl_HEADER
   inc/vertex.h
   inc/material.h
   inc/light.h
+  inc/lidr.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

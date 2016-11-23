@@ -61,3 +61,12 @@ int LIDR::LightVolumes()
   glBindTexture(GL_TEXTURE_2D, depth_map);
   return lightvolume_program;
 }
+
+void LIDR::LightVolumesEnd()
+{
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void LIDR::cornerWindow()
+{
+}

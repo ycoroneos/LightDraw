@@ -4,11 +4,11 @@
 
 
 out vec2 var_texcoords;
-out vec4 var_position_radius_screen[256];
-out in nlights;
+out vec4 var_position_radius_screen[127];
+flat out int var_nlights;
 
 //input from scene graph
-uniform vec4 light_position_radius[256];
+uniform vec4 light_position_radius[127];
 uniform int nlights;
 
 
@@ -25,12 +25,14 @@ void main ()
 
     for (int i=0; i<nlights; i++)
     {
-    vec3 screenpos_center = P*V*light_position_radius[i].xyz;
-    vec3 screenpos_edge = P*V*vec3(light_position_radius[i].x+light_position_radius[i].w, light_position_radius[i].yz);
-    float screenradius = length(screenpos_edge - screenpos_center);
-    var_position_radius_screen[i] = vec4(screenpos_center, screenradius);
+    vec4 screenpos_center = P*V*vec4(light_position_radius[i].xyz, 1.0f);
+    screenpos_center = screenpos_center/screenpos_center.w;
+    vec4 screenpos_edge = P*V*vec4(vec3(light_position_radius[i].x+light_position_radius[i].w, light_position_radius[i].yz), 1.0f);
+    screenpos_edge = screenpos_edge/screenpos_edge.w;
+    float screenradius = length(screenpos_edge.xyz - screenpos_center.xyz);
+    var_position_radius_screen[i] = vec4(screenpos_center.xyz, screenradius);
     }
 
-    nlights=nlights;
+    var_nlights=nlights;
     gl_Position = vec4(x, y, 0, 1);
 }

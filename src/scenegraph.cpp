@@ -1,4 +1,5 @@
 #include "inc/scenegraph.h"
+#include <inc/gl.h>
 #include "inc/mesh.h"
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -236,20 +237,30 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
   }
 }
 
-void SceneGraph::drawLightVolumes(int lightvolume_program)
+void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
 {
+  camera->updateUniforms(lightvolume_program);
   vec4 *lightprops = new vec4[lights.size()];
   for (int i=0; i<lights.size(); ++i)
   {
-    lightprops[i] = vec4(lights[i].getWorldPos(), lights[i].getRadius());
+    lightprops[i] = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
   }
   glBindVertexArray(lightvolume_vao);
-  glBindBuffer(GL_ARRAY_BUFFER, lightvolume_vertex_buffer);
-  size_t vert_bytes = lights.size() * sizeof(vec4);
-  glBufferData(GL_ARRAY_BUFFER, vert_bytes, &lightprops[0], GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), 0);
+  int lightposition_loc = glGetUniformLocation(lightvolume_program, "light_position_radius");
+  if (lightposition_loc < 0)
+  {
+    perror("cant find light position loc\r\n");
+  }
+  int nlights_loc = glGetUniformLocation(lightvolume_program, "nlights");
+  if (nlights_loc < 0)
+  {
+    perror("cant find nlights loc \r\n");
+  }
+  int nlights = lights.size();
+  glUniform1iv(nlights_loc, 1, &nlights);
+  glUniform4fv(lightposition_loc, lights.size(), &lightprops[0][0]);
   delete[] lightprops;
+  glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 Node *SceneGraph::allocNode()

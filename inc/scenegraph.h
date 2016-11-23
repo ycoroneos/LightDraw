@@ -1,4 +1,5 @@
 #pragma once
+#include <inc/gl.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -52,8 +53,8 @@ class SceneGraph
     Node *getRoot();
     void bake();
     void zPre();
-    void zPreBaked();
-    void drawLightVolumes(int lightvolme_program);
+    void zPreBaked(int program);
+    void drawLightVolumes(int lightvolme_program, Camera *camera);
     void drawScene(Camera *camera, bool wireframe);
     void drawSceneShadowed(Camera *camera, bool wireframe);
     void drawBaked(Camera *camera, bool wireframe);
@@ -66,8 +67,8 @@ class SceneGraph
     std::vector<Material*> materials;
     std::vector<Light *> lights;
   private:
-    int lightvolume_vao;
-    int lightvolume_vertex_buffer;
+    GLuint lightvolume_vao;
+    GLuint lightvolume_vertex_buffer;
 };
 
 class AssimpGraph : public SceneGraph
