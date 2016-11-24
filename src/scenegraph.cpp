@@ -239,13 +239,20 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
 
 void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
 {
-  camera->updateUniforms(lightvolume_program);
+  //camera->updateUniforms(lightvolume_program);
   glBindVertexArray(lightvolume_vao);
   int lightposition_loc = glGetUniformLocation(lightvolume_program, "light_position_radius");
   if (lightposition_loc < 0)
   {
     perror("cant find light position loc\r\n");
   }
+  int PV_inverse_loc = glGetUniformLocation(lightvolume_program, "PV_inverse");
+  if (PV_inverse_loc < 0)
+  {
+    perror("cant find PV inverse loc\r\n");
+  }
+  mat4 pv_inverse = camera->getProjectionViewInverse();
+  glUniformMatrix4fv(PV_inverse_loc, 1, false, &pv_inverse[0][0]);
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   for (int i=0; i<lights.size(); ++i)

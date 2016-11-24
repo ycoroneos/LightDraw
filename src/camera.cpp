@@ -35,6 +35,11 @@ vec3 Camera::getPos()
   return pos;
 }
 
+mat4 Camera::getProjectionViewInverse()
+{
+  return glm::inverse(getProjectionMatrix()*getViewMatrix());
+}
+
 void Camera::updateUniforms(unsigned program)
 {
   assert(program != 0);

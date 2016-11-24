@@ -9,6 +9,7 @@ class Camera : public InputResponder
     Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection);
     mat4 getViewMatrix();
     mat4 getProjectionMatrix();
+    mat4 getProjectionViewInverse();
     void computeViewMatrix();
     void updatePitchYaw(vec2 pitchyawdelta);
     void updateTranslation(vec2 translation);
