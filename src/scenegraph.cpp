@@ -61,6 +61,9 @@ void SceneGraph::bake()
     vector<Light*> Nlights = curN->getLights();
     for (int i=0; i<Nlights.size(); ++i)
     {
+      vec4 trs = M[3];
+      //fprintf(stderr, "bake: found light %s\r\n", Nlights[i]->getName());
+      fprintf(stderr, "\t pos %f %f %f %f\r\n", trs.x, trs.y, trs.z, trs.w);
       Nlights[i]->updatePos(&M);
     }
     for (unsigned i=0; i<meshes.size(); ++i)

@@ -74,16 +74,6 @@ int LIDR::LightVolumes()
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, depth_map);
   glDepthMask(GL_FALSE);
-//  int screenres_loc = glGetUniformLocation(lightvolume_program, "screenres");
-//  if (screenres_loc < 0)
-//  {
-//    perror("lidr cant find screenres loc\r\n");
-//  }
-//  else
-//  {
-//    vec2 screenres = vec2(1.0f*window_width, 1.0f*window_height);
-//    glUniform2fv(screenres_loc, 1, &screenres[0]);
-//  }
   return lightvolume_program;
 }
 

@@ -30,6 +30,7 @@ Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec
   fprintf(stderr, "\t amb %f %f %f\r\n", ambient.x, ambient.y, ambient.z);
   fprintf(stderr, "\t diff %f %f %f", diffuse.x, diffuse.y, diffuse.z);
   fprintf(stderr, "\t spec %f %f %f\r\n", specular.x, specular.y, specular.z);
+  fprintf(stderr, "\t local pos %f %f %f\r\n", pos.x, pos.y, pos.z);
 }
 
 const char *Light::getName()

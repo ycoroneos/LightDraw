@@ -128,6 +128,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   for (int i=0; i<scene->mNumLights; ++i)
   {
     aiLight *asslight = scene->mLights[i];
+    fprintf(stderr, "light pos %f %f %f\r\n", asslight->mPosition[0], asslight->mPosition[1], asslight->mPosition[2]);
     switch(asslight->mType)
     {
       case aiLightSource_DIRECTIONAL:
@@ -266,9 +267,8 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   {
     if (strcmp(lights[i]->getName(), newnode->getName())==0)
     {
-      fprintf(stderr, "%s has light\r\n", newnode->getName());
+      fprintf(stderr, "%s has light, parent %s\r\n", newnode->getName(), parent->getName());
       newnode->addLight(lights[i]);
-      //lights[i]->updatePos(M);
     }
   }
   newnode->setParent(parent);
