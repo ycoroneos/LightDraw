@@ -1,8 +1,6 @@
 #version 410
 
 in vec2 var_texcoords;
-//in vec4 var_light_viewpos;
-//in float var_light_radius_view;
 
 layout(location=0) out vec4 out_Color;
 
@@ -16,6 +14,9 @@ uniform mat4 PV_inverse;
 
 //input from scene graph
 uniform vec4 light_position_radius;
+uniform vec4 light_index;
+//uniform float light_index;  //goes from 0x0 -> 0xFF
+                            //0x0 is reserved as no light
 
 vec2 screen2ndc(vec2 inputpos)
 {
@@ -43,11 +44,17 @@ void main()
 
   if (length(scenepos_world_fixed - lightpos) < radius)
   {
-    out_Color = vec4(1.0f, 0.0f, 0.0f, 0.0f);
+   // float red = (light_index & 0x3) << 6;
+   // float green = (light_index & 0xC) << 6;
+   // float blue = (light_index & 0x30) << 6;
+   // float alpha = (light_index & 0xC0) << 6;
+   // out_Color = vec4(red, green, blue, alpha);
+    out_Color = light_index;
   }
   else
   {
-    discard;
+    out_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    //discard;
   }
 }
 

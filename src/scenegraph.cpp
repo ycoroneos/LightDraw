@@ -249,6 +249,11 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   {
     perror("cant find light position loc\r\n");
   }
+  int lightindex_loc = glGetUniformLocation(lightvolume_program, "light_index");
+  if (lightindex_loc < 0)
+  {
+    perror("cant find light index loc\r\n");
+  }
   int PV_inverse_loc = glGetUniformLocation(lightvolume_program, "PV_inverse");
   if (PV_inverse_loc < 0)
   {
@@ -257,11 +262,16 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   mat4 pv_inverse = camera->getProjectionViewInverse();
   glUniformMatrix4fv(PV_inverse_loc, 1, false, &pv_inverse[0][0]);
   glEnable(GL_BLEND);
-  glBlendFunc(GL_ONE, GL_ONE);
-  for (int i=0; i<lights.size(); ++i)
+  glBlendFunc(GL_ONE, GL_CONSTANT_COLOR);
+  glBlendColor(0.25f, 0.25f, 0.25f, 0.25f);
+  for (int i=0; i<lights.size() && i<0xFF; ++i)
   {
     vec4 lightprop = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
     glUniform4fv(lightposition_loc, 1, &lightprop[0]);
+    int adj = i+1;
+    vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 6, (adj&0x30) << 6, (adj&0xC0) << 6)/256.0f;
+    //fprintf(stderr, "light index %f %f %f %f\r\n", index.x, index.y, index.z, index.w);
+    glUniform4fv(lightindex_loc, 1, &index[0]);
     glDrawArrays(GL_TRIANGLES, 0, 3);
   }
   glDisable(GL_BLEND);

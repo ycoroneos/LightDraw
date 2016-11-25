@@ -42,8 +42,8 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    int width = 1024;
-    int height = 768;
+    int width = 1920;
+    int height = 1080;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     window_size_callback(window, width, height);

@@ -16,11 +16,25 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
   glGenTextures(1, &volume_map);
-  glGenTextures(1, &light_map);
+  glGenTextures(1, &light_color_tex);
+  glGenTextures(1, &light_position_tex);
   glActiveTexture(GL_TEXTURE0);
 
-  //first generate light lookup map
-  glBindTexture(GL_TEXTURE_1D, light_map);
+  //first generate light color lookup texture
+  //ambient:24bits
+  //diffuse:24bits
+  //specular:24bits
+  glBindTexture(GL_TEXTURE_1D, light_color_tex);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, maxlights*sizeof(vec3), 0, GL_RGB, GL_FLOAT, 0);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+
+  //then generate the light position texture
+  //position:96bits
+  //1/radius:8bits
+  //cone direction:24bits
+  glBindTexture(GL_TEXTURE_1D, light_position_tex);
   glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, maxlights*sizeof(vec4), 0, GL_RGBA, GL_FLOAT, 0);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -37,7 +51,7 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
 
   //color volumes
   glBindTexture(GL_TEXTURE_2D, volume_map);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width, window_height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, window_width, window_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -56,7 +70,8 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
 
 LIDR::~LIDR()
 {
-  glDeleteTextures(1, &light_map);
+  glDeleteTextures(1, &light_position_tex);
+  glDeleteTextures(1, &light_color_tex);
   glDeleteTextures(1, &volume_map);
   glDeleteTextures(1, &depth_map);
   glDeleteFramebuffers(1, &depth_fbo);
@@ -92,6 +107,7 @@ void LIDR::LightVolumesEnd()
 }
 
 
+//lets be silly and pack everything for now
 void LIDR::packLightTextures(std::vector<Light *> lights)
 {
 }
@@ -104,28 +120,28 @@ void LIDR::cornerWindow()
   //setup state
   glBindVertexArray(dummyvao);
   glUseProgram(viewport_program);
-  glEnable(GL_SCISSOR_TEST);
-  //glDisable(GL_DEPTH_TEST);
+  //glEnable(GL_SCISSOR_TEST);
+  glDisable(GL_DEPTH_TEST);
 
   //draw the z buffer
   glViewport(0, 0, smallwidth, smallheight);
-  glScissor(0, 0, smallwidth, smallheight);
-  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  //glScissor(0, 0, smallwidth, smallheight);
+  //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, depth_map);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   //draw the light volumes
   glViewport(smallwidth, 0, smallwidth, smallheight);
-  glScissor(smallwidth, 0, smallwidth, smallheight);
-  glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+  //glScissor(smallwidth, 0, smallwidth, smallheight);
+  //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, volume_map);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   //restore state
-  //glEnable(GL_DEPTH_TEST);
-  glDisable(GL_SCISSOR_TEST);
+  glEnable(GL_DEPTH_TEST);
+  //glDisable(GL_SCISSOR_TEST);
   glUseProgram(0);
   glViewport(0, 0, window_width, window_height);
   glBindVertexArray(0);
