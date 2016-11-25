@@ -31,6 +31,7 @@ int default_quad_program;
 int lidr_z_program;
 int lidr_lightvolume_program;
 int viewport_program;
+int mesh_lidr_prog;
 
 int initScene(mat4 Projection)
 {
@@ -44,7 +45,9 @@ int initScene(mat4 Projection)
   lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
   lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
   viewport_program = compileProgram("../shaders/viewport.vs", "../shaders/viewport.fs");
-  if (!voxelprog || !default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program)
+  mesh_lidr_prog = compileProgram("../shaders/flat.vs", "../shaders/lidr_light.fs");
+  if (!voxelprog || !default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program ||
+      !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program || !mesh_lidr_prog)
   {
     return -1;
   }

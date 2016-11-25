@@ -34,17 +34,17 @@ uniform vec3 lightConeDirection;
 #define NUM_LIGHTS 256.0
 vec4 unpacklights(vec4 packedLight)
 {
-  // Unpack each lighting channel
   vec4 unpackConst = vec4(4.0, 16.0, 64.0 , 256.0) / NUM_LIGHTS;
-  // Expand the packed light values to the 0.. 255 range
   vec4 floorValues = ceil(packedLight * 254.5);
-  float lightIndex[4];
-  for(int i=0; i< 4; i++)
+  vec4 lightIndex;
+  for (int i=0; i<4; i++)
   {
-    packedLight = floorValues * 0.25; // Shift two bits down
-    floorValues = floor(packedLight); // Remove shifted bits
-    lightIndex[i] = dot((packedLight – floorValues), unpackConst);
+    packedLight = floorValues * 0.25;
+    floorValues = floor(packedLight);
+    lightIndex[i]=dot(packedLight - floorValues, unpackConst);
   }
+  return lightIndex;
+  //return vec4(lightIndex[0], lightIndex[1], lightIndex[2], lightIndex[3]);
 }
 
 vec3 ambient()

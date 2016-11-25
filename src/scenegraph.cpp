@@ -264,7 +264,7 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_CONSTANT_COLOR);
   glBlendColor(0.25f, 0.25f, 0.25f, 0.25f);
-  for (int i=0; i<lights.size() && i<0xFF; ++i)
+  for (int i=0; i<lights.size() && i<256; ++i)
   {
     vec4 lightprop = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
     glUniform4fv(lightposition_loc, 1, &lightprop[0]);
