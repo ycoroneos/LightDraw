@@ -36,6 +36,7 @@ class LIDR
     GLuint depth_map;
     GLuint volume_map;
     GLuint light_map;
+    GLuint dummyvao;
     int z_program;
     int lightvolume_program;
 

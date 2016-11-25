@@ -17,10 +17,10 @@ uniform mat4 PV_inverse;
 //input from scene graph
 uniform vec4 light_position_radius;
 
-vec2 screen2ndc(vec2 input)
+vec2 screen2ndc(vec2 inputpos)
 {
-  float x = (input.x / screenres.x / 2.0f) - 1.0f;
-  float y = (input.y / screenres.y / 2.0f) - 1.0f;
+  float x = (inputpos.x / screenres.x / 2.0f) - 1.0f;
+  float y = (inputpos.y / screenres.y / 2.0f) - 1.0f;
   return vec2(x,y);
 }
 

@@ -36,8 +36,7 @@ int initScene(mat4 Projection)
 {
   camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
-//  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
-  //default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/flat.fs");
+  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
   default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
   pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
   directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
@@ -45,7 +44,7 @@ int initScene(mat4 Projection)
   lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
   lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
   viewport_program = compileProgram("../shaders/viewport.vs", "../shaders/viewport.fs");
-  if (!default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program)
+  if (!voxelprog || !default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program || !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program)
   {
     return -1;
   }

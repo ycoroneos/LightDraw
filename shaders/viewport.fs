@@ -8,6 +8,6 @@ uniform sampler2D texmap;
 
 void main()
 {
-  out_Color = vec4(texture(texmap, var_texcoords));
+  out_Color = vec4(texture(texmap, var_texcoords).xyz, 1);
 }
 
