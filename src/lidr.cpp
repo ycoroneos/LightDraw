@@ -16,26 +16,37 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
   glGenTextures(1, &volume_map);
-  glGenTextures(1, &light_color_tex);
+  glGenTextures(1, &light_ambient_tex);
+  glGenTextures(1, &light_diffuse_tex);
+  glGenTextures(1, &light_specular_tex);
   glGenTextures(1, &light_position_tex);
   glActiveTexture(GL_TEXTURE0);
 
   //first generate light color lookup texture
-  //ambient:24bits
-  //diffuse:24bits
-  //specular:24bits
-  glBindTexture(GL_TEXTURE_1D, light_color_tex);
-  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, maxlights*sizeof(vec3), 0, GL_RGB, GL_FLOAT, 0);
+  //ambient:96bits
+  glBindTexture(GL_TEXTURE_1D, light_ambient_tex);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, maxlights, 0, GL_RGB, GL_FLOAT, 0);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  //diffuse:96bits
+  glBindTexture(GL_TEXTURE_1D, light_diffuse_tex);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, maxlights, 0, GL_RGB, GL_FLOAT, 0);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  //specular:96bits
+  glBindTexture(GL_TEXTURE_1D, light_specular_tex);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGB32F, maxlights, 0, GL_RGB, GL_FLOAT, 0);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
   //then generate the light position texture
   //position:96bits
-  //1/radius:8bits
-  //cone direction:24bits
+  //1/radius:32bits
   glBindTexture(GL_TEXTURE_1D, light_position_tex);
-  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, maxlights*sizeof(vec4), 0, GL_RGBA, GL_FLOAT, 0);
+  glTexImage1D(GL_TEXTURE_1D, 0, GL_RGBA32F, maxlights, 0, GL_RGBA, GL_FLOAT, 0);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -71,7 +82,9 @@ LIDR::LIDR(int z_program_1, int lightvolume_program_1)
 LIDR::~LIDR()
 {
   glDeleteTextures(1, &light_position_tex);
-  glDeleteTextures(1, &light_color_tex);
+  glDeleteTextures(1, &light_ambient_tex);
+  glDeleteTextures(1, &light_diffuse_tex);
+  glDeleteTextures(1, &light_specular_tex);
   glDeleteTextures(1, &volume_map);
   glDeleteTextures(1, &depth_map);
   glDeleteFramebuffers(1, &depth_fbo);
@@ -110,6 +123,40 @@ void LIDR::LightVolumesEnd()
 //lets be silly and pack everything for now
 void LIDR::packLightTextures(std::vector<Light *> lights)
 {
+  //update light colors and positions
+  int nlights = lights.size();
+  vec3 *light_ambient = new vec3[nlights];
+  vec3 *light_diffuse = new vec3[nlights];
+  vec3 *light_specular = new vec3[nlights];
+  vec4 *light_pos_radius = new vec4[nlights];
+  for (int i=0; i<nlights; ++i)
+  {
+    light_ambient[i] = lights[i]->getAmbient();
+    light_diffuse[i] = lights[i]->getDiffuse();
+    light_specular[i] = lights[i]->getSpecular();
+    light_pos_radius[i] = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
+  }
+  glActiveTexture(GL_TEXTURE1);
+  glBindTexture(GL_TEXTURE_1D, light_ambient_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights, GL_RGB, GL_FLOAT, &light_ambient[0]);
+
+  glActiveTexture(GL_TEXTURE2);
+  glBindTexture(GL_TEXTURE_1D, light_diffuse_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights, GL_RGB, GL_FLOAT, &light_diffuse[0]);
+
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_1D, light_specular_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights, GL_RGB, GL_FLOAT, &light_specular[0]);
+
+  glActiveTexture(GL_TEXTURE4);
+  glBindTexture(GL_TEXTURE_1D, light_position_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights, GL_RGBA, GL_FLOAT, &light_pos_radius[0]);
+
+
+  delete[] light_ambient;
+  delete[] light_diffuse;
+  delete[] light_specular;
+  delete[] light_pos_radius;
 }
 
 void LIDR::cornerWindow()

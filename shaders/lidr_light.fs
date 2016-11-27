@@ -8,7 +8,7 @@ in vec3 var_Position;
 layout(location=0) out vec4 out_Color;
 
 //Material Supplied
-uniform sampler2D texture_obj;
+layout (binding=0) uniform sampler2D texture_obj;
 uniform vec3 matAmbient;
 uniform vec3 matDiffuse;
 uniform vec3 matSpecular;
@@ -44,7 +44,6 @@ vec4 unpacklights(vec4 packedLight)
     lightIndex[i]=dot(packedLight - floorValues, unpackConst);
   }
   return lightIndex;
-  //return vec4(lightIndex[0], lightIndex[1], lightIndex[2], lightIndex[3]);
 }
 
 vec3 ambient()

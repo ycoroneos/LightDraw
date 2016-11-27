@@ -43,6 +43,21 @@ vec3 Light::getWorldPos()
   return worldpos;
 }
 
+vec3 Light::getAmbient()
+{
+  return ambient;
+}
+
+vec3 Light::getDiffuse()
+{
+  return diffuse;
+}
+
+vec3 Light::getSpecular()
+{
+  return specular;
+}
+
 float Light::getRadius()
 {
   return 5.0f;

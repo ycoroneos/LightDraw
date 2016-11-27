@@ -21,6 +21,9 @@ class Light
     virtual unsigned getType()=0;
     virtual void renderQuad()=0;
     vec3 getWorldPos();
+    vec3 getAmbient();
+    vec3 getDiffuse();
+    vec3 getSpecular();
     float getRadius();
   protected:
     char name[25];
