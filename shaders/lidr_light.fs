@@ -8,7 +8,7 @@ in vec3 var_Position;
 layout(location=0) out vec4 out_Color;
 
 //Material Supplied
-layout (binding=0) uniform sampler2D texture_obj;
+uniform sampler2D texture_obj;
 uniform vec3 matAmbient;
 uniform vec3 matDiffuse;
 uniform vec3 matSpecular;

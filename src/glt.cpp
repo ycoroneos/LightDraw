@@ -64,17 +64,17 @@ static void GLAPIENTRY gl_dbg_callback(GLenum source,
     const void* userParam)
 {
    const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
-   fprintf(stderr, msg, type, id, severity, message);
+   //fprintf(stderr, msg, type, id, severity, message);
    //exit(-1);
-//    if (severity > GL_DEBUG_SEVERITY_NOTIFICATION) {
-//        // below some spammy ids that you might want to filter 
-//        //id != 131204 && id != 131076 && id != 131184 && 
-//        //id != 131186 && id != 131188 && id != 131154
-//        if (id != 131076) {
-//            const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
-//            fprintf(stderr, msg, type, id, severity, message);
-//        }
-//    }
+    if (severity > GL_DEBUG_SEVERITY_NOTIFICATION) {
+        // below some spammy ids that you might want to filter 
+        //id != 131204 && id != 131076 && id != 131184 && 
+        //id != 131186 && id != 131188 && id != 131154
+        if (id != 131076) {
+            const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
+            fprintf(stderr, msg, type, id, severity, message);
+        }
+    }
 }
 
 void setupDebugPrint()
@@ -86,7 +86,7 @@ void setupDebugPrint()
 }
 #endif
 
-static char *read_file(const char *fn)
+char *read_file(const char *fn)
 {
 	FILE *fp;
 	char *content = NULL;
@@ -185,7 +185,6 @@ int compileProgram(const char* vshader_src_file, const char* fshader_src_file)
     fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
     return -1;
   }
-  fprintf(stderr,"read vshader as:\n%s\n", vshader_text);
 
   char *fshader_text = read_file(fshader_src_file);
   if (fshader_text == NULL)
@@ -193,7 +192,6 @@ int compileProgram(const char* vshader_src_file, const char* fshader_src_file)
     fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
     return -1;
   }
-  fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 
 
   //link program
@@ -201,6 +199,8 @@ int compileProgram(const char* vshader_src_file, const char* fshader_src_file)
 	GLuint vshader = compileShader(GL_VERTEX_SHADER, vshader_text);
 	GLuint fshader = compileShader(GL_FRAGMENT_SHADER, fshader_text);
 	if (!linkProgram(program, vshader, fshader)) {
+  fprintf(stderr,"read vshader as:\n%s\n", vshader_text);
+  fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 		glDeleteProgram(program);
 		program = 0;
     fprintf(stderr, "killed program\n");
@@ -222,7 +222,6 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
     fprintf(stderr,"error reading vertex shader %s\n", vshader_src_file);
     return -1;
   }
-  fprintf(stderr,"read vshader as:\n%s\n", vshader_text);
 
   char *gshader_text = read_file(gshader_src_file);
   if (gshader_text == NULL)
@@ -230,7 +229,6 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
     fprintf(stderr,"error reading geometry shader %s\n", gshader_src_file);
     return -1;
   }
-  fprintf(stderr,"read gshader as:\n%s\n", gshader_text);
 
   char *fshader_text = read_file(fshader_src_file);
   if (fshader_text == NULL)
@@ -238,7 +236,6 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
     fprintf(stderr,"error reading fragment shader %s\n", fshader_src_file);
     return -1;
   }
-  fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 
 
   //link program
@@ -247,6 +244,9 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
 	GLuint gshader = compileShader(GL_GEOMETRY_SHADER, gshader_text);
 	GLuint fshader = compileShader(GL_FRAGMENT_SHADER, fshader_text);
 	if (!linkProgramGShader(program, vshader, gshader, fshader)) {
+  fprintf(stderr,"read vshader as:\n%s\n", vshader_text);
+  fprintf(stderr,"read gshader as:\n%s\n", gshader_text);
+  fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 		glDeleteProgram(program);
 		program = 0;
     fprintf(stderr, "killed program\n");

@@ -1,4 +1,5 @@
 #version 410
+//name=lightvolume
 
 //https://rauwendaal.net/2014/06/14/rendering-a-screen-covering-triangle-in-opengl/
 
