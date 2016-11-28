@@ -20,11 +20,13 @@ class Light
     virtual void restore()=0;
     virtual unsigned getType()=0;
     virtual void renderQuad()=0;
+    virtual vec3 getDirection()=0;
     vec3 getWorldPos();
     vec3 getAmbient();
     vec3 getDiffuse();
     vec3 getSpecular();
     float getRadius();
+    float getAngle();
   protected:
     char name[25];
     vec3 pos;
@@ -32,6 +34,7 @@ class Light
     vec3 diffuse;
     vec3 specular;
     vec3 worldpos;
+    float angle;
 
     //GL things for shadows
     GLuint depth_fbo;
@@ -54,6 +57,7 @@ class PointLight : public Light
     void restore() override;
     unsigned getType() override;
     void renderQuad() override;
+    vec3 getDirection() override;
   private:
     mat4 cubemats[6];
 };
@@ -69,6 +73,7 @@ class SpotLight : public Light
     void restore() override;
     unsigned getType() override;
     void renderQuad() override;
+    vec3 getDirection() override;
   private:
     float angle;
     vec3 direction;
@@ -86,6 +91,7 @@ class DirectionLight : public Light
     void restore() override;
     unsigned getType() override;
     void renderQuad() override;
+    vec3 getDirection() override;
   private:
     vec3 direction;
 };
@@ -100,5 +106,6 @@ class DummyLight : public Light
     void restore() override;
     unsigned getType() override;
     void renderQuad() override;
+    vec3 getDirection() override;
   private:
 };

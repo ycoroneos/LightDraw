@@ -261,6 +261,11 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   {
     perror("cant find light position loc\r\n");
   }
+  int lightdirection_loc = glGetUniformLocation(lightvolume_program, "light_cone_direction_angle");
+  if (lightdirection_loc < 0)
+  {
+    perror("cant find light cone direction loc\r\n");
+  }
   int lightindex_loc = glGetUniformLocation(lightvolume_program, "light_index");
   if (lightindex_loc < 0)
   {
@@ -278,8 +283,10 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   glBlendColor(0.25f, 0.25f, 0.25f, 0.25f);
   for (int i=0; i<lights.size() && i<256; ++i)
   {
-    vec4 lightprop = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
-    glUniform4fv(lightposition_loc, 1, &lightprop[0]);
+    vec4 lightprop_a = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
+    vec4 lightprop_b = vec4(lights[i]->getDirection(), lights[i]->getAngle());
+    glUniform4fv(lightposition_loc, 1, &lightprop_a[0]);
+    glUniform4fv(lightdirection_loc, 1, &lightprop_b[0]);
     int adj = i+1;
     vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 4, (adj&0x30) << 2, (adj&0xC0) << 0)/255.0f;
     glUniform4fv(lightindex_loc, 1, &index[0]);

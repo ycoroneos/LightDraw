@@ -62,6 +62,12 @@ float Light::getRadius()
 {
   return 5.0f;
 }
+
+float Light::getAngle()
+{
+  //return angle;
+  return 2*3.14;
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
@@ -193,6 +199,10 @@ void PointLight::renderQuad()
 {
 }
 
+vec3 PointLight::getDirection()
+{
+  return vec3(0.0f);
+}
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpotLight::updatePos(mat4 *M)
@@ -371,6 +381,11 @@ void SpotLight::renderQuad()
   glUseProgram(0);
 }
 
+vec3 SpotLight::getDirection()
+{
+  return direction;
+}
+
 ////////////////////////////////////////////////////
 DirectionLight::DirectionLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1)
   : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), direction(direction_1)
@@ -484,6 +499,11 @@ void DirectionLight::renderQuad()
 {
 }
 
+vec3 DirectionLight::getDirection()
+{
+  return direction;
+}
+
 //////////////////////////////////////////////////////
 void DummyLight::updatePos(mat4 *M)
 {
@@ -514,4 +534,9 @@ unsigned DummyLight::getType()
 
 void DummyLight::renderQuad()
 {
+}
+
+vec3 DummyLight::getDirection()
+{
+  return vec3(0.0f);
 }
