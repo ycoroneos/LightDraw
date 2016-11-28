@@ -4,7 +4,6 @@ in vec3 var_Normal;
 in vec2 var_texcoords;
 in vec3 var_Position;
 in vec4 var_projectSpace;
-//in vec4 var_shadowCoords;
 
 layout(location=0) out vec4 out_Color;
 
@@ -24,15 +23,6 @@ uniform sampler1D lightambient_tex;   //3
 uniform sampler1D lightdiffuse_tex;   //4
 uniform sampler1D lightspecular_tex;  //5
 uniform sampler1D lightposition_tex;  //6
-
-
-//Light Supplied
-//uniform vec4 lightPos;
-//uniform vec3 lightAmbient;
-//uniform vec3 lightDiffuse;
-//uniform vec4 lightSpecular;
-//uniform vec3 lightConeDirection;
-//uniform float far_plane;
 
 #define NUM_LIGHTS 256.0
 highp vec4 unpacklights(vec4 packedLight)
@@ -108,7 +98,6 @@ void main () {
 
         float distance = 1.0f / length(lightPos - pos_world.xyz);
         out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * att;
-        //out_Color.xyz  = diffuseColor;
       }
   }
 
