@@ -45,8 +45,6 @@ mat4 Camera::getProjectionViewInverse()
 
 void Camera::updateUniforms(unsigned program)
 {
-  assert(program != 0);
-//  glUseProgram(program);
   //projection matrix
   int loc = glGetUniformLocation(program, "P");
   if (loc==-1)
@@ -75,17 +73,6 @@ void Camera::updateUniforms(unsigned program)
   {
     glUniform3fv(loc, 1, &pos[0]);
   }
-  loc = glGetUniformLocation(program, "screendims");
-  if (loc==-1)
-  {
-   // perror("camPos not found\n");
-  }
-  else
-  {
-    vec2 screendims = vec2(1920.0f, 1080.0f);
-    glUniform2fv(loc, 1, &screendims[0]);
-  }
-  //glUseProgram(0);
 }
 
 bool Camera::viewWire()

@@ -112,37 +112,6 @@ void main () {
       }
   }
 
-//    vec3 L;
-//    if (lightPos.w == 0) {
-//      L = normalize(lightPos.xyz);
-//    }
-//    else {
-//      L = normalize(lightPos.xyz - pos_world.xyz);
-//    }
-//    vec3 V = normalize(camPos - pos_world.xyz);
-//    vec3 N = normalize(var_Normal);
-//
-//    vec3 coneDirection = normalize(lightConeDirection);
-//    vec3 rayDirection = -L;
-//    float att=1;
-//    if (lightSpecular.a>0)
-//    {
-//      att = clamp(dot(rayDirection, coneDirection), 0.1f, 1.0f);
-//    }
-//
-//    //vec3 Iamb = vec3(0.0f);
-//    vec3 Idif = vec3(0.0f);
-//    vec3 Ispe = vec3(0.0f);
-//
-//    vec3 Iamb = ambient();
-//    Idif = diffuse(N, L);
-//    Ispe = specular(N, L, V);
-//    vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
-//
-//    // combination of all components and diffuse color of the object
-//    att=1.0f;
-//    out_Color.xyz = (Iamb * (Idif + Ispe)) * diffuseColor * att;
-//    //out_Color.a = 1.0f;
 }
 
 

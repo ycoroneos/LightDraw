@@ -15,15 +15,6 @@ uniform mat4 PV_inverse;
 //input from scene graph
 uniform vec4 light_position_radius;
 uniform highp vec4 light_index;
-//uniform float light_index;  //goes from 0x0 -> 0xFF
-                            //0x0 is reserved as no light
-
-//vec2 screen2ndc(vec2 inputpos)
-//{
-//  float x = (inputpos.x / screenres.x / 2.0f) - 1.0f;
-//  float y = (inputpos.y / screenres.y / 2.0f) - 1.0f;
-//  return vec2(x,y);
-//}
 
 void main()
 {
@@ -48,7 +39,6 @@ void main()
   }
   else
   {
-    //out_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
     discard;
   }
 }
