@@ -330,12 +330,14 @@ void SceneGraph::doKeyboardInput(int key, int scancode, int action, int mods)
         {
           meshes[i]->setProgram(default_mesh_prog);
         }
+        bake();
         break;
       case 'L':
         for (int i=0; i<meshes.size(); ++i)
         {
           meshes[i]->setProgram(mesh_lidr_prog);
         }
+        bake();
         break;
     }
 }
