@@ -119,7 +119,7 @@ void PointLight::updateUniforms(unsigned program)
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
   if (ambient_loc<0)
   {
-    fprintf(stderr, "cant find ambient loc for light %s\r\n", name);
+    //fprintf(stderr, "cant find ambient loc for light %s\r\n", name);
   }
   //int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
  /// if (farplane_loc < 0)

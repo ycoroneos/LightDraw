@@ -45,7 +45,7 @@ class Node
   std::vector<Light *> lights;
 };
 
-class SceneGraph
+class SceneGraph : public InputResponder
 {
   public:
     SceneGraph();
@@ -60,6 +60,9 @@ class SceneGraph
     void drawBaked(Camera *camera, bool wireframe);
     void printGraph();
     std::vector<Light *> getLights();
+
+    void doMouseInput(double xpos, double ypos) override;
+    void doKeyboardInput(int key, int scancode, int action, int mods) override;
   protected:
     Node * allocNode();
     Node *root;

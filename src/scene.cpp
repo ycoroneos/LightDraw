@@ -58,6 +58,7 @@ int initScene(mat4 Projection)
   //garg->setProgram(voxelprog);
   //sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
+  sgr->enableInput();
   sgr->bake();
   return 0;
 }

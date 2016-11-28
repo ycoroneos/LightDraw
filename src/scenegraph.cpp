@@ -13,6 +13,10 @@
 using namespace std;
 using namespace glm;
 
+
+extern int default_mesh_prog;
+extern int mesh_lidr_prog;
+
 SceneGraph::SceneGraph()
 {
   glGenVertexArrays(1, &lightvolume_vao);
@@ -289,3 +293,33 @@ Node *SceneGraph::allocNode()
   return newnode;
 }
 
+
+void SceneGraph::doMouseInput(double xpos, double ypos)
+{
+}
+
+void SceneGraph::doKeyboardInput(int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_RELEASE) { // only handle PRESS and REPEAT
+        return;
+    }
+
+    //printf("camera key input\n");
+    // Special keys (arrows, CTRL, ...) are documented
+    // here: http://www.glfw.org/docs/latest/group__keys.html
+    switch (key)
+    {
+      case 'F':
+        for (int i=0; i<meshes.size(); ++i)
+        {
+          meshes[i]->setProgram(default_mesh_prog);
+        }
+        break;
+      case 'L':
+        for (int i=0; i<meshes.size(); ++i)
+        {
+          meshes[i]->setProgram(mesh_lidr_prog);
+        }
+        break;
+    }
+}

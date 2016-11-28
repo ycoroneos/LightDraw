@@ -6,6 +6,9 @@
 #include "stdio.h"
 using namespace glm;
 
+extern int window_width;
+extern int window_height;
+
 Camera::Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection)
   : pitchyaw(pitchandyaw), pos(eye), Projection(Projection), invProjection(glm::inverse(Projection)), wireframe(false), sprint(false)
 {
@@ -71,6 +74,16 @@ void Camera::updateUniforms(unsigned program)
   else
   {
     glUniform3fv(loc, 1, &pos[0]);
+  }
+  loc = glGetUniformLocation(program, "screendims");
+  if (loc==-1)
+  {
+   // perror("camPos not found\n");
+  }
+  else
+  {
+    vec2 screendims = vec2(1920.0f, 1080.0f);
+    glUniform2fv(loc, 1, &screendims[0]);
   }
   //glUseProgram(0);
 }
