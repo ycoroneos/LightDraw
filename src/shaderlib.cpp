@@ -4,6 +4,8 @@
 #include "inc/glt.h"
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
+#include <iostream>
 using namespace std;
 
 
@@ -13,8 +15,10 @@ static struct Constraint texture_constraints[] = {
   {"texmap", 0},
   {"texture_obj", 0},
   {"lightindex_tex",2},
-  {"lightpos_tex", 3},
-  {"lightcolor_tex", 4},
+  {"lightambient_tex", 3},
+  {"lightdiffuse_tex", 4},
+  {"lightspecular_tex", 5},
+  {"lightposition_tex", 6},
 };
 
 #define NCONSTRAINTS sizeof(texture_constraints)/sizeof(Constraint)
@@ -98,6 +102,15 @@ int ShaderLib::loadShader(const char *vshader, const char *fshader)
   return program;
 }
 
+int ShaderLib::getShaderByName(string name)
+{
+  if(programs.find(name) != programs.end())
+  {
+    return programs[name];
+  }
+  return -1;
+}
+
 int ShaderLib::canonicalize(string shadername)
 {
   int program = programs[shadername];
@@ -115,4 +128,5 @@ int ShaderLib::canonicalize(string shadername)
     }
   }
   glUseProgram(0);
+  return 0;
 }

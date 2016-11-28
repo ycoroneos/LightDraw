@@ -277,6 +277,11 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   glDisable(GL_BLEND);
 }
 
+std::vector<Light *> SceneGraph::getLights()
+{
+  return lights;
+}
+
 Node *SceneGraph::allocNode()
 {
   Node *newnode = new Node();

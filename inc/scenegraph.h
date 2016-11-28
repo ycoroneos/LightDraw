@@ -59,6 +59,7 @@ class SceneGraph
     void drawSceneShadowed(Camera *camera, bool wireframe);
     void drawBaked(Camera *camera, bool wireframe);
     void printGraph();
+    std::vector<Light *> getLights();
   protected:
     Node * allocNode();
     Node *root;

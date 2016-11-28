@@ -202,7 +202,7 @@ int compileProgram(const char* vshader_src_file, const char* fshader_src_file)
   fprintf(stderr,"read vshader as:\n%s\n", vshader_text);
   fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 		glDeleteProgram(program);
-		program = 0;
+		program = -1;
     fprintf(stderr, "killed program\n");
 	}
 	// once a program is linked

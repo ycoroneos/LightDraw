@@ -9,6 +9,7 @@
 #include "stdio.h"
 
 extern int default_mesh_prog;
+extern int mesh_lidr_prog;
 
 Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material)
 {
@@ -34,7 +35,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoords));
   glBindVertexArray(0);
-  program = default_mesh_prog;
+  //program = default_mesh_prog;
+  program = mesh_lidr_prog;
   glUseProgram(program);
   M_loc = glGetUniformLocation(program, "M");
   if (M_loc<0)

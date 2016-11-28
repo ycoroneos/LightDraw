@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include "inc/glt.h"
+#include <iostream>
 using namespace std;
 
 struct Constraint

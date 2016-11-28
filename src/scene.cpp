@@ -40,22 +40,6 @@ int initScene(mat4 Projection)
   camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
 
-  //
-//  voxelprog = compileProgram("../shaders/voxel.vs", "../shaders/voxel.fs");
-//  default_mesh_prog = compileProgram("../shaders/flat.vs", "../shaders/light.fs");
-//  pointlight_shadowmap_program = compileGProgram("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
-//  directionlight_shadowmap_program = compileProgram("../shaders/shadow.vs", "../shaders/shadow.fs");
-//  default_quad_program = compileGProgram("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
-//  lidr_z_program = compileProgram("../shaders/depth.vs", "../shaders/depth.fs");
-//  lidr_lightvolume_program = compileProgram("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
-//  viewport_program = compileProgram("../shaders/viewport.vs", "../shaders/viewport.fs");
-//  mesh_lidr_prog = compileProgram("../shaders/lidr.vs", "../shaders/lidr_light.fs");
-//  if (!voxelprog || !default_mesh_prog || !pointlight_shadowmap_program || !directionlight_shadowmap_program ||
-//      !default_quad_program || !lidr_z_program || !lidr_lightvolume_program || !viewport_program || !mesh_lidr_prog)
-//  {
-//    return -1;
-//  }
-  ////
   voxelprog                         = shaderlib.loadShader("../shaders/voxel.vs", "../shaders/voxel.fs");
   default_mesh_prog                 = shaderlib.loadShader("../shaders/flat.vs", "../shaders/light.fs");
   pointlight_shadowmap_program      = shaderlib.loadShader("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
@@ -98,6 +82,9 @@ void drawScene()
   int lightvolume_prog = lidr->LightVolumes();
   sgr->drawLightVolumes(lightvolume_prog, camera);
   lidr->LightVolumesEnd();
+
+  //update the light textures
+  lidr->packLightTextures(sgr->getLights());
 
   sgr->drawBaked(camera, camera->viewWire());
   lidr->cornerWindow();
