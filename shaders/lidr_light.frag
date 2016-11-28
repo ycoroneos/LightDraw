@@ -35,16 +35,17 @@ uniform sampler1D lightposition_tex;  //6
 //uniform float far_plane;
 
 #define NUM_LIGHTS 256.0
-vec4 unpacklights(vec4 packedLight)
+highp vec4 unpacklights(vec4 packedLight)
 {
-  vec4 unpackConst = vec4(4.0, 16.0, 64.0 , 256.0) / NUM_LIGHTS;
-  vec4 floorValues = ceil(packedLight * 254.5);
-  vec4 lightIndex;
+  highp vec4 unpackConst = vec4(4.0, 16.0, 64.0 , 256.0) / NUM_LIGHTS;
+  highp vec4 floorValues = ceil(packedLight * 254.5);
+  highp vec4 lightIndex;
   for (int i=0; i<4; i++)
   {
     packedLight = floorValues * 0.25;
     floorValues = floor(packedLight);
-    lightIndex[i]=dot(packedLight - floorValues, unpackConst);
+    highp vec4 fracpart = packedLight - floorValues;
+    lightIndex[i]=dot(fracpart, unpackConst);
   }
   return lightIndex;
 }
@@ -76,12 +77,12 @@ void main () {
   vec4 pos_world = vec4(var_Position, 1);
   pos_world /= pos_world.w;
 
-  vec4 light_indices = unpacklights(textureProj(lightindex_tex, var_projectSpace));
+  highp vec4 light_indices = unpacklights(textureProj(lightindex_tex, var_projectSpace));
 
   out_Color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
   for (int i=0; i<4; i++)
   {
-    float index = light_indices[i];
+    highp float index = light_indices[i];
     vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
     if (index==0.0f)
       {

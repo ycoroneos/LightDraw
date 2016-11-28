@@ -7,23 +7,23 @@ layout(location=0) out vec4 out_Color;
 uniform sampler2D depthmap;
 
 //input from LIDR
-uniform vec2 screenres;
+//uniform vec2 screenres;
 
 //input from camera
 uniform mat4 PV_inverse;
 
 //input from scene graph
 uniform vec4 light_position_radius;
-uniform vec4 light_index;
+uniform highp vec4 light_index;
 //uniform float light_index;  //goes from 0x0 -> 0xFF
                             //0x0 is reserved as no light
 
-vec2 screen2ndc(vec2 inputpos)
-{
-  float x = (inputpos.x / screenres.x / 2.0f) - 1.0f;
-  float y = (inputpos.y / screenres.y / 2.0f) - 1.0f;
-  return vec2(x,y);
-}
+//vec2 screen2ndc(vec2 inputpos)
+//{
+//  float x = (inputpos.x / screenres.x / 2.0f) - 1.0f;
+//  float y = (inputpos.y / screenres.y / 2.0f) - 1.0f;
+//  return vec2(x,y);
+//}
 
 void main()
 {
@@ -44,17 +44,12 @@ void main()
 
   if (length(scenepos_world_fixed - lightpos) < radius)
   {
-   // float red = (light_index & 0x3) << 6;
-   // float green = (light_index & 0xC) << 6;
-   // float blue = (light_index & 0x30) << 6;
-   // float alpha = (light_index & 0xC0) << 6;
-   // out_Color = vec4(red, green, blue, alpha);
     out_Color = light_index;
   }
   else
   {
-    out_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
-    //discard;
+    //out_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    discard;
   }
 }
 

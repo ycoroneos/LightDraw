@@ -276,19 +276,17 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_CONSTANT_COLOR);
   glBlendColor(0.25f, 0.25f, 0.25f, 0.25f);
-  fprintf(stderr, "about to draw %d lights\r\n", lights.size());
+  //fprintf(stderr, "about to draw %d lights\r\n", lights.size());
   for (int i=0; i<lights.size() && i<256; ++i)
+  //for (int i=0; i<3 && i<256; ++i)
   {
-    if (i>0)
-    {
-      continue;
-    }
     vec4 lightprop = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
     //fprintf(stderr, "\t light at %f %f %f\r\n", lightprop.x, lightprop.y, lightprop.z);
     glUniform4fv(lightposition_loc, 1, &lightprop[0]);
     int adj = i+1;
     //vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 4, (adj&0x30) << 2, (adj&0xC0) << 0)/256.0f;
     vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 4, (adj&0x30) << 2, (adj&0xC0) << 0)/255.0f;
+    //fprintf(stderr, "i -> %d, index -> %f %f %f %f\r\n", adj, index.x, index.y, index.z, index.w);
     //vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 6, (adj&0x30) << 6, (adj&0xC0) << 6)/255.0f;
     //fprintf(stderr, "light index %f %f %f %f\r\n", index.x, index.y, index.z, index.w);
     glUniform4fv(lightindex_loc, 1, &index[0]);
