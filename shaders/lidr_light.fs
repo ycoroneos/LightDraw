@@ -17,7 +17,6 @@ uniform float matShininess;
 
 //Camera Supplied
 uniform vec3 camPos;
-uniform vec2 screendims;
 
 //lidr supplied
 uniform sampler2D lightindex_tex;     //2
@@ -77,21 +76,22 @@ void main () {
   vec4 pos_world = vec4(var_Position, 1);
   pos_world /= pos_world.w;
 
-  //vec2 texcoords = (gl_FragCoord.xy/screendims.xy * 2.0f) - 1.0f;
-  //vec4 light_indices = unpacklights(texture(lightindex_tex, texcoords));
   vec4 light_indices = unpacklights(textureProj(lightindex_tex, var_projectSpace));
 
   out_Color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
   for (int i=0; i<4; i++)
   {
     float index = light_indices[i];
+    vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
     if (index==0.0f)
       {
-        out_Color.xyz += vec3(0.0f, 0.0f, 0.0f);
+        out_Color.xyz = diffuseColor / 10.0f;
       }
     else
       {
-        vec3 lightPos = texture(lightposition_tex, index).xyz;
+        vec4 lightPos_att = texture(lightposition_tex, index).xyzw;
+        vec3 lightPos = lightPos_att.xyz;
+        float att = lightPos_att.w;
         vec3 L = normalize(lightPos.xyz);
         vec3 V = normalize(camPos - pos_world.xyz);
         vec3 N = normalize(var_Normal);
@@ -105,9 +105,9 @@ void main () {
         vec3 lightSpecular = texture(lightspecular_tex, index).xyz;
         vec3 Ispe = specular(N, L, V, lightSpecular);
 
-        vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
-        //out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor;
-        out_Color.xyz  = diffuseColor;
+        float distance = 1.0f / length(lightPos - pos_world.xyz);
+        out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * att;
+        //out_Color.xyz  = diffuseColor;
       }
   }
 
