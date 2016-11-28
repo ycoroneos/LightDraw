@@ -92,7 +92,7 @@ void main () {
         vec4 lightPos_att = texture(lightposition_tex, index).xyzw;
         vec3 lightPos = lightPos_att.xyz;
         float att = lightPos_att.w;
-        vec3 L = normalize(lightPos.xyz);
+        vec3 L = normalize(lightPos.xyz - pos_world.xyz);
         vec3 V = normalize(camPos - pos_world.xyz);
         vec3 N = normalize(var_Normal);
 
