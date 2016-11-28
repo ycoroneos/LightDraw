@@ -40,15 +40,15 @@ int initScene(mat4 Projection)
   camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
 
-  voxelprog                         = shaderlib.loadShader("../shaders/voxel.vs", "../shaders/voxel.fs");
-  default_mesh_prog                 = shaderlib.loadShader("../shaders/flat.vs", "../shaders/light.fs");
-  pointlight_shadowmap_program      = shaderlib.loadShader("../shaders/point_shadow.vs", "../shaders/point_shadow.gs", "../shaders/point_shadow.fs");
-  directionlight_shadowmap_program  = shaderlib.loadShader("../shaders/shadow.vs", "../shaders/shadow.fs");
-  default_quad_program              = shaderlib.loadShader("../shaders/quad.vs", "../shaders/quad.gs", "../shaders/quad.fs");
-  lidr_z_program                    = shaderlib.loadShader("../shaders/depth.vs", "../shaders/depth.fs");
-  lidr_lightvolume_program          = shaderlib.loadShader("../shaders/lightvolume.vs", "../shaders/lightvolume.fs");
-  viewport_program                  = shaderlib.loadShader("../shaders/viewport.vs", "../shaders/viewport.fs");
-  mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vs", "../shaders/lidr_light.fs");
+  voxelprog                         = shaderlib.loadShader("../shaders/voxel.vert", "../shaders/voxel.frag");
+  default_mesh_prog                 = shaderlib.loadShader("../shaders/flat.vert", "../shaders/light.frag");
+  pointlight_shadowmap_program      = shaderlib.loadShader("../shaders/point_shadow.vert", "../shaders/point_shadow.geom", "../shaders/point_shadow.frag");
+  directionlight_shadowmap_program  = shaderlib.loadShader("../shaders/shadow.vert", "../shaders/shadow.frag");
+  default_quad_program              = shaderlib.loadShader("../shaders/quad.vert", "../shaders/quad.geom", "../shaders/quad.frag");
+  lidr_z_program                    = shaderlib.loadShader("../shaders/depth.vert", "../shaders/depth.frag");
+  lidr_lightvolume_program          = shaderlib.loadShader("../shaders/lightvolume.vert", "../shaders/lightvolume.frag");
+  viewport_program                  = shaderlib.loadShader("../shaders/viewport.vert", "../shaders/viewport.frag");
+  mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vert", "../shaders/lidr_light.frag");
   lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
 //  vxg = new VoxelGrid(10,10,10);
 //  vxg->setProgram(voxelprog);
