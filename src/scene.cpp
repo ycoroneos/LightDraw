@@ -56,7 +56,7 @@ int initScene(mat4 Projection)
 //  gnd->setProgram(voxelprog);
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
-  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
+  sgr = new AssimpGraph("../data/sponza/sponza.dae");
   sgr->enableInput();
   sgr->bake();
   return 0;
