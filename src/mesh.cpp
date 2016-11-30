@@ -65,6 +65,12 @@ Mesh::~Mesh()
 void Mesh::setWorldPos(mat4 pos)
 {
   worldpos = pos;
+  fprintf(stderr, "mesh at world pos %f %f %f\r\n", worldpos[3].x, worldpos[3].y, worldpos[3].z);
+  fprintf(stderr, "M: ");
+  for (int i = 0; i<4; ++i)
+  {
+    fprintf(stderr, "\tcol %d : %f %f %f %f\r\n", i, pos[i].x, pos[i].y, pos[i].z, pos[i].w);
+  }
 }
 
 mat4 Mesh::getWorldPos()

@@ -209,8 +209,12 @@ float PointLight::getAngle()
 void SpotLight::updatePos(mat4 *M)
 {
   mat4 mm = *M;
-  worldpos = vec3(mm[3].x, mm[3].z, mm[3].y);
-  world_direction = mat3(mm)*direction;
+  vec4 world = mm*vec4(pos, 1.0f);
+  world/=world.w;
+  worldpos = vec3(world.x, world.z, world.y);
+  vec3 direction_inv = mat3(mm)*direction;
+  world_direction = vec3(direction_inv.x, direction_inv.y, direction_inv.z);
+  fprintf(stderr, "spot light local direction : %f %f %f\r\n", direction.x, direction.y, direction.z);
   fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
 }
 
