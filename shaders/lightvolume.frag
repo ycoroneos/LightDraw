@@ -40,7 +40,7 @@ void main()
   float cone_angle = light_cone_direction_angle.w;
   float angle = clamp(dot(D, normalize(L)), 0, 1);
 
-  if (angle < cone_angle && length(scenepos_world_fixed - lightpos) <= radius)
+  if (acos(angle) < cone_angle && length(scenepos_world_fixed - lightpos) <= radius)
   {
     out_Color = light_index;
   }

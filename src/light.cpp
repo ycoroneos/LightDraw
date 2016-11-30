@@ -208,12 +208,10 @@ float PointLight::getAngle()
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpotLight::updatePos(mat4 *M)
 {
-  //vec4 base = *M * vec4(0.0f, 0.0f, 0.0f, 1.0f);
-  //worldpos = vec3(base) + pos;
-  //worldpos = vec3(*M * vec4(pos, 1.0f));
-  //worldpos = vec3(*M * vec4(0.0f, 0.0f, 0.0f, 1.0f)) + pos;
-  worldpos = vec3(-1.0f, 0.2f, -1.0f);
-  direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
+  mat4 mm = *M;
+  worldpos = vec3(mm[3].x, mm[3].z, mm[3].y);
+  world_direction = mat3(mm)*direction;
+  fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
 }
 
 SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1)
@@ -221,6 +219,7 @@ SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffus
 {
   //worldpos = vec3(5.0f, 0.0f, 0.0f);
   //direction = -1.0f*worldpos;
+  fprintf(stderr, "spotlight direction %f %f %f\r\n", direction.x, direction.y, direction.z);
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
   glBindTexture(GL_TEXTURE_2D, depth_map);
@@ -384,7 +383,7 @@ void SpotLight::renderQuad()
 
 vec3 SpotLight::getDirection()
 {
-  return direction;
+  return world_direction;
 }
 
 float SpotLight::getRadius()

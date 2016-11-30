@@ -88,6 +88,7 @@ class SpotLight : public Light
     float radius;
     float angle;
     vec3 direction;
+    vec3 world_direction;
     mat4 shadowmat;
 };
 
