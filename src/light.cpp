@@ -61,8 +61,12 @@ vec3 Light::getSpecular()
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
+  //mat4 mm = *M;
+  //worldpos = vec3(mm[3].x, mm[3].z, mm[3].y);
   mat4 mm = *M;
-  worldpos = vec3(mm[3].x, mm[3].z, mm[3].y);
+  vec4 world = mm*vec4(pos, 1.0f);
+  world/=world.w;
+  worldpos = vec3(world);
 }
 
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1)
@@ -212,10 +216,11 @@ void SpotLight::updatePos(mat4 *M)
   vec4 world = mm*vec4(pos, 1.0f);
   world/=world.w;
   worldpos = vec3(world.x, world.z, world.y);
-  vec3 direction_inv = mat3(mm)*direction;
-  world_direction = vec3(direction_inv.x, direction_inv.y, direction_inv.z);
-  fprintf(stderr, "spot light local direction : %f %f %f\r\n", direction.x, direction.y, direction.z);
-  fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
+  vec3 world_direction = mat3(mm)*direction;
+  //vec3 direction_inv = mat3(mm)*direction;
+  //world_direction = vec3(direction_inv.x, direction_inv.y, direction_inv.z);
+  //fprintf(stderr, "spot light local direction : %f %f %f\r\n", direction.x, direction.y, direction.z);
+  //fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
 }
 
 SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1)

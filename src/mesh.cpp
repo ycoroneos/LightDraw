@@ -11,8 +11,9 @@
 extern int default_mesh_prog;
 extern int mesh_lidr_prog;
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name_1, Material *material)
 {
+  strncpy(name, name_1, sizeof(name));
   glGenVertexArrays(1, &vertexarray);
   glGenBuffers(1, &vertexbuffer);
   glGenBuffers(1, &indexbuffer);
@@ -65,7 +66,7 @@ Mesh::~Mesh()
 void Mesh::setWorldPos(mat4 pos)
 {
   worldpos = pos;
-  fprintf(stderr, "mesh at world pos %f %f %f\r\n", worldpos[3].x, worldpos[3].y, worldpos[3].z);
+  fprintf(stderr, "mesh %s at world pos %f %f %f\r\n", name, worldpos[3].x, worldpos[3].y, worldpos[3].z);
   fprintf(stderr, "M: ");
   for (int i = 0; i<4; ++i)
   {

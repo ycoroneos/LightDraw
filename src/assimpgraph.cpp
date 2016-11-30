@@ -17,9 +17,11 @@ using namespace glm;
 // ASSIMP GLUE
 //
 ////////////////////////////////////////////////////////////////
+//must swap y and z
 static vec3 aiVec3toVec3(aiVector3D in)
 {
   return vec3(in.x, in.y, in.z);
+  //return vec3(in.x, in.z, -1.0f*in.y);
 }
 
 static vec3 aiColor3toVec3(aiColor3D in)
@@ -27,6 +29,7 @@ static vec3 aiColor3toVec3(aiColor3D in)
   return vec3(in.r, in.g, in.b);
 }
 
+//must transpose and row-swap too
 static mat4 aiMat4toMat4(aiMatrix4x4 in)
 {
   mat4 out;
@@ -37,7 +40,13 @@ static mat4 aiMat4toMat4(aiMatrix4x4 in)
       out[row][col] = in[row][col];
     }
   }
-  return out;
+//  mat4 swap;
+//  swap[0] = vec4(1.0f, 0.0f, 0.0f, 0.0f);
+//  swap[1] = vec4(0.0f, 0.0f, 1.0f, 0.0f);
+//  swap[2] = vec4(0.0f, 1.0f, 0.0f, 0.0f);
+//  swap[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+  //return swap*transpose(out);
+  return transpose(out);
 }
 
 //load a scenegraph with assimp help

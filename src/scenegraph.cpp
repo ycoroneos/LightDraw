@@ -65,18 +65,18 @@ void SceneGraph::bake()
     vector<Light*> Nlights = curN->getLights();
     for (int i=0; i<Nlights.size(); ++i)
     {
-     fprintf(stderr, "\r\n");
-     for (int i=0; i<4; ++i)
-     {
-       vec4 col = M[i];
-       fprintf(stderr, "%f %f %f %f", col.x, col.y, col.z, col.w);
-     }
-     fprintf(stderr, "\r\n");
-      mat4 fixed_M = transpose(M);
-      vec4 trs = fixed_M[3];
-      fprintf(stderr, "bake: found light %s\r\n", Nlights[i]->getName());
-      fprintf(stderr, "\t pos %f %f %f %f\r\n", trs.x, trs.y, trs.z, trs.w);
-      Nlights[i]->updatePos(&fixed_M);
+   //  fprintf(stderr, "\r\n");
+   //  for (int i=0; i<4; ++i)
+   //  {
+   //    vec4 col = M[i];
+   //    fprintf(stderr, "%f %f %f %f", col.x, col.y, col.z, col.w);
+   //  }
+   //  fprintf(stderr, "\r\n");
+   //   //mat4 fixed_M = transpose(M);
+   //   //vec4 trs = fixed_M[3];
+   //   fprintf(stderr, "bake: found light %s\r\n", Nlights[i]->getName());
+   //   fprintf(stderr, "\t pos %f %f %f %f\r\n", trs.x, trs.y, trs.z, trs.w);
+      Nlights[i]->updatePos(&M);
     }
     for (unsigned i=0; i<meshes.size(); ++i)
     {

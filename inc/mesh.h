@@ -9,7 +9,7 @@ using namespace glm;
 class Mesh
 {
   public:
-    Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name, Material *material);
+    Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const char *name_1, Material *material);
     ~Mesh();
     void setWorldPos(mat4 pos);
     mat4 getWorldPos();
