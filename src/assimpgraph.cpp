@@ -129,6 +129,19 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   {
     aiLight *asslight = scene->mLights[i];
     fprintf(stderr, "light pos %f %f %f\r\n", asslight->mPosition[0], asslight->mPosition[1], asslight->mPosition[2]);
+    float angle = asslight->mAngleInnerCone;
+    //approximate radius as distance when attenuation is 0.1
+    fprintf(stderr, "att: %f %f %f\r\n", asslight->mAttenuationConstant, asslight->mAttenuationLinear, asslight->mAttenuationQuadratic);
+    //float radius = ((1.0f/0.8f) - asslight->mAttenuationConstant) / asslight->mAttenuationLinear;
+    //float radius = asslight->mAttenuationConstant*1.1f;
+    //float radius = 1.0f/asslight->mAttenuationQuadratic;
+    //float radius = 5.0f;
+    float radius = 1.0f;
+    if (asslight->mAttenuationQuadratic > 0)
+    {
+      radius = (-1.0f*asslight->mAttenuationLinear + sqrt(asslight->mAttenuationLinear * asslight->mAttenuationLinear - 4.0f*asslight->mAttenuationQuadratic*(asslight->mAttenuationConstant - 2.0f))) / (2.0f * asslight->mAttenuationQuadratic);
+    }
+    fprintf(stderr, "radius %f \r\n", radius);
     switch(asslight->mType)
     {
       case aiLightSource_DIRECTIONAL:
@@ -139,12 +152,12 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
       case aiLightSource_POINT:
         fprintf(stderr, "Point light\r\n");
         lights.push_back(new PointLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-              aiColor3toVec3(asslight->mColorSpecular)));
+              aiColor3toVec3(asslight->mColorSpecular), radius));
         break;
       case aiLightSource_SPOT:
         fprintf(stderr, "Spot light\r\n");
-        //lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), asslight->mAngleInnerCone));
+        lights.push_back(new SpotLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection), radius, angle));
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);
@@ -238,7 +251,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   {
     if (strcmp(lights[i]->getName(), root->getName())==0)
     {
-      fprintf(stderr, "root has light\r\n");
+      //fprintf(stderr, "root has light\r\n");
       root->addLight(lights[i]);
     }
   }
@@ -247,7 +260,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   {
     root->addChild(recursive_copy(ainode->mChildren[i], root));
   }
-  fprintf(stderr, "scene loaded %d lights\r\n", lights.size());
+  //fprintf(stderr, "scene loaded %d lights\r\n", lights.size());
   delete[] cwd;
 }
 
@@ -267,7 +280,7 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   {
     if (strcmp(lights[i]->getName(), newnode->getName())==0)
     {
-      fprintf(stderr, "%s has light, parent %s\r\n", newnode->getName(), parent->getName());
+      //fprintf(stderr, "%s has light, parent %s\r\n", newnode->getName(), parent->getName());
       newnode->addLight(lights[i]);
     }
   }

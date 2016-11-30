@@ -21,12 +21,15 @@ class Light
     virtual unsigned getType()=0;
     virtual void renderQuad()=0;
     virtual vec3 getDirection()=0;
+    //only spotlights and pointlights have radius and angle
+    virtual float getRadius()=0;
+    virtual float getAngle()=0;
     vec3 getWorldPos();
     vec3 getAmbient();
     vec3 getDiffuse();
     vec3 getSpecular();
-    float getRadius();
-    float getAngle();
+   // float getRadius();
+   // float getAngle();
   protected:
     char name[25];
     vec3 pos;
@@ -34,7 +37,8 @@ class Light
     vec3 diffuse;
     vec3 specular;
     vec3 worldpos;
-    float angle;
+   // float angle;
+   // float radius;
 
     //GL things for shadows
     GLuint depth_fbo;
@@ -50,7 +54,7 @@ class PointLight : public Light
 {
   public:
     ~PointLight();
-    PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1);
+    PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1);
     void updateUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
@@ -58,7 +62,11 @@ class PointLight : public Light
     unsigned getType() override;
     void renderQuad() override;
     vec3 getDirection() override;
+    float getRadius() override;
+    //2*pi
+    float getAngle() override;
   private:
+    float radius;
     mat4 cubemats[6];
 };
 
@@ -66,7 +74,7 @@ class SpotLight : public Light
 {
   public:
     ~SpotLight();
-    SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float angle_1);
+    SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1);
     void updateUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
@@ -74,7 +82,10 @@ class SpotLight : public Light
     unsigned getType() override;
     void renderQuad() override;
     vec3 getDirection() override;
+    float getRadius() override;
+    float getAngle() override;
   private:
+    float radius;
     float angle;
     vec3 direction;
     mat4 shadowmat;
@@ -92,6 +103,8 @@ class DirectionLight : public Light
     unsigned getType() override;
     void renderQuad() override;
     vec3 getDirection() override;
+    float getRadius() override;
+    float getAngle() override;
   private:
     vec3 direction;
 };
@@ -107,5 +120,7 @@ class DummyLight : public Light
     unsigned getType() override;
     void renderQuad() override;
     vec3 getDirection() override;
+    float getRadius() override;
+    float getAngle() override;
   private:
 };

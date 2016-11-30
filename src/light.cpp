@@ -58,16 +58,6 @@ vec3 Light::getSpecular()
   return specular;
 }
 
-float Light::getRadius()
-{
-  return 5.0f;
-}
-
-float Light::getAngle()
-{
-  //return angle;
-  return 2*3.14;
-}
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
@@ -75,8 +65,8 @@ void PointLight::updatePos(mat4 *M)
   worldpos = vec3(mm[3].x, mm[3].z, mm[3].y);
 }
 
-PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1)
+PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), radius(radius_1)
 {
   fprintf(stderr, "point light named %s\r\n", name);
   worldpos = vec3(5.0f, 5.0f, 0.0f);
@@ -203,6 +193,17 @@ vec3 PointLight::getDirection()
 {
   return vec3(0.0f);
 }
+
+float PointLight::getRadius()
+{
+  return radius;
+}
+
+float PointLight::getAngle()
+{
+  return 2*3.14;
+}
+
 ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void SpotLight::updatePos(mat4 *M)
@@ -215,8 +216,8 @@ void SpotLight::updatePos(mat4 *M)
   direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
 }
 
-SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float angle_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), direction(direction_1), angle(angle_1)
+SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), direction(direction_1), radius(radius_1), angle(angle_1)
 {
   //worldpos = vec3(5.0f, 0.0f, 0.0f);
   //direction = -1.0f*worldpos;
@@ -261,36 +262,36 @@ void SpotLight::updateUniforms(unsigned program)
   int specular_loc = glGetUniformLocation(program, "lightSpecular");
   //int cone_loc = glGetUniformLocation(program, "lightCone");
   int conedir_loc = glGetUniformLocation(program, "lightConeDirection");
-  int shadow_loc = glGetUniformLocation(program, "single_depthMap");
-  if (shadow_loc < 0)
-    fprintf(stderr, "shadow map loc missing\r\n");
-  int BPV_loc = glGetUniformLocation(program, "BPV");
-  if (BPV_loc < 0)
-    fprintf(stderr, "BPV loc missing\r\n");
-  if (lightpos_loc<0)
-  {
-    fprintf(stderr, "spot light: couldn't find lightpos uniform\r\n");
-  }
-  if (ambient_loc<0)
-  {
-    fprintf(stderr, "spot light: couldn't find ambient uniform\r\n");
-  }
-  if (diffuse_loc<0)
-  {
-    fprintf(stderr, "spot light: couldn't find diffuse uniform\r\n");
-  }
-  if (specular_loc<0)
-  {
-    fprintf(stderr, "spot light: couldn't find specular uniform\r\n");
-  }
+//  int shadow_loc = glGetUniformLocation(program, "single_depthMap");
+//  if (shadow_loc < 0)
+//    fprintf(stderr, "shadow map loc missing\r\n");
+//  int BPV_loc = glGetUniformLocation(program, "BPV");
+//  if (BPV_loc < 0)
+//    fprintf(stderr, "BPV loc missing\r\n");
+//  if (lightpos_loc<0)
+//  {
+//    fprintf(stderr, "spot light: couldn't find lightpos uniform\r\n");
+//  }
+//  if (ambient_loc<0)
+//  {
+//    fprintf(stderr, "spot light: couldn't find ambient uniform\r\n");
+//  }
+//  if (diffuse_loc<0)
+//  {
+//    fprintf(stderr, "spot light: couldn't find diffuse uniform\r\n");
+//  }
+//  if (specular_loc<0)
+//  {
+//    fprintf(stderr, "spot light: couldn't find specular uniform\r\n");
+//  }
  // if (cone_loc<0)
  // {
  //   fprintf(stderr, "spot light: couldn't find cone uniform\r\n");
  // }
-  if (conedir_loc<0)
-  {
-    fprintf(stderr, "spot light: couldn't find cone dir uniform\r\n");
-  }
+//  if (conedir_loc<0)
+//  {
+//    fprintf(stderr, "spot light: couldn't find cone dir uniform\r\n");
+//  }
   vec4 lpos = vec4(worldpos, 1.0f);
   glUniform4fv(lightpos_loc, 1, &lpos[0]);
   glUniform3fv(ambient_loc, 1, &ambient[0]);
@@ -299,18 +300,18 @@ void SpotLight::updateUniforms(unsigned program)
   glUniform4fv(specular_loc, 1, &combined[0]);
   //glUniform1fv(cone_loc, 1, &angle);
   glUniform3fv(conedir_loc, 1, &direction[0]);
-  glUniform1i(shadow_loc, 4);
-  glActiveTexture(GL_TEXTURE0 + 4);
-  glBindTexture(GL_TEXTURE_2D, depth_map);
-  glm::mat4 biasMatrix(
-  0.5, 0.0, 0.0, 0.0,
-  0.0, 0.5, 0.0, 0.0,
-  0.0, 0.0, 0.5, 0.0,
-  0.5, 0.5, 0.5, 1.0
-  );
-  glm::mat4 BPV = biasMatrix*PV;
-  glUniform4fv(BPV_loc, 1, &BPV[0][0]);
-  glBindTexture(GL_TEXTURE_2D, depth_map);
+//  glUniform1i(shadow_loc, 4);
+//  glActiveTexture(GL_TEXTURE0 + 4);
+//  glBindTexture(GL_TEXTURE_2D, depth_map);
+//  glm::mat4 biasMatrix(
+//  0.5, 0.0, 0.0, 0.0,
+//  0.0, 0.5, 0.0, 0.0,
+//  0.0, 0.0, 0.5, 0.0,
+//  0.5, 0.5, 0.5, 1.0
+//  );
+//  glm::mat4 BPV = biasMatrix*PV;
+//  glUniform4fv(BPV_loc, 1, &BPV[0][0]);
+//  glBindTexture(GL_TEXTURE_2D, depth_map);
 }
 
 int SpotLight::shadowMap()
@@ -384,6 +385,16 @@ void SpotLight::renderQuad()
 vec3 SpotLight::getDirection()
 {
   return direction;
+}
+
+float SpotLight::getRadius()
+{
+  return radius;
+}
+
+float SpotLight::getAngle()
+{
+  return angle;
 }
 
 ////////////////////////////////////////////////////
@@ -504,6 +515,16 @@ vec3 DirectionLight::getDirection()
   return direction;
 }
 
+float DirectionLight::getRadius()
+{
+  return 1000.0f;
+}
+
+float DirectionLight::getAngle()
+{
+  return 2*3.14;
+}
+
 //////////////////////////////////////////////////////
 void DummyLight::updatePos(mat4 *M)
 {
@@ -539,4 +560,14 @@ void DummyLight::renderQuad()
 vec3 DummyLight::getDirection()
 {
   return vec3(0.0f);
+}
+
+float DummyLight::getRadius()
+{
+  return 0.0001;
+}
+
+float DummyLight::getAngle()
+{
+  return 0.0f;
 }

@@ -15,7 +15,7 @@
 #include <time.h>
 
 
-Camera *camera;// = Camera(vec3(0.0f,0.0f,10.0f),vec2(0.0f,0.0f));
+Camera *camera;
 VoxelGrid *vxg;
 VoxelGrid *gnd;
 BinVox *garg;
@@ -57,7 +57,6 @@ int initScene(mat4 Projection)
   //garg = new BinVox("../data/garg.binvox");
   //garg->setProgram(voxelprog);
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
-  //sgr = new AssimpGraph("../data/crytek-sponza-maya/sponza.dae");
   sgr->enableInput();
   sgr->bake();
   return 0;
