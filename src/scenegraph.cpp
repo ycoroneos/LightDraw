@@ -119,6 +119,24 @@ void SceneGraph::zPreBaked(int program)
   }
 }
 
+void SceneGraph::drawShadowMaps()
+{
+  //for each light:
+  //  program = binddepthfbo()
+  //  zPreBaked(program)
+  for (int i=0; i<lights.size(); ++i)
+  {
+    Light *dislight = lights[i];
+    if (!dislight->isShadowing())
+    {
+      continue;
+    }
+    int depth_prog = dislight->shadowMap();
+    zPreBaked(depth_prog);
+    dislight->restore();
+  }
+}
+
 //cast shadows for the first 2 lights in the lights list
 //Ill do more for the final project
 void SceneGraph::zPre()
@@ -290,6 +308,7 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
     //vec4 lightprop_b = vec4(lights[i]->getDirection(), 2*3.14);
     glUniform4fv(lightposition_loc, 1, &lightprop_a[0]);
     glUniform4fv(lightdirection_loc, 1, &lightprop_b[0]);
+    lights[i]->updateShadowUniforms(lightvolume_program);
     int adj = i+1;
     vec4 index = vec4((adj&0x3) << 6, (adj&0xC) << 4, (adj&0x30) << 2, (adj&0xC0) << 0)/255.0f;
     glUniform4fv(lightindex_loc, 1, &index[0]);

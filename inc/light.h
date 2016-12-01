@@ -12,8 +12,9 @@ using namespace glm;
 class Light
 {
   public:
-    Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1);
+    Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, bool shadows_1);
     virtual void updateUniforms(unsigned program)=0;
+    virtual void updateShadowUniforms(unsigned program)=0;
     const char* getName();
     virtual void updatePos(mat4 *M)=0;
     virtual int shadowMap()=0;
@@ -28,6 +29,8 @@ class Light
     vec3 getAmbient();
     vec3 getDiffuse();
     vec3 getSpecular();
+    bool isShadowing();
+    GLuint getDepthMap();
    // float getRadius();
    // float getAngle();
   protected:
@@ -37,6 +40,7 @@ class Light
     vec3 diffuse;
     vec3 specular;
     vec3 worldpos;
+    bool shadows=0;
    // float angle;
    // float radius;
 
@@ -56,6 +60,7 @@ class PointLight : public Light
     ~PointLight();
     PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1);
     void updateUniforms(unsigned program) override;
+    void updateShadowUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
     void restore() override;
@@ -76,6 +81,7 @@ class SpotLight : public Light
     ~SpotLight();
     SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1);
     void updateUniforms(unsigned program) override;
+    void updateShadowUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
     void restore() override;
@@ -98,6 +104,7 @@ class DirectionLight : public Light
     ~DirectionLight();
     DirectionLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1);
     void updateUniforms(unsigned program) override;
+    void updateShadowUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
     void restore() override;
@@ -116,6 +123,7 @@ class DummyLight : public Light
   public:
     DummyLight();
     void updateUniforms(unsigned program) override;
+    void updateShadowUniforms(unsigned program) override;
     void updatePos(mat4 *M) override;
     int shadowMap() override;
     void restore() override;

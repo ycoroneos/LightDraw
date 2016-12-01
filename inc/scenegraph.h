@@ -54,6 +54,7 @@ class SceneGraph : public InputResponder
     void bake();
     void zPre();
     void zPreBaked(int program);
+    void drawShadowMaps();
     void drawLightVolumes(int lightvolme_program, Camera *camera);
     void drawScene(Camera *camera, bool wireframe);
     void drawSceneShadowed(Camera *camera, bool wireframe);

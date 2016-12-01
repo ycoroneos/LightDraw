@@ -13,11 +13,11 @@ using namespace glm;
 extern int window_width;
 extern int window_height;
 extern int  pointlight_shadowmap_program;
-extern int  directionlight_shadowmap_program;
+extern int  spotlight_shadowmap_program;
 extern int  default_quad_program;
 
-Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1)
-  : pos(pos_1), ambient(ambient_1), diffuse(diffuse_1), specular(specular_1)
+Light::Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, bool shadows_1)
+  : pos(pos_1), ambient(ambient_1), diffuse(diffuse_1), specular(specular_1), shadows(shadows_1)
 {
   strncpy(name, name_1, sizeof(name));
   worldpos = pos;
@@ -58,6 +58,16 @@ vec3 Light::getSpecular()
   return specular;
 }
 
+bool Light::isShadowing()
+{
+  return shadows;
+}
+
+GLuint Light::getDepthMap()
+{
+  return depth_map;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
@@ -70,7 +80,7 @@ void PointLight::updatePos(mat4 *M)
 }
 
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), radius(radius_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1, false), radius(radius_1)
 {
   fprintf(stderr, "point light named %s\r\n", name);
   worldpos = vec3(5.0f, 5.0f, 0.0f);
@@ -138,6 +148,11 @@ void PointLight::updateUniforms(unsigned program)
 //  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 //  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 //  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+}
+
+void PointLight::updateShadowUniforms(unsigned program)
+{
+  return;
 }
 
 int PointLight::shadowMap()
@@ -226,7 +241,7 @@ void SpotLight::updatePos(mat4 *M)
 }
 
 SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1, float radius_1, float angle_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), direction(direction_1), radius(radius_1), angle(angle_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1, true), direction(direction_1), radius(radius_1), angle(angle_1)
 {
   //worldpos = vec3(5.0f, 0.0f, 0.0f);
   //direction = -1.0f*worldpos;
@@ -254,7 +269,7 @@ SpotLight::SpotLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffus
   }
   glBindTexture(GL_TEXTURE_2D, 0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  shadowmap_program = directionlight_shadowmap_program;
+  shadowmap_program = spotlight_shadowmap_program;
 }
 
 SpotLight::~SpotLight()
@@ -324,6 +339,43 @@ void SpotLight::updateUniforms(unsigned program)
 //  glBindTexture(GL_TEXTURE_2D, depth_map);
 }
 
+void SpotLight::updateShadowUniforms(unsigned program)
+{
+  if (isShadowing())
+  {
+    GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
+    GLfloat near = 1.0f;
+    GLfloat far = 250.0f;
+    mat4 P = glm::perspective(90.0f, aspect, near, far);
+    shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
+    int PV_loc = glGetUniformLocation(program, "light_PV");
+    if (PV_loc < 0)
+    {
+      fprintf(stderr, "lightvolume PV_loc loc missing\r\n");
+    }
+    int shadows_loc = glGetUniformLocation(program, "shadows");
+    if (shadows_loc < 0)
+    {
+      fprintf(stderr, "lightvolme shadows loc missing\r\n");
+    }
+    glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
+    glUniform1fv(shadows_loc, 1, &far);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, depth_map);
+  }
+  else
+  {
+    int shadows_loc = glGetUniformLocation(program, "shadows");
+    if (shadows_loc < 0)
+    {
+      fprintf(stderr, "lightvolme shadows loc missing\r\n");
+    }
+    float noshadow = -1.0f;
+    glUniform1fv(shadows_loc, 1, &noshadow);
+  }
+  return;
+}
+
 int SpotLight::shadowMap()
 {
   glUseProgram(shadowmap_program);
@@ -331,15 +383,15 @@ int SpotLight::shadowMap()
   GLfloat near = 1.0f;
   GLfloat far = 250.0f;
   mat4 P = glm::perspective(90.0f, aspect, near, far);
-  shadowmat = P * glm::lookAt(pos, pos+direction, vec3(0.0f, 1.0f, 0.0f));
-  int PV_loc = glGetUniformLocation(shadowmap_program, "PV");
+  shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
+  int PV_loc = glGetUniformLocation(shadowmap_program, "light_PV");
   //int lightpos_loc = glGetUniformLocation(shadowmap_program, "lightPos");
   //int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
   //if (PV_loc < 0 || lightpos_loc < 0 || farplane_loc < 0)
   //{
   if (PV_loc < 0)
   {
-    fprintf(stderr, "shadowmap locs missing\r\n");
+    fprintf(stderr, "shadowmap PV_loc loc missing\r\n");
   }
   glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
   //glUniform3fv(lightpos_loc, 1, &pos[0]);
@@ -361,7 +413,7 @@ void SpotLight::restore()
   glUseProgram(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, window_width, window_height);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_BACK);
 }
 
@@ -409,7 +461,7 @@ float SpotLight::getAngle()
 
 ////////////////////////////////////////////////////
 DirectionLight::DirectionLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, vec3 direction_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1), direction(direction_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1, false), direction(direction_1)
 {
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
@@ -427,7 +479,7 @@ DirectionLight::DirectionLight(const char *name_1, vec3 pos_1, vec3 ambient_1, v
   }
   glBindTexture(GL_TEXTURE_2D, 0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  shadowmap_program = directionlight_shadowmap_program;
+  shadowmap_program = spotlight_shadowmap_program;
 }
 
 DirectionLight::~DirectionLight()
@@ -472,6 +524,11 @@ void DirectionLight::updateUniforms(unsigned program)
   );
   glm::mat4 BPV = biasMatrix*PV;
   glUniform4fv(BPV_loc, 1, &BPV[0][0]);
+}
+
+void DirectionLight::updateShadowUniforms(unsigned program)
+{
+  return;
 }
 
 int DirectionLight::shadowMap()
@@ -540,7 +597,7 @@ void DummyLight::updatePos(mat4 *M)
 {
 }
 
-DummyLight::DummyLight() : Light("dummy", vec3(), vec3(), vec3(), vec3())
+DummyLight::DummyLight() : Light("dummy", vec3(), vec3(), vec3(), vec3(), false)
 {
 }
 
@@ -558,6 +615,12 @@ void DummyLight::restore()
 void DummyLight::updateUniforms(unsigned program)
 {
 }
+
+void DummyLight::updateShadowUniforms(unsigned program)
+{
+  return;
+}
+
 unsigned DummyLight::getType()
 {
   return DUMMY_LIGHT;

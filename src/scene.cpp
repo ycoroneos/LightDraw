@@ -28,7 +28,7 @@ ShaderLib shaderlib;
 int voxelprog;
 int default_mesh_prog;
 int pointlight_shadowmap_program;
-int directionlight_shadowmap_program;
+int spotlight_shadowmap_program;
 int default_quad_program;
 int lidr_z_program;
 int lidr_lightvolume_program;
@@ -43,7 +43,7 @@ int initScene(mat4 Projection)
   voxelprog                         = shaderlib.loadShader("../shaders/voxel.vert", "../shaders/voxel.frag");
   default_mesh_prog                 = shaderlib.loadShader("../shaders/flat.vert", "../shaders/light.frag");
   pointlight_shadowmap_program      = shaderlib.loadShader("../shaders/point_shadow.vert", "../shaders/point_shadow.geom", "../shaders/point_shadow.frag");
-  directionlight_shadowmap_program  = shaderlib.loadShader("../shaders/shadow.vert", "../shaders/shadow.frag");
+  spotlight_shadowmap_program       = shaderlib.loadShader("../shaders/spotlight_shadow.vert", "../shaders/spotlight_shadow.frag");
   default_quad_program              = shaderlib.loadShader("../shaders/quad.vert", "../shaders/quad.geom", "../shaders/quad.frag");
   lidr_z_program                    = shaderlib.loadShader("../shaders/depth.vert", "../shaders/depth.frag");
   lidr_lightvolume_program          = shaderlib.loadShader("../shaders/lightvolume.vert", "../shaders/lightvolume.frag");
@@ -79,6 +79,9 @@ void drawScene()
   int zprog = lidr->ZPrePass(camera);
   sgr->zPreBaked(zprog);
 
+  //draw shadowmaps for each light
+  sgr->drawShadowMaps();
+
   //draw lightvolumes
   int lightvolume_prog = lidr->LightVolumes();
   sgr->drawLightVolumes(lightvolume_prog, camera);
@@ -89,6 +92,7 @@ void drawScene()
 
   sgr->drawBaked(camera, camera->viewWire());
   lidr->cornerWindow();
+  lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());
   //sgr->drawSceneShadowed(camera, camera->viewWire());

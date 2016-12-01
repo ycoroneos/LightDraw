@@ -174,7 +174,7 @@ void LIDR::cornerWindow()
   glDisable(GL_DEPTH_TEST);
 
   //draw the z buffer
-  glViewport(0, 0, smallwidth, smallheight);
+  glViewport(smallwidth, 0, smallwidth, smallheight);
   //glScissor(0, 0, smallwidth, smallheight);
   //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glActiveTexture(GL_TEXTURE0);
@@ -182,7 +182,7 @@ void LIDR::cornerWindow()
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
   //draw the light volumes
-  glViewport(smallwidth, 0, smallwidth, smallheight);
+  glViewport(smallwidth*2, 0, smallwidth, smallheight);
   //glScissor(smallwidth, 0, smallwidth, smallheight);
   //glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
   glActiveTexture(GL_TEXTURE0);
@@ -192,6 +192,27 @@ void LIDR::cornerWindow()
   //restore state
   glEnable(GL_DEPTH_TEST);
   //glDisable(GL_SCISSOR_TEST);
+  glUseProgram(0);
+  glViewport(0, 0, window_width, window_height);
+  glBindVertexArray(0);
+}
+
+void LIDR::textureWindow(GLuint texture)
+{
+  int smallwidth = window_width/4;
+  int smallheight = window_height/4;
+
+  //setup state
+  glBindVertexArray(dummyvao);
+  glUseProgram(viewport_program);
+  glDisable(GL_DEPTH_TEST);
+
+  glViewport(0, 0, smallwidth, smallheight);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, texture);
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+  //restore state
+  glEnable(GL_DEPTH_TEST);
   glUseProgram(0);
   glViewport(0, 0, window_width, window_height);
   glBindVertexArray(0);

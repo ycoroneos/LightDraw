@@ -14,6 +14,8 @@ using namespace std;
 static struct Constraint texture_constraints[] = {
   {"texmap", 0},
   {"texture_obj", 0},
+  {"depthmap", 0},
+  {"shadowmap", 1},
   {"lightindex_tex",2},
   {"lightambient_tex", 3},
   {"lightdiffuse_tex", 4},

@@ -31,6 +31,7 @@ class LIDR
     void LightVolumesEnd();
     void packLightTextures(std::vector<Light *> lights);
     void cornerWindow();
+    void textureWindow(GLuint texture);
   private:
     GLuint depth_fbo;
     GLuint depth_map;
