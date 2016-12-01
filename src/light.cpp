@@ -86,29 +86,29 @@ PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diff
   worldpos = vec3(5.0f, 5.0f, 0.0f);
   glGenFramebuffers(1, &depth_fbo);
   glGenTextures(1, &depth_map);
-//  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
-//  for (short i=0; i<6; ++i)
-//  {
-//    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-//  }
-//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-//  glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-//  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
-//  glDrawBuffer(GL_NONE);
-//  glReadBuffer(GL_NONE);
-//
-//  //check for completeness
-//  GLenum fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-//  if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
-//  {
-//    fprintf(stderr, "shadowmap FBO for %s is incomplete\r\n", name);
-//  }
-//  glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-//  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+  for (short i=0; i<6; ++i)
+  {
+    glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+  }
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+  glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
+  glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
+  glDrawBuffer(GL_NONE);
+  glReadBuffer(GL_NONE);
+
+  //check for completeness
+  GLenum fbostatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+  if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
+  {
+    fprintf(stderr, "shadowmap FBO for %s is incomplete\r\n", name);
+  }
+  glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   shadowmap_program = pointlight_shadowmap_program;
 }
 
@@ -154,25 +154,16 @@ void PointLight::updateShadowUniforms(unsigned program)
 {
   if (isShadowing())
   {
-  //  GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
-  //  GLfloat near = 1.0f;
-  //  GLfloat far = 250.0f;
-  //  mat4 P = glm::perspective(90.0f, aspect, near, far);
-  //  shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
-  //  int PV_loc = glGetUniformLocation(program, "light_PV");
-  //  if (PV_loc < 0)
-  //  {
-  //    fprintf(stderr, "lightvolume PV_loc loc missing\r\n");
-  //  }
-  //  int shadows_loc = glGetUniformLocation(program, "shadows");
-  //  if (shadows_loc < 0)
-  //  {
-  //    fprintf(stderr, "lightvolme shadows loc missing\r\n");
-  //  }
-  //  glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
-  //  glUniform1fv(shadows_loc, 1, &far);
-  //  glActiveTexture(GL_TEXTURE1);
-  //  glBindTexture(GL_TEXTURE_2D, depth_map);
+    GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
+    GLfloat far = 250.0f;
+    int shadows_loc = glGetUniformLocation(program, "shadows");
+    if (shadows_loc < 0)
+    {
+      fprintf(stderr, "lightvolme shadows loc missing\r\n");
+    }
+    glUniform1fv(shadows_loc, 1, &far);
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
   }
   else
   {
@@ -194,22 +185,21 @@ int PointLight::shadowMap()
   GLfloat near = 1.0f;
   GLfloat far = 250.0f;
   mat4 P = glm::perspective(90.0f, aspect, near, far);
-  cubemats[0] = P* glm::lookAt(pos, pos + vec3(1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
-  cubemats[1] = P* glm::lookAt(pos, pos + vec3(-1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
-  cubemats[2] = P* glm::lookAt(pos, pos + vec3(0.0,1.0,0.0), vec3(0.0,0.0,1.0));
-  cubemats[3] = P* glm::lookAt(pos, pos + vec3(0.0,-1.0,0.0), vec3(0.0,0.0,-1.0));
-  cubemats[4] = P* glm::lookAt(pos, pos + vec3(0.0,0.0,1.0), vec3(0.0,-1.0,0.0));
-  cubemats[5] = P* glm::lookAt(pos, pos + vec3(0.0,0.0,-1.0), vec3(0.0,-1.0,0.0));
-  int PV_loc = glGetUniformLocation(shadowmap_program, "PV");
+  vec3 wpos = getWorldPos();
+  cubemats[0] = P* glm::lookAt(wpos, wpos + vec3(1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
+  cubemats[1] = P* glm::lookAt(wpos, wpos + vec3(-1.0,0.0,0.0), vec3(0.0,-1.0,0.0));
+  cubemats[2] = P* glm::lookAt(wpos, wpos + vec3(0.0,1.0,0.0), vec3(0.0,0.0,1.0));
+  cubemats[3] = P* glm::lookAt(wpos, wpos + vec3(0.0,-1.0,0.0), vec3(0.0,0.0,-1.0));
+  cubemats[4] = P* glm::lookAt(wpos, wpos + vec3(0.0,0.0,1.0), vec3(0.0,-1.0,0.0));
+  cubemats[5] = P* glm::lookAt(wpos, wpos + vec3(0.0,0.0,-1.0), vec3(0.0,-1.0,0.0));
+  int PV_loc = glGetUniformLocation(shadowmap_program, "light_PV");
   int lightpos_loc = glGetUniformLocation(shadowmap_program, "lightPos");
   int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
   if (PV_loc < 0 || lightpos_loc < 0 || farplane_loc < 0)
   {
-    fprintf(stderr, "shadowmap locs missing\r\n");
+    fprintf(stderr, "shadowmap PV_loc missing\r\n");
   }
   glUniformMatrix4fv(PV_loc, 6, false, &cubemats[0][0][0]);
-  glUniform3fv(lightpos_loc, 1, &pos[0]);
-  glUniform1fv(farplane_loc, 1, &far);
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
@@ -227,7 +217,6 @@ void PointLight::restore()
   glUseProgram(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, window_width, window_height);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_BACK);
 }
 
@@ -417,17 +406,11 @@ int SpotLight::shadowMap()
   mat4 P = glm::perspective(90.0f, aspect, near, far);
   shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
   int PV_loc = glGetUniformLocation(shadowmap_program, "light_PV");
-  //int lightpos_loc = glGetUniformLocation(shadowmap_program, "lightPos");
-  //int farplane_loc = glGetUniformLocation(shadowmap_program, "far_plane");
-  //if (PV_loc < 0 || lightpos_loc < 0 || farplane_loc < 0)
-  //{
   if (PV_loc < 0)
   {
     fprintf(stderr, "shadowmap PV_loc loc missing\r\n");
   }
   glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
-  //glUniform3fv(lightpos_loc, 1, &pos[0]);
-  //glUniform1fv(farplane_loc, 1, &far);
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
@@ -445,7 +428,6 @@ void SpotLight::restore()
   glUseProgram(0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glViewport(0, 0, window_width, window_height);
-  //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_BACK);
 }
 

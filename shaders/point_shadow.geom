@@ -2,7 +2,7 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices=18) out;
 
-uniform mat4 PV[6];
+uniform mat4 light_PV[6];
 
 out vec4 FragPos;
 

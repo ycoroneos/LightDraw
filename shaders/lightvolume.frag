@@ -6,6 +6,7 @@ layout(location=0) out vec4 out_Color;
 
 uniform sampler2D depthmap;
 uniform sampler2D shadowmap;
+uniform samplerCube cube_shadowmap;
 
 //input from LIDR
 //uniform vec2 screenres;
@@ -45,21 +46,8 @@ void main()
   float cone_angle = light_cone_direction_angle.w;
   float angle = clamp(dot(normalize(L), D), 0, 1);
 
-//  //calculate shadows
-//  if (shadows>0.0f)
-//  {
-//    vec4 light_ndc = light_PV * vec4(scenepos_world_fixed, 1.0f);
-//    float light_z = light_ndc.z*0.5f + 0.5f;
-//    //light_ndc.y = -light_ndc.y;
-//    vec2 light_ndc_fixed = light_ndc.xy*0.5f + 0.5f;
-//    float light_depth = texture(shadowmap, light_ndc_fixed).r;
-//    if (light_depth < light_z)
-//    {
-//      discard;
-//    }
-//  }
-  //calculate shadows
-  if (shadows>0.0f)
+  //calculate shadows for spot light
+  if (shadows>0.0f && shadows<2.0f)
   {
     vec4 light_ndc = light_PV * vec4(scenepos_world_fixed, 1.0f);
     light_ndc = light_ndc/light_ndc.w;

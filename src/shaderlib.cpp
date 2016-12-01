@@ -21,6 +21,7 @@ static struct Constraint texture_constraints[] = {
   {"lightdiffuse_tex", 4},
   {"lightspecular_tex", 5},
   {"lightposition_tex", 6},
+  {"cube_shadowmap", 7},
 };
 
 #define NCONSTRAINTS sizeof(texture_constraints)/sizeof(Constraint)
