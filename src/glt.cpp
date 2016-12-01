@@ -74,6 +74,7 @@ static void GLAPIENTRY gl_dbg_callback(GLenum source,
             const char* msg = "Type = %d, id = %d, severity = %d, %s\n";
             fprintf(stderr, msg, type, id, severity, message);
         }
+        //exit(-1);
     }
 }
 
@@ -248,7 +249,7 @@ int compileGProgram(const char* vshader_src_file, const char* gshader_src_file, 
   fprintf(stderr,"read gshader as:\n%s\n", gshader_text);
   fprintf(stderr,"read fshader as:\n%s\n", fshader_text);
 		glDeleteProgram(program);
-		program = 0;
+		program = -1;
     fprintf(stderr, "killed program\n");
 	}
 	// once a program is linked

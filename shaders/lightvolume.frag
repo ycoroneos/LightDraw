@@ -22,6 +22,7 @@ uniform highp vec4 light_index;
 //input from light
 uniform mat4 light_PV;
 uniform float shadows;
+uniform float far_plane;
 
 void main()
 {
@@ -46,8 +47,22 @@ void main()
   float cone_angle = light_cone_direction_angle.w;
   float angle = clamp(dot(normalize(L), D), 0, 1);
 
+//  //calculate shadows for spot light
+//  if (shadows>0.0f && shadows<2.0f)
+//  {
+//    vec4 light_ndc = light_PV * vec4(scenepos_world_fixed, 1.0f);
+//    light_ndc = light_ndc/light_ndc.w;
+//    light_ndc = light_ndc*0.5f + 0.5f;
+//    float light_z = light_ndc.z;///light_ndc.w;
+//    float light_depth = texture(shadowmap, light_ndc.xy).r;
+//    if (light_depth < (light_z - 0.01))
+//    {
+//      discard;
+//    }
+//  }
+//
   //calculate shadows for spot light
-  if (shadows>0.0f && shadows<2.0f)
+  if (shadows>2.0f)
   {
     vec4 light_ndc = light_PV * vec4(scenepos_world_fixed, 1.0f);
     light_ndc = light_ndc/light_ndc.w;
@@ -55,6 +70,15 @@ void main()
     float light_z = light_ndc.z;///light_ndc.w;
     float light_depth = texture(shadowmap, light_ndc.xy).r;
     if (light_depth < (light_z - 0.01))
+    {
+      discard;
+    }
+  }
+  //calculate shadows for point light
+  else if (shadows>0.0f)
+  {
+    float light_depth = texture(cube_shadowmap, L).r * far_plane;
+    if (light_depth < (length(L) - 0.01))
     {
       discard;
     }

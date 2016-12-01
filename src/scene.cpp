@@ -92,7 +92,7 @@ void drawScene()
 
   sgr->drawBaked(camera, camera->viewWire());
   lidr->cornerWindow();
-  lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
+  //lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
   //sgr->zPre();
   //sgr->drawScene(camera, camera->viewWire());
   //sgr->drawSceneShadowed(camera, camera->viewWire());

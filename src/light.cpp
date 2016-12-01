@@ -80,7 +80,7 @@ void PointLight::updatePos(mat4 *M)
 }
 
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1)
-  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1, false), radius(radius_1)
+  : Light(name_1, pos_1, ambient_1, diffuse_1, specular_1, true), radius(radius_1)
 {
   fprintf(stderr, "point light named %s\r\n", name);
   worldpos = vec3(5.0f, 5.0f, 0.0f);
@@ -106,6 +106,7 @@ PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diff
   if (fbostatus != GL_FRAMEBUFFER_COMPLETE)
   {
     fprintf(stderr, "shadowmap FBO for %s is incomplete\r\n", name);
+    exit(-1);
   }
   glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -156,12 +157,19 @@ void PointLight::updateShadowUniforms(unsigned program)
   {
     GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
     GLfloat far = 250.0f;
+    float shadowtype = 1.0f;
     int shadows_loc = glGetUniformLocation(program, "shadows");
     if (shadows_loc < 0)
     {
       fprintf(stderr, "lightvolme shadows loc missing\r\n");
     }
-    glUniform1fv(shadows_loc, 1, &far);
+    int farplane_loc = glGetUniformLocation(program, "far_plane");
+    if (farplane_loc < 0)
+    {
+      fprintf(stderr, "lightvolme farplane loc missing\r\n");
+    }
+    glUniform1fv(shadows_loc, 1, &shadowtype);
+    glUniform1fv(farplane_loc, 1, &far);
     glActiveTexture(GL_TEXTURE7);
     glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
   }
@@ -199,13 +207,15 @@ int PointLight::shadowMap()
   {
     fprintf(stderr, "shadowmap PV_loc missing\r\n");
   }
+  glUniform3fv(lightpos_loc, 1, &wpos[0]);
+  glUniform1fv(farplane_loc, 1, &far);
   glUniformMatrix4fv(PV_loc, 6, false, &cubemats[0][0][0]);
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
+//  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+//  glDrawBuffer(GL_NONE);
+//  glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_FRONT);
   return shadowmap_program;
@@ -367,6 +377,7 @@ void SpotLight::updateShadowUniforms(unsigned program)
     GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
     GLfloat near = 1.0f;
     GLfloat far = 250.0f;
+    float shadowtype = 3.0f;
     mat4 P = glm::perspective(90.0f, aspect, near, far);
     shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
     int PV_loc = glGetUniformLocation(program, "light_PV");
@@ -379,8 +390,14 @@ void SpotLight::updateShadowUniforms(unsigned program)
     {
       fprintf(stderr, "lightvolme shadows loc missing\r\n");
     }
+    int farplane_loc = glGetUniformLocation(program, "far_plane");
+    if (farplane_loc < 0)
+    {
+      fprintf(stderr, "lightvolme farplane loc missing\r\n");
+    }
     glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
-    glUniform1fv(shadows_loc, 1, &far);
+    glUniform1fv(shadows_loc, 1, &shadowtype);
+    glUniform1fv(farplane_loc, 1, &far);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, depth_map);
   }
