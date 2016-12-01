@@ -66,7 +66,7 @@ void main()
     light_ndc = light_ndc*0.5f + 0.5f;
     float light_z = light_ndc.z;///light_ndc.w;
     float light_depth = texture(shadowmap, light_ndc.xy).r;
-    if (light_depth < (light_z-0.01))
+    if (light_depth < (light_z - 0.01))
     {
       discard;
     }

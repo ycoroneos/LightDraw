@@ -152,6 +152,38 @@ void PointLight::updateUniforms(unsigned program)
 
 void PointLight::updateShadowUniforms(unsigned program)
 {
+  if (isShadowing())
+  {
+  //  GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
+  //  GLfloat near = 1.0f;
+  //  GLfloat far = 250.0f;
+  //  mat4 P = glm::perspective(90.0f, aspect, near, far);
+  //  shadowmat = P * glm::lookAt(getWorldPos(), getWorldPos()+getDirection(), vec3(0.0f, 1.0f, 0.0f));
+  //  int PV_loc = glGetUniformLocation(program, "light_PV");
+  //  if (PV_loc < 0)
+  //  {
+  //    fprintf(stderr, "lightvolume PV_loc loc missing\r\n");
+  //  }
+  //  int shadows_loc = glGetUniformLocation(program, "shadows");
+  //  if (shadows_loc < 0)
+  //  {
+  //    fprintf(stderr, "lightvolme shadows loc missing\r\n");
+  //  }
+  //  glUniformMatrix4fv(PV_loc, 1, false, &shadowmat[0][0]);
+  //  glUniform1fv(shadows_loc, 1, &far);
+  //  glActiveTexture(GL_TEXTURE1);
+  //  glBindTexture(GL_TEXTURE_2D, depth_map);
+  }
+  else
+  {
+    int shadows_loc = glGetUniformLocation(program, "shadows");
+    if (shadows_loc < 0)
+    {
+      fprintf(stderr, "lightvolme shadows loc missing\r\n");
+    }
+    float noshadow = -1.0f;
+    glUniform1fv(shadows_loc, 1, &noshadow);
+  }
   return;
 }
 
