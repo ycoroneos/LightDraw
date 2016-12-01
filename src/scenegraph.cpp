@@ -284,7 +284,9 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   for (int i=0; i<lights.size() && i<256; ++i)
   {
     vec4 lightprop_a = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
-    vec4 lightprop_b = vec4(lights[i]->getDirection(), cos(lights[i]->getAngle()));
+    vec4 lightprop_b = vec4(lights[i]->getDirection(), lights[i]->getAngle());
+    //fprintf(stderr, "pos: %f %f %f radius: %f direction: %f %f %f angle: %f\r\n", lightprop_a.x, lightprop_a.y, lightprop_a.z, lightprop_a.w,
+    //    lightprop_b.x, lightprop_b.y, lightprop_b.z, lightprop_b.w);
     //vec4 lightprop_b = vec4(lights[i]->getDirection(), 2*3.14);
     glUniform4fv(lightposition_loc, 1, &lightprop_a[0]);
     glUniform4fv(lightdirection_loc, 1, &lightprop_b[0]);

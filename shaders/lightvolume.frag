@@ -39,12 +39,10 @@ void main()
   vec3 L = scenepos_world_fixed - lightpos;
   float cone_angle = light_cone_direction_angle.w;
   //float angle = clamp(dot(-L, D), 0, 1);
-  float angle = dot(normalize(L), D);
+  float angle = clamp(dot(normalize(L), D), 0, 1);
 
 
-  //if (angle < cone_angle && length(L) <= radius)
-  if (angle < 0.33 && length(L) <= radius)
-  //if (length(L) <= radius)
+  if (acos(angle) < cone_angle && length(L) <= radius)
   {
     out_Color = light_index;
   }

@@ -108,6 +108,7 @@ class DirectionLight : public Light
     float getAngle() override;
   private:
     vec3 direction;
+    vec3 world_direction;
 };
 
 class DummyLight : public Light

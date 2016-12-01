@@ -216,7 +216,7 @@ void SpotLight::updatePos(mat4 *M)
   vec4 world = mm*vec4(pos, 1.0f);
   world/=world.w;
   worldpos = vec3(world);
-  vec3 world_direction = normalize(mat3(mm)*direction);
+  world_direction = normalize(mat3(mm)*direction);
   //vec3 direction_inv = mat3(mm)*direction;
   fprintf(stderr, "spot light local direction : %f %f %f\r\n", direction.x, direction.y, direction.z);
   fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
