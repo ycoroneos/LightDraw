@@ -42,8 +42,8 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    int width = 1920*2;
-    int height = 1080*2;
+    int width = 1920;
+    int height = 1080;
     window_width = width;
     window_height = height;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
