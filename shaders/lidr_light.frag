@@ -97,7 +97,7 @@ void main () {
         vec3 Ispe = specular(N, L, V, lightSpecular);
 
         float distance = 1.0f / length(lightPos - pos_world.xyz);
-        out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * att;
+        out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * distance * att;
       }
   }
 

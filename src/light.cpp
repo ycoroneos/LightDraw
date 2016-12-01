@@ -431,9 +431,9 @@ int SpotLight::shadowMap()
 
   glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
-  glDrawBuffer(GL_NONE);
-  glReadBuffer(GL_NONE);
+  //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth_map, 0);
+  //glDrawBuffer(GL_NONE);
+  //glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_FRONT);
   return shadowmap_program;
