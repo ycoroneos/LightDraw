@@ -65,17 +65,6 @@ void SceneGraph::bake()
     vector<Light*> Nlights = curN->getLights();
     for (int i=0; i<Nlights.size(); ++i)
     {
-   //  fprintf(stderr, "\r\n");
-   //  for (int i=0; i<4; ++i)
-   //  {
-   //    vec4 col = M[i];
-   //    fprintf(stderr, "%f %f %f %f", col.x, col.y, col.z, col.w);
-   //  }
-   //  fprintf(stderr, "\r\n");
-   //   //mat4 fixed_M = transpose(M);
-   //   //vec4 trs = fixed_M[3];
-   //   fprintf(stderr, "bake: found light %s\r\n", Nlights[i]->getName());
-   //   fprintf(stderr, "\t pos %f %f %f %f\r\n", trs.x, trs.y, trs.z, trs.w);
       Nlights[i]->updatePos(&M);
     }
     for (unsigned i=0; i<meshes.size(); ++i)
@@ -127,7 +116,7 @@ void SceneGraph::drawShadowMaps()
   for (int i=0; i<lights.size(); ++i)
   {
     Light *dislight = lights[i];
-    if (!dislight->isShadowing())
+    if (!dislight->isShadowing() || !dislight->isOn())
     {
       continue;
     }
@@ -137,8 +126,6 @@ void SceneGraph::drawShadowMaps()
   }
 }
 
-//cast shadows for the first 2 lights in the lights list
-//Ill do more for the final project
 void SceneGraph::zPre()
 {
   // do DFS with a while loop so its faster
@@ -162,10 +149,6 @@ void SceneGraph::zPre()
       for (unsigned i=0; i<meshes.size(); ++i)
       {
         meshes[i]->quickdraw(&M[0][0], program);
-        //int program = meshes[i]->getProgram();
-        //glUseProgram(program);
-        //meshes[i]->draw(false, &M[0][0], &M[0][0]);
-        //glUseProgram(0);
       }
 
       vector<Node *> children = curN->getChildren();
@@ -272,7 +255,6 @@ void SceneGraph::drawScene(Camera *camera, bool wireframe)
 
 void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
 {
-  //camera->updateUniforms(lightvolume_program);
   glBindVertexArray(lightvolume_vao);
   int lightposition_loc = glGetUniformLocation(lightvolume_program, "light_position_radius");
   if (lightposition_loc < 0)
@@ -301,11 +283,12 @@ void SceneGraph::drawLightVolumes(int lightvolume_program, Camera *camera)
   glBlendColor(0.25f, 0.25f, 0.25f, 0.25f);
   for (int i=0; i<lights.size() && i<256; ++i)
   {
+    if (!lights[i]->isOn())
+    {
+      continue;
+    }
     vec4 lightprop_a = vec4(lights[i]->getWorldPos(), lights[i]->getRadius());
     vec4 lightprop_b = vec4(lights[i]->getDirection(), lights[i]->getAngle());
-    //fprintf(stderr, "pos: %f %f %f radius: %f direction: %f %f %f angle: %f\r\n", lightprop_a.x, lightprop_a.y, lightprop_a.z, lightprop_a.w,
-    //    lightprop_b.x, lightprop_b.y, lightprop_b.z, lightprop_b.w);
-    //vec4 lightprop_b = vec4(lights[i]->getDirection(), 2*3.14);
     glUniform4fv(lightposition_loc, 1, &lightprop_a[0]);
     glUniform4fv(lightdirection_loc, 1, &lightprop_b[0]);
     lights[i]->updateShadowUniforms(lightvolume_program);

@@ -141,10 +141,6 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
     float angle = asslight->mAngleInnerCone;
     //approximate radius as distance when attenuation is 0.1
     fprintf(stderr, "att: %f %f %f\r\n", asslight->mAttenuationConstant, asslight->mAttenuationLinear, asslight->mAttenuationQuadratic);
-    //float radius = ((1.0f/0.8f) - asslight->mAttenuationConstant) / asslight->mAttenuationLinear;
-    //float radius = asslight->mAttenuationConstant*1.1f;
-    //float radius = 1.0f/asslight->mAttenuationQuadratic;
-    //float radius = 5.0f;
     float radius = 1.0f;
     if (asslight->mAttenuationQuadratic > 0)
     {
@@ -170,9 +166,9 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
         break;
       default:
         fprintf(stderr, "unknown light %d\r\n", asslight->mType);
-        //lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
-        //      aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
-        //lights.push_back(new DummyLight());
+        lights.push_back(new DirectionLight(asslight->mName.C_Str(), aiVec3toVec3(asslight->mPosition), aiColor3toVec3(asslight->mColorAmbient), aiColor3toVec3(asslight->mColorDiffuse),
+              aiColor3toVec3(asslight->mColorSpecular), aiVec3toVec3(asslight->mDirection)));
+        lights.push_back(new DummyLight());
         break;
     }
   }

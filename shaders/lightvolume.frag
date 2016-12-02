@@ -55,7 +55,7 @@ void main()
     light_ndc = light_ndc*0.5f + 0.5f;
     float light_z = light_ndc.z;
     float light_depth = texture(shadowmap, light_ndc.xy).r;
-    if (light_depth < (light_z - 0.01))
+    if (light_depth < (light_z - 0.02))
     {
       discard;
     }
@@ -64,7 +64,7 @@ void main()
   else if (shadows>0.0f)
   {
     float light_depth = texture(cube_shadowmap, L).r * far_plane;
-    if (light_depth < (length(L) - 0.01))
+    if (light_depth < (length(L) - 0.02))
     {
       discard;
     }
