@@ -280,6 +280,8 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
       aiNodeAnim *dischannel = disanimation->mChannels[j];
       fprintf(stderr, "animation channel for node %s\r\n", dischannel->mNodeName.C_Str());
       //assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys == dischannel->mNumScalingKeys);
+      fprintf(stderr, "rotation keys: %d position keys: %d\r\n", dischannel->mNumRotationKeys, dischannel->mNumPositionKeys);
+      //assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys);
       vector<vec3> poskeys;
       vector<vec3> scalekeys;
       vector<quat> rotationkeys;

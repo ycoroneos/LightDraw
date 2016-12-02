@@ -20,20 +20,29 @@ KeyframeAnimation::KeyframeAnimation(double ticks_per_second_1, vector<vec3> pos
 void KeyframeAnimation::stepAnimation(double timestep)
 {
   double ticks = timestep * ticks_per_second;
-  double curtick = fmod(last_tick + ticks, poskeys.size());
-  last_tick = curtick;
-  int curtick_bot = int(curtick);
+  last_tick += ticks;
+  double curtick_pos = fmod(last_tick, poskeys.size());
+  double curtick_rot = fmod(last_tick, rotationkeys.size());
+  //double curtick_scale = fmod(last_tick, poskeys.size());
+  int curtick_bot = int(curtick_pos);
   int curtick_top = curtick_bot+1;
-  float a = curtick - double(curtick_bot);
+  float a = curtick_pos - double(curtick_bot);
   float b = 1.0f - a;
-  //translate * rotate * scale
-  //mat4 A = glm::translate(poskeys[curtick_bot]) * mat4_cast(rotationkeys[curtick_bot]) * glm::scale(scalekeys[curtick_bot]);
-  //mat4 B = glm::translate(poskeys[curtick_top]) * mat4_cast(rotationkeys[curtick_top]) * glm::scale(scalekeys[curtick_top]);
-  mat4 A = glm::translate(poskeys[curtick_bot]);
-  mat4 B = glm::translate(poskeys[curtick_top]);
-  mat4 transform = a*A + b*B;
+  mat4 A = glm::translate(poskeys[curtick_bot]);// * mat4_cast(rotationkeys[curtick_bot]);
+  mat4 B = glm::translate(poskeys[curtick_top]);// * mat4_cast(rotationkeys[curtick_top]);
+  mat4 translate = a*A + b*B;
+
+  curtick_bot = int(curtick_rot);
+  curtick_top = curtick_bot+1;
+  a = curtick_rot - double(curtick_bot);
+  b = 1.0f - a;
+  A = mat4_cast(rotationkeys[curtick_bot]);
+  B = mat4_cast(rotationkeys[curtick_top]);
+  mat4 rotation = a*A + b*B;
+
+  mat4 transform = translate;// * rotation;
 
   //update the node transforms
-  target->setTransform(A);
+  target->setTransform(transform);
   target->bakeLower();
 }
