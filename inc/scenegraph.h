@@ -12,38 +12,14 @@
 #include <assimp/postprocess.h>     // Post processing flag
 #include <inc/camera.h>
 #include <inc/light.h>
+#include <inc/node.h>
+#include <inc/animation.h>
 /*
  * Scenegraph will traverse the graph and generate deferred draw calls that contain all of the transforms required for the chunk to draw correctly.
  * Before drawing, the deferred draw calls will be sorted by centroid distance from the camera. This will allow the gl depth test to quickly throw out some vertices.
  *
  */
 
-
-//transform is relative to parent
-//so do push(transform)
-//then draw()
-class Node
-{
-  public:
-    void addChild(Node *child);
-    void addLight(Light *light);
-    void setName(const char *newname);
-    const char* getName();
-    void setTransform(mat4 transform_1);
-    void setParent(Node *parent_1);
-    glm::mat4 getTransform();
-    void addMesh(Mesh *mesh);
-    std::vector<Node *> getChildren();
-    std::vector<Mesh *> getMeshes();
-    std::vector<Light *> getLights();
-  private:
-  char name[25];        //name for debugging
-  glm::mat4 transform;  //transform relative to parent
-  Node *parent;
-  std::vector<Node *> children;
-  std::vector<Mesh *> meshes;
-  std::vector<Light *> lights;
-};
 
 class SceneGraph : public InputResponder
 {
@@ -61,6 +37,7 @@ class SceneGraph : public InputResponder
     void drawBaked(Camera *camera, bool wireframe);
     void printGraph();
     std::vector<Light *> getLights();
+    Node *findNodeByName(const char *name);
 
     void doMouseInput(double xpos, double ypos) override;
     void doKeyboardInput(int key, int scancode, int action, int mods) override;
@@ -71,6 +48,7 @@ class SceneGraph : public InputResponder
     std::vector<Mesh*> meshes;
     std::vector<Material*> materials;
     std::vector<Light *> lights;
+    std::vector<KeyframeAnimation *> animations;
   private:
     GLuint lightvolume_vao;
     GLuint lightvolume_vertex_buffer;

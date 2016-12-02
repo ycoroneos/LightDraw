@@ -63,6 +63,7 @@ void SceneGraph::bake()
     mat4 M = cur_depth.M;
     vector<Mesh*> meshes = curN->getMeshes();
     vector<Light*> Nlights = curN->getLights();
+    curN->setM(M);
     for (int i=0; i<Nlights.size(); ++i)
     {
       Nlights[i]->updatePos(&M);
@@ -312,6 +313,17 @@ Node *SceneGraph::allocNode()
   return newnode;
 }
 
+Node *SceneGraph::findNodeByName(const char *name)
+{
+  for (int i=0; i<nodes.size(); ++i)
+  {
+    if(strcmp(name, nodes[i]->getName())==0)
+    {
+      return nodes[i];
+    }
+  }
+  return NULL;
+}
 
 void SceneGraph::doMouseInput(double xpos, double ypos)
 {

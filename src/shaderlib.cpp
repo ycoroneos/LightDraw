@@ -11,7 +11,7 @@ using namespace std;
 
 
 
-static struct Constraint texture_constraints[] = {
+static const struct Constraint texture_constraints[] = {
   {"texmap", 0},
   {"texture_obj", 0},
   {"depthmap", 0},

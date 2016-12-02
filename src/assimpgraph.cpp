@@ -17,11 +17,14 @@ using namespace glm;
 // ASSIMP GLUE
 //
 ////////////////////////////////////////////////////////////////
-//must swap y and z
+static quat aiQuattoQuat(aiQuaternion in)
+{
+  return quat(in.w, in.x, in.y, in.z);
+}
+
 static vec3 aiVec3toVec3(aiVector3D in)
 {
   return vec3(in.x, in.y, in.z);
-  //return vec3(in.x, in.z, -1.0f*in.y);
 }
 
 static vec3 aiColor3toVec3(aiColor3D in)
@@ -40,12 +43,6 @@ static mat4 aiMat4toMat4(aiMatrix4x4 in)
       out[row][col] = in[row][col];
     }
   }
-//  mat4 swap;
-//  swap[0] = vec4(1.0f, 0.0f, 0.0f, 0.0f);
-//  swap[1] = vec4(0.0f, 0.0f, 1.0f, 0.0f);
-//  swap[2] = vec4(0.0f, 1.0f, 0.0f, 0.0f);
-//  swap[3] = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-  //return swap*transpose(out);
   return transpose(out);
 }
 
@@ -241,6 +238,8 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
     }
   }
 
+
+
   fprintf(stderr,"\t loading scene graph\r\n");
   root = allocNode();
   aiNode *ainode=scene->mRootNode;
@@ -267,6 +266,38 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   }
   //fprintf(stderr, "scene loaded %d lights\r\n", lights.size());
   delete[] cwd;
+
+  //animations come last
+  for (int i=0; i<scene->mNumAnimations; ++i)
+  {
+    aiAnimation *disanimation = scene->mAnimations[i];
+    fprintf(stderr, "found animation %s\r\n", disanimation->mName.C_Str());
+    fprintf(stderr, "\tchannels: %d\r\n", disanimation->mNumChannels);
+    fprintf(stderr, "\tmesh channels: %d\r\n", disanimation->mNumMeshChannels);
+    double ticks_per_second = disanimation->mTicksPerSecond;
+    for (int j=0; j<disanimation->mNumChannels; ++j)
+    {
+      aiNodeAnim *dischannel = disanimation->mChannels[j];
+      fprintf(stderr, "animation channel for node %s\r\n", dischannel->mNodeName.C_Str());
+      assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys == dischannel->mNumScalingKeys);
+      vector<vec3> poskeys;
+      vector<vec3> scalekeys;
+      vector<quat> rotationkeys;
+      Node *target = findNodeByName(dischannel->mNodeName.C_Str());
+      if (target == NULL)
+      {
+        fprintf(stderr, "animation for node %s cannot find the node\r\n", dischannel->mNodeName.C_Str());
+        exit(-1);
+      }
+      for (int keynum=0; keynum<dischannel->mNumRotationKeys; ++keynum)
+      {
+        poskeys.push_back(aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue));
+        scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
+        rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
+      }
+      animations.push_back(new KeyframeAnimation(ticks_per_second, poskeys, scalekeys, rotationkeys, target));
+    }
+  }
 }
 
 
@@ -277,6 +308,7 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   newnode->setName(ainode->mName.data);
   mat4 transform = aiMat4toMat4(ainode->mTransformation);
   newnode->setTransform(transform);
+  fprintf(stderr, "name %s \r\n", newnode->getName());
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
     newnode->addMesh(meshes[ainode->mMeshes[i]]);
@@ -285,7 +317,6 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   {
     if (strcmp(lights[i]->getName(), newnode->getName())==0)
     {
-      //fprintf(stderr, "%s has light, parent %s\r\n", newnode->getName(), parent->getName());
       newnode->addLight(lights[i]);
     }
   }

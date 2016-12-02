@@ -68,3 +68,8 @@ const char *Node::getName()
 {
   return (const char *)name;
 }
+
+void Node::setM(glm::mat4 M_1)
+{
+  M = M_1;
+}

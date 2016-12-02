@@ -80,6 +80,7 @@ list (APPEND voxl_SRC
   src/node.cpp
   src/lidr.cpp
   src/shaderlib.cpp
+  src/animation.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -100,6 +101,8 @@ list (APPEND voxl_HEADER
   inc/light.h
   inc/lidr.h
   inc/shaderlib.h
+  inc/node.h
+  inc/animation.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})
