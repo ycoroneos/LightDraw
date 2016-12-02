@@ -14,37 +14,24 @@ using namespace glm;
 KeyframeAnimation::KeyframeAnimation(double ticks_per_second_1, vector<vec3> poskeys_1, vector<vec3> scalekeys_1, vector<quat> rotationkeys_1, Node *target_1)
   : ticks_per_second(ticks_per_second_1), poskeys(poskeys_1), scalekeys(scalekeys_1), rotationkeys(rotationkeys_1), target(target_1)
 {
-  last_tick=0;
+  last_tick_pos=0;
+  last_tick_rot=0;
 }
 
 void KeyframeAnimation::stepAnimation(double timestep)
 {
+  //position
   double ticks = timestep * ticks_per_second;
-  last_tick += ticks;
-  double curtick_pos = fmod(last_tick, poskeys.size());
-  double curtick_rot = fmod(last_tick, rotationkeys.size());
-  //double curtick_scale = fmod(last_tick, poskeys.size());
-  int curtick_bot = int(curtick_pos);
-  int curtick_top = curtick_bot+1 % poskeys.size();
-  float a = curtick_pos - double(curtick_bot);
-  float b = 1.0f - a;
-  mat4 A = glm::translate(poskeys[curtick_bot]);// * mat4_cast(rotationkeys[curtick_bot]);
-  //mat4 B = glm::translate(poskeys[curtick_top]);// * mat4_cast(rotationkeys[curtick_top]);
-  //mat4 translate = a*A + b*B;
-  mat4 translate = A;
+  int next_tick = int(ceil(last_tick_pos + ticks)) % poskeys.size();
+  mat4 translate = glm::translate(poskeys[last_tick_pos] + float(ticks)*(poskeys[next_tick] - poskeys[last_tick_pos]));
+  last_tick_pos = next_tick;
 
-  curtick_bot = int(curtick_rot);
-  curtick_top = curtick_bot+1 + rotationkeys.size();
-  a = curtick_rot - double(curtick_bot);
-  b = 1.0f - a;
-  A = mat4_cast(rotationkeys[curtick_bot]);
-  //B = mat4_cast(rotationkeys[curtick_top]);
-  //mat4 rotation = a*A + b*B;
-  mat4 rotation = A;
-
-  mat4 transform = translate * rotation;
+  //rotation
+  next_tick = int(ceil(last_tick_rot + ticks)) % rotationkeys.size();
+  mat4 rotate = mat4_cast(rotationkeys[last_tick_rot]) + float(ticks)*(mat4_cast(rotationkeys[next_tick]) - mat4_cast(rotationkeys[last_tick_rot]));
+  last_tick_rot = next_tick;
 
   //update the node transforms
-  target->setTransform(transform);
+  target->setTransform(translate * rotate);
   target->bakeLower();
 }

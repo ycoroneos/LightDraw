@@ -14,11 +14,6 @@
 #include <inc/light.h>
 #include <inc/node.h>
 #include <inc/animation.h>
-/*
- * Scenegraph will traverse the graph and generate deferred draw calls that contain all of the transforms required for the chunk to draw correctly.
- * Before drawing, the deferred draw calls will be sorted by centroid distance from the camera. This will allow the gl depth test to quickly throw out some vertices.
- *
- */
 
 
 class SceneGraph : public InputResponder

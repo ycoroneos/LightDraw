@@ -110,7 +110,7 @@ PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diff
   fprintf(stderr, "point light named %s\r\n", name);
   aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
   near = 1.0f;
-  far = 250.0f;
+  far = 25.0f;
   P = glm::perspective(90.0f, aspect, near, far);
   worldpos = vec3(5.0f, 5.0f, 0.0f);
   glGenFramebuffers(1, &depth_fbo);
@@ -167,8 +167,8 @@ void PointLight::updateShadowUniforms(unsigned program)
 {
   if (isShadowing())
   {
-    GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
-    GLfloat far = 250.0f;
+    //GLfloat aspect = (GLfloat)SHADOW_WIDTH/(GLfloat)SHADOW_HEIGHT;
+    //GLfloat far = 250.0f;
     float shadowtype = 1.0f;
     int shadows_loc = glGetUniformLocation(program, "shadows");
     if (shadows_loc < 0)

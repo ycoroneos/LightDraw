@@ -21,5 +21,6 @@ class KeyframeAnimation
     vector<vec3> scalekeys;
     vector<quat> rotationkeys;
     Node *target;
-    double last_tick;
+    double last_tick_pos;
+    double last_tick_rot;
 };
