@@ -25,7 +25,7 @@ void KeyframeAnimation::stepAnimation(double timestep)
   double curtick_rot = fmod(last_tick, rotationkeys.size());
   //double curtick_scale = fmod(last_tick, poskeys.size());
   int curtick_bot = int(curtick_pos);
-  int curtick_top = curtick_bot+1;
+  int curtick_top = curtick_bot+1 % poskeys.size();
   float a = curtick_pos - double(curtick_bot);
   float b = 1.0f - a;
   mat4 A = glm::translate(poskeys[curtick_bot]);// * mat4_cast(rotationkeys[curtick_bot]);
@@ -34,7 +34,7 @@ void KeyframeAnimation::stepAnimation(double timestep)
   mat4 translate = A;
 
   curtick_bot = int(curtick_rot);
-  curtick_top = curtick_bot+1;
+  curtick_top = curtick_bot+1 + rotationkeys.size();
   a = curtick_rot - double(curtick_bot);
   b = 1.0f - a;
   A = mat4_cast(rotationkeys[curtick_bot]);

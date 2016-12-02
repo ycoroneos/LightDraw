@@ -363,5 +363,33 @@ void SceneGraph::doKeyboardInput(int key, int scancode, int action, int mods)
         }
         bake();
         break;
+      case '1':
+        for (int i=0; i<lights.size(); ++i)
+        {
+          if(lightson)
+          {
+            lights[i]->turnOff();
+          }
+          else
+          {
+            lights[i]->turnOn();
+          }
+        }
+        lightson = !lightson;
+        break;
+      case '2':
+        for (int i=0; i<lights.size(); ++i)
+        {
+          if(shadows)
+          {
+            lights[i]->shadowsOff();
+          }
+          else
+          {
+            lights[i]->shadowsOn();
+          }
+        }
+        shadows = !shadows;
+        break;
     }
 }

@@ -50,6 +50,8 @@ class SceneGraph : public InputResponder
     std::vector<Material*> materials;
     std::vector<Light *> lights;
     std::vector<KeyframeAnimation *> animations;
+    bool lightson=true;
+    bool shadows=true;
   private:
     GLuint lightvolume_vao;
     GLuint lightvolume_vertex_buffer;
