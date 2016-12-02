@@ -16,13 +16,8 @@
 
 
 Camera *camera;
-VoxelGrid *vxg;
-VoxelGrid *gnd;
-BinVox *garg;
 AssimpGraph *sgr;
 LIDR *lidr;
-glm::mat4 floormat = glm::translate(glm::mat4(), vec3(-20.0,-1.0, -20.0));
-glm::mat4 ident;
 ShaderLib shaderlib;
 
 int voxelprog;
@@ -50,13 +45,6 @@ int initScene(mat4 Projection)
   viewport_program                  = shaderlib.loadShader("../shaders/viewport.vert", "../shaders/viewport.frag");
   mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vert", "../shaders/lidr_light.frag");
   lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
-//  vxg = new VoxelGrid(10,10,10);
-//  vxg->setProgram(voxelprog);
-//  gnd = new VoxelGrid(100,1,100);
-//  gnd->setProgram(voxelprog);
-  //garg = new BinVox("../data/garg.binvox");
-  //garg->setProgram(voxelprog);
-  //sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr->enableInput();
   sgr->bake();
@@ -65,16 +53,6 @@ int initScene(mat4 Projection)
 
 void drawScene()
 {
-//  int loc = glGetUniformLocation(voxelprog, "M");
-//  camera->updateUniforms(voxelprog);
-//  glUseProgram(voxelprog);
-//  glUniformMatrix4fv(loc, 1, false, &floormat[0][0]);
-//  gnd->draw();
-
-//  sgr->zPreBaked();
-// / sgr->drawBaked(camera, camera->viewWire());
-
-
   //first fill the z buffer
   int zprog = lidr->ZPrePass(camera);
   sgr->zPreBaked(zprog);
@@ -93,25 +71,10 @@ void drawScene()
   sgr->drawBaked(camera, camera->viewWire());
   lidr->cornerWindow();
   lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
-  //sgr->zPre();
-  //sgr->drawScene(camera, camera->viewWire());
-  //sgr->drawSceneShadowed(camera, camera->viewWire());
-//
-//  glUseProgram(voxelprog);
-//  if (loc<0)
-//  {
-//    fprintf(stderr, "M not found\n");
-//  }
-//  glUniformMatrix4fv(loc, 1, false, &ident[0][0]);
-//  //vxg->draw();
-//  //garg->draw();
 }
 
 void cleanupScene()
 {
-//  delete vxg;
-//  delete gnd;
-  //delete garg;
   delete camera;
   delete sgr;
   delete lidr;

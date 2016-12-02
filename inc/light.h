@@ -30,6 +30,11 @@ class Light
     vec3 getDiffuse();
     vec3 getSpecular();
     bool isShadowing();
+    void shadowsOn();
+    void shadowsOff();
+    bool isOn();
+    void turnOn();
+    void turnOff();
     GLuint getDepthMap();
    // float getRadius();
    // float getAngle();
@@ -41,8 +46,7 @@ class Light
     vec3 specular;
     vec3 worldpos;
     bool shadows=0;
-   // float angle;
-   // float radius;
+    bool on=1;
 
     //GL things for shadows
     GLuint depth_fbo;
@@ -72,7 +76,13 @@ class PointLight : public Light
     float getAngle() override;
   private:
     float radius;
+
+    //for shadows
     mat4 cubemats[6];
+    float aspect;
+    float near;
+    float far;
+    mat4 P;
 };
 
 class SpotLight : public Light
@@ -95,7 +105,12 @@ class SpotLight : public Light
     float angle;
     vec3 direction;
     vec3 world_direction;
-    mat4 shadowmat;
+
+    //for shadows
+    float aspect;
+    float near;
+    float far;
+    mat4 P;
 };
 
 class DirectionLight : public Light
