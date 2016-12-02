@@ -297,7 +297,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
         //scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
         //rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
         vec3 posframe = aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue);
-        fprintf(stderr, "found position keyframe %f %f %f\r\n", posframe.x, posframe.y, posframe.z);
+        //fprintf(stderr, "found position keyframe %f %f %f\r\n", posframe.x, posframe.y, posframe.z);
       }
       for (int keynum=0; keynum<dischannel->mNumRotationKeys; ++keynum)
       {

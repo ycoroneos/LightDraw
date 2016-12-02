@@ -43,4 +43,5 @@ class Node
   std::vector<Node *> children;
   std::vector<Mesh *> meshes;
   std::vector<Light *> lights;
+  std::vector<Camera *> cameras;
 };

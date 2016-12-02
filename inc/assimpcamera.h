@@ -3,10 +3,10 @@
 #include "inc/input.h"
 using namespace glm;
 
-class Camera : public InputResponder
+class AssimpCamera : public InputResponder
 {
   public:
-    Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection);
+    AssimpCamera(float aspect_1, float near_1, float far_1, float fov_1, char *name_1, vec3 local_lookAt_center_1, vec3 local_pos_1, vec3 local_up_1);
     mat4 getViewMatrix();
     mat4 getProjectionMatrix();
     mat4 getProjectionViewInverse();
@@ -25,6 +25,15 @@ class Camera : public InputResponder
     mat4 View;
     mat4 Projection;
     mat4 invProjection;
-    bool wireframe=false;
-    bool sprint=false;
+    bool wireframe;
+    bool sprint;
+
+    float aspect;
+    float near;
+    float far;
+    float fov;
+    char name[25];
+    vec3 local_lookAt_center;
+    vec3 local_pos;
+    vec3 local_up;
 };
