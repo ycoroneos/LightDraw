@@ -63,14 +63,18 @@ int main(void)
       glfwTerminate();
       return -1;
     }
+    double time = glfwGetTime();
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
+        double newtime = glfwGetTime();
+        double diff = newtime - time;
+        time=newtime;
         //draw
-        drawScene();
+        drawScene(diff);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

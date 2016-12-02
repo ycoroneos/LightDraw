@@ -31,7 +31,11 @@ class Node
     std::vector<Mesh *> getMeshes();
     std::vector<Light *> getLights();
     void setM(glm::mat4 M_1);
+    Node *getParent();
+    glm::mat4 getM();
+    void bakeLower();
   private:
+  bool baked=false;
   char name[25];        //name for debugging
   glm::mat4 transform;  //transform relative to parent
   glm::mat4 M; //a baked M used for animation

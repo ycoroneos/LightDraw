@@ -47,38 +47,39 @@ void SceneGraph::printGraph()
 //bake world transforms into the meshes
 void SceneGraph::bake()
 {
-  // do DFS with a while loop so its faster
-  struct state_variables
-  {
-    Node *N;
-    mat4 M;
-  };
-  vector <struct state_variables> Nstack;
-  Nstack.push_back((struct state_variables){root, root->getTransform()});
-  while (Nstack.size()>0)
-  {
-    struct state_variables cur_depth = Nstack.back();
-    Nstack.pop_back();
-    Node *curN = cur_depth.N;
-    mat4 M = cur_depth.M;
-    vector<Mesh*> meshes = curN->getMeshes();
-    vector<Light*> Nlights = curN->getLights();
-    curN->setM(M);
-    for (int i=0; i<Nlights.size(); ++i)
-    {
-      Nlights[i]->updatePos(&M);
-    }
-    for (unsigned i=0; i<meshes.size(); ++i)
-    {
-      meshes[i]->setWorldPos(M);
-    }
-
-    vector<Node *> children = curN->getChildren();
-    for (unsigned i=0; i<children.size(); ++i)
-    {
-      Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
-    }
-  }
+  root->bakeLower();
+//  // do DFS with a while loop so its faster
+//  struct state_variables
+//  {
+//    Node *N;
+//    mat4 M;
+//  };
+//  vector <struct state_variables> Nstack;
+//  Nstack.push_back((struct state_variables){root, root->getTransform()});
+//  while (Nstack.size()>0)
+//  {
+//    struct state_variables cur_depth = Nstack.back();
+//    Nstack.pop_back();
+//    Node *curN = cur_depth.N;
+//    mat4 M = cur_depth.M;
+//    vector<Mesh*> meshes = curN->getMeshes();
+//    vector<Light*> Nlights = curN->getLights();
+//    curN->setM(M);
+//    for (int i=0; i<Nlights.size(); ++i)
+//    {
+//      Nlights[i]->updatePos(&M);
+//    }
+//    for (unsigned i=0; i<meshes.size(); ++i)
+//    {
+//      meshes[i]->setWorldPos(M);
+//    }
+//
+//    vector<Node *> children = curN->getChildren();
+//    for (unsigned i=0; i<children.size(); ++i)
+//    {
+//      Nstack.push_back((struct state_variables){children[i], M * children[i]->getTransform()});
+//    }
+//  }
 }
 
 void SceneGraph::drawBaked(Camera *camera, bool wireframe)
@@ -323,6 +324,14 @@ Node *SceneGraph::findNodeByName(const char *name)
     }
   }
   return NULL;
+}
+
+void SceneGraph::animate(double timestep)
+{
+  for (int i=0; i<animations.size(); ++i)
+  {
+    animations[i]->stepAnimation(timestep);
+  }
 }
 
 void SceneGraph::doMouseInput(double xpos, double ypos)

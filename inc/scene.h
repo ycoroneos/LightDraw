@@ -3,6 +3,6 @@
 
 int initScene(glm::mat4 Projection);
 
-void drawScene();
+void drawScene(double timestep);
 
 void cleanupScene();

@@ -31,6 +31,7 @@ void Node::setName(const char *newname)
 void Node::setTransform(mat4 transform_1)
 {
   transform = transform_1;
+  baked=false;
 }
 
 void Node::setParent(Node *parent_1)
@@ -72,4 +73,43 @@ const char *Node::getName()
 void Node::setM(glm::mat4 M_1)
 {
   M = M_1;
+}
+
+Node *Node::getParent()
+{
+  return parent;
+}
+
+glm::mat4 Node::getM()
+{
+  return M;
+}
+
+//also sets light and mesh transforms
+void Node::bakeLower()
+{
+  mat4 parentM = mat4(1.0f);
+  if (parent != NULL)
+  {
+    parentM = parent->M;
+  }
+  M = parentM * transform;
+  baked=true;
+
+  //assign mesh transforms
+  for (int i=0; i<meshes.size(); ++i)
+  {
+    meshes[i]->setWorldPos(M);
+  }
+
+  //assign light transforms
+  for(int i=0; i<lights.size(); ++i)
+  {
+    lights[i]->updatePos(&M);
+  }
+
+  for (int i=0; i<children.size(); ++i)
+  {
+    children[i]->bakeLower();
+  }
 }

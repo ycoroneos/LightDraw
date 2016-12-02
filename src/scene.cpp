@@ -51,8 +51,11 @@ int initScene(mat4 Projection)
   return 0;
 }
 
-void drawScene()
+void drawScene(double timestep)
 {
+  //animate
+  sgr->animate(timestep);
+
   //first fill the z buffer
   int zprog = lidr->ZPrePass(camera);
   sgr->zPreBaked(zprog);
