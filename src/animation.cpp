@@ -27,11 +27,13 @@ void KeyframeAnimation::stepAnimation(double timestep)
   float a = curtick - double(curtick_bot);
   float b = 1.0f - a;
   //translate * rotate * scale
-  mat4 A = glm::translate(poskeys[curtick_bot]) * mat4_cast(rotationkeys[curtick_bot]) * glm::scale(scalekeys[curtick_bot]);
-  mat4 B = glm::translate(poskeys[curtick_top]) * mat4_cast(rotationkeys[curtick_top]) * glm::scale(scalekeys[curtick_top]);
+  //mat4 A = glm::translate(poskeys[curtick_bot]) * mat4_cast(rotationkeys[curtick_bot]) * glm::scale(scalekeys[curtick_bot]);
+  //mat4 B = glm::translate(poskeys[curtick_top]) * mat4_cast(rotationkeys[curtick_top]) * glm::scale(scalekeys[curtick_top]);
+  mat4 A = glm::translate(poskeys[curtick_bot]);
+  mat4 B = glm::translate(poskeys[curtick_top]);
   mat4 transform = a*A + b*B;
 
   //update the node transforms
-  target->setTransform(transform);
+  target->setTransform(A);
   target->bakeLower();
 }

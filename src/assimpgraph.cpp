@@ -279,7 +279,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
     {
       aiNodeAnim *dischannel = disanimation->mChannels[j];
       fprintf(stderr, "animation channel for node %s\r\n", dischannel->mNodeName.C_Str());
-      assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys == dischannel->mNumScalingKeys);
+      //assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys == dischannel->mNumScalingKeys);
       vector<vec3> poskeys;
       vector<vec3> scalekeys;
       vector<quat> rotationkeys;
@@ -289,11 +289,22 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
         fprintf(stderr, "animation for node %s cannot find the node\r\n", dischannel->mNodeName.C_Str());
         exit(-1);
       }
-      for (int keynum=0; keynum<dischannel->mNumRotationKeys; ++keynum)
+      for (int keynum=0; keynum<dischannel->mNumPositionKeys; ++keynum)
       {
         poskeys.push_back(aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue));
-        scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
+        //scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
+        //rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
+        vec3 posframe = aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue);
+        fprintf(stderr, "found position keyframe %f %f %f\r\n", posframe.x, posframe.y, posframe.z);
+      }
+      for (int keynum=0; keynum<dischannel->mNumRotationKeys; ++keynum)
+      {
+        //scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
         rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
+      }
+      for (int keynum=0; keynum<dischannel->mNumScalingKeys; ++keynum)
+      {
+        scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
       }
       animations.push_back(new KeyframeAnimation(ticks_per_second, poskeys, scalekeys, rotationkeys, target));
     }
