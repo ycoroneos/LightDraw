@@ -3,6 +3,6 @@
 
 int initScene(glm::mat4 Projection, bool benchmark);
 
-void drawScene(double timestep);
+void drawScene(double timestep, bool uselidr);
 
 void cleanupScene();

@@ -60,29 +60,36 @@ int initScene(mat4 Projection, bool benchmark)
   return 0;
 }
 
-void drawScene(double timestep)
+void drawScene(double timestep, bool uselidr)
 {
   //animate
   sgr->animate(timestep);
 
-  //first fill the z buffer
-  int zprog = lidr->ZPrePass(active_camera);
-  sgr->zPreBaked(zprog);
+  if (uselidr)
+  {
+    //first fill the z buffer
+    int zprog = lidr->ZPrePass(active_camera);
+    sgr->zPreBaked(zprog);
 
-  //draw shadowmaps for each light
-  sgr->drawShadowMaps();
+    //draw shadowmaps for each light
+    sgr->drawShadowMaps();
 
-  //draw lightvolumes
-  int lightvolume_prog = lidr->LightVolumes();
-  sgr->drawLightVolumes(lightvolume_prog, active_camera);
-  lidr->LightVolumesEnd();
+    //draw lightvolumes
+    int lightvolume_prog = lidr->LightVolumes();
+    sgr->drawLightVolumes(lightvolume_prog, active_camera);
+    lidr->LightVolumesEnd();
 
-  //update the light textures
-  lidr->packLightTextures(sgr->getLights());
+    //update the light textures
+    lidr->packLightTextures(sgr->getLights());
 
-  sgr->drawBaked(active_camera, active_camera->viewWire());
-  lidr->cornerWindow();
-  lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
+    sgr->drawBaked(active_camera, active_camera->viewWire());
+    lidr->cornerWindow();
+    lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
+  }
+  else
+  {
+    //do regular forward pass
+  }
 }
 
 void cleanupScene()

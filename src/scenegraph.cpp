@@ -84,20 +84,20 @@ void SceneGraph::bake()
 
 void SceneGraph::drawBaked(Camera *camera, bool wireframe)
 {
-  for (int lnum=0; lnum<lights.size(); ++lnum)
-  {
+//  for (int lnum=0; lnum<lights.size(); ++lnum)
+//  {
     for (int i=0; i<meshes.size(); ++i)
     {
       int program = meshes[i]->getProgram();
       glUseProgram(program);
       camera->updateUniforms(program);
-      lights[lnum]->updateUniforms(program);
+      //lights[lnum]->updateUniforms(program);
       mat4 M = meshes[i]->getWorldPos();
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
       glUseProgram(0);
     }
-  }
+//  }
 }
 
 

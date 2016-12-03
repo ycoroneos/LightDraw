@@ -92,7 +92,7 @@ int main(int argc, char **argv)
           framecount=0;
         }
         //draw
-        drawScene(diff);
+        drawScene(diff, true);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
