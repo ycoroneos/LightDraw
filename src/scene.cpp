@@ -30,6 +30,7 @@ int lidr_z_program;
 int lidr_lightvolume_program;
 int viewport_program;
 int mesh_lidr_prog;
+int mesh_forward_prog;
 
 int initScene(mat4 Projection, bool benchmark, bool uselidr)
 {
@@ -45,6 +46,7 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr)
   lidr_lightvolume_program          = shaderlib.loadShader("../shaders/lightvolume.vert", "../shaders/lightvolume.frag");
   viewport_program                  = shaderlib.loadShader("../shaders/viewport.vert", "../shaders/viewport.frag");
   mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vert", "../shaders/lidr_light.frag");
+  mesh_forward_prog                 = shaderlib.loadShader("../shaders/forward.vert", "../shaders/forward.frag");
   lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr->enableInput();
@@ -64,7 +66,7 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr)
   }
   else
   {
-    sgr->setAllMeshProgram(default_mesh_prog);
+    sgr->setAllMeshProgram(mesh_forward_prog);
   }
   return 0;
 }
@@ -74,9 +76,10 @@ void drawScene(double timestep, bool uselidr)
   //animate
   sgr->animate(timestep);
 
+
   if (uselidr)
   {
-    //first fill the z buffer
+    //first fill the z buffer for both render passes
     int zprog = lidr->ZPrePass(active_camera);
     sgr->zPreBaked(zprog);
 
@@ -97,7 +100,18 @@ void drawScene(double timestep, bool uselidr)
   }
   else
   {
+    //depth pre-pass
+    glColorMask(0,0,0,0);
+    glDepthMask(GL_TRUE);
+    glUseProgram(lidr_z_program);
+    active_camera->updateUniforms(lidr_z_program);
+    sgr->zPreBaked(lidr_z_program);
+    glColorMask(1,1,1,1);
+    glDepthMask(GL_FALSE);
+
     //do regular forward pass
+    sgr->drawForwardBaked(active_camera, active_camera->viewWire());
+    glDepthMask(GL_TRUE);
   }
 }
 

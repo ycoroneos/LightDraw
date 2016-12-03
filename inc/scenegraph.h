@@ -30,6 +30,7 @@ class SceneGraph : public InputResponder
     void drawScene(Camera *camera, bool wireframe);
     void drawSceneShadowed(Camera *camera, bool wireframe);
     void drawBaked(Camera *camera, bool wireframe);
+    void drawForwardBaked(Camera *camera, bool wireframe);
     void printGraph();
     std::vector<Light *> getLights();
     Node *findNodeByName(const char *name);

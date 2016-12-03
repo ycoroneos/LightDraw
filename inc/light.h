@@ -14,6 +14,7 @@ class Light
   public:
     Light(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, bool shadows_1);
     virtual void updateUniforms(unsigned program)=0;
+    void updateForwardUniforms(unsigned program);
     virtual void updateShadowUniforms(unsigned program)=0;
     const char* getName();
     virtual void updatePos(mat4 *M)=0;

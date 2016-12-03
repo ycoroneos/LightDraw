@@ -84,25 +84,40 @@ void SceneGraph::bake()
 
 void SceneGraph::drawBaked(Camera *camera, bool wireframe)
 {
-//  for (int lnum=0; lnum<lights.size(); ++lnum)
-//  {
+  for (int i=0; i<meshes.size(); ++i)
+  {
+    int program = meshes[i]->getProgram();
+    glUseProgram(program);
+    camera->updateUniforms(program);
+    mat4 M = meshes[i]->getWorldPos();
+    mat3 N = transpose(inverse(glm::mat3(M)));
+    meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
+    glUseProgram(0);
+  }
+}
+
+void SceneGraph::drawForwardBaked(Camera *camera, bool wireframe)
+{
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+  glDepthFunc(GL_LEQUAL);
+  for (int lnum=0; lnum<lights.size(); ++lnum)
+  {
     for (int i=0; i<meshes.size(); ++i)
     {
       int program = meshes[i]->getProgram();
       glUseProgram(program);
       camera->updateUniforms(program);
-      //lights[lnum]->updateUniforms(program);
+      lights[lnum]->updateForwardUniforms(program);
       mat4 M = meshes[i]->getWorldPos();
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
       glUseProgram(0);
     }
-//  }
+  }
+  glDisable(GL_BLEND);
+  glDepthFunc(GL_LESS);
 }
-
-//void SceneGraph::drawForward(Camera *camera, bool wireframe)
-//{
-//}
 
 void SceneGraph::zPreBaked(int program)
 {

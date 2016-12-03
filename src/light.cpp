@@ -93,6 +93,27 @@ GLuint Light::getDepthMap()
   return depth_map;
 }
 
+void Light::updateForwardUniforms(unsigned program)
+{
+  //I hate doing this. Too bad apple doesn't support OGL4.3
+  int lightpos_loc = glGetUniformLocation(program, "lightPos_att");
+  int lightcone_loc = glGetUniformLocation(program, "lightCone_direction_angle");
+  int ambient_loc = glGetUniformLocation(program, "lightAmbient");
+  int diffuse_loc = glGetUniformLocation(program, "lightDiffuse");
+  int specular_loc = glGetUniformLocation(program, "lightSpecular");
+  if (!lightpos_loc || !lightcone_loc || !ambient_loc || !diffuse_loc || !specular_loc)
+  {
+    fprintf(stderr, "forward render could not find light uniforms\r\n");
+  }
+  vec4 lpos_att = vec4(getWorldPos(), getRadius());
+  vec4 lcone_angle = vec4(getDirection(), getAngle());
+  glUniform4fv(lightpos_loc, 1, &lpos_att[0]);
+  glUniform4fv(lightcone_loc, 1, &lcone_angle[0]);
+  glUniform3fv(ambient_loc, 1, &ambient[0]);
+  glUniform3fv(diffuse_loc, 1, &diffuse[0]);
+  glUniform3fv(specular_loc, 1, &specular[0]);
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
@@ -162,6 +183,7 @@ void PointLight::updateUniforms(unsigned program)
   vec4 combined = vec4(specular, 0.0f);
   glUniform4fv(specular_loc, 1, &combined[0]);
 }
+
 
 void PointLight::updateShadowUniforms(unsigned program)
 {

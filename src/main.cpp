@@ -39,11 +39,16 @@ int main(int argc, char **argv)
 {
     //parse input arguments
     bool benchmark=false;
+    bool uselidr=true;
     for (int i=0; i<argc; ++i)
     {
       if (strcmp(argv[i], "benchmark")==0)
       {
         benchmark=true;
+      }
+      if (strcmp(argv[i], "forward")==0)
+      {
+        uselidr=false;
       }
     }
     GLFWwindow* window;
@@ -67,7 +72,7 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    if (initScene(Projection, benchmark, true)<0)
+    if (initScene(Projection, benchmark, uselidr)<0)
     {
       cleanupScene();
       glfwTerminate();
@@ -92,7 +97,7 @@ int main(int argc, char **argv)
           framecount=0;
         }
         //draw
-        drawScene(diff, true);
+        drawScene(diff, uselidr);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
