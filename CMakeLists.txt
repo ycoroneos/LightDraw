@@ -82,6 +82,7 @@ list (APPEND voxl_SRC
   src/shaderlib.cpp
   src/animation.cpp
   src/fpscamera.cpp
+  src/assimpcamera.cpp
 )
 list (APPEND voxl_HEADER
   inc/voxel.h
@@ -105,6 +106,7 @@ list (APPEND voxl_HEADER
   inc/node.h
   inc/animation.h
   inc/fpscamera.h
+  inc/assimpcamera.h
 )
 
 add_executable(voxl ${voxl_SRC} ${voxl_HEADER})

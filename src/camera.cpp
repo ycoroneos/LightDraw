@@ -67,13 +67,22 @@ void Camera::updateUniforms(unsigned program)
   }
 }
 
-void Camera::updatePos(mat4 M)
+void Camera::animateView(mat4 *M)
 {
-  View = M * local_View;
+  vec4 newpos = *M * vec4(local_pos, 1.0f);
+  pos = vec3(newpos);
+  vec3 newlookat = vec3(*M * vec4(local_lookat, 1.0f));
+  vec3 newup = mat3(*M)*local_up;
+  View = lookAt(pos, newlookat, newup);
 }
 
 bool Camera::viewWire()
 {
   return wireframe;
+}
+
+const char *Camera::getName()
+{
+  return (const char*)name;
 }
 

@@ -23,6 +23,11 @@ void Node::addLight(Light *light)
   lights.push_back(light);
 }
 
+void Node::addCamera(Camera *camera)
+{
+  cameras.push_back(camera);
+}
+
 void Node::setName(const char *newname)
 {
   strncpy(name, newname, sizeof(name));
@@ -111,7 +116,7 @@ void Node::bakeLower()
   //update camera transforms
   for (int i=0; i<cameras.size(); ++i)
   {
-    cameras[i]->updatePos(M);
+    cameras[i]->animateView(&M);
   }
 
   for (int i=0; i<children.size(); ++i)

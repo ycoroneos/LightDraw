@@ -34,6 +34,7 @@ class SceneGraph : public InputResponder
     std::vector<Light *> getLights();
     Node *findNodeByName(const char *name);
     void animate(double timestep);
+    Camera *getCamera(unsigned num);
 
     void doMouseInput(double xpos, double ypos) override;
     void doKeyboardInput(int key, int scancode, int action, int mods) override;

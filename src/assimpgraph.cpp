@@ -7,7 +7,7 @@
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flag
 #include "stdio.h"
-#include <inc/camera.h>
+#include <inc/assimpcamera.h>
 #include <inc/light.h>
 using namespace std;
 using namespace glm;
@@ -267,6 +267,29 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
   //fprintf(stderr, "scene loaded %d lights\r\n", lights.size());
   delete[] cwd;
 
+  //cameras that may be defined
+  for (int i=0; i<scene->mNumCameras; ++i)
+  {
+    aiCamera *discamera = scene->mCameras[i];
+    float aspect = discamera->mAspect;
+    float near = discamera->mClipPlaneNear;
+    float far = discamera->mClipPlaneFar;
+    float fov = discamera->mHorizontalFOV;
+    mat4 P = glm::perspective(fov, aspect, near, far);
+    vec3 lookat = aiVec3toVec3(discamera->mLookAt);
+    vec3 pos = aiVec3toVec3(discamera->mPosition);
+    vec3 up = aiVec3toVec3(discamera->mUp);
+    AssimpCamera *newcamera = new AssimpCamera(P, pos, lookat, up, discamera->mName.C_Str());
+    cameras.push_back(newcamera);
+    Node *target = findNodeByName(newcamera->getName());
+    if (target == NULL)
+    {
+      fprintf(stderr, "target for camera %s not found\r\n", discamera->mName.C_Str());
+    }
+    target->addCamera(newcamera);
+    fprintf(stderr, "added camera with name %s\r\n", discamera->mName.C_Str());
+  }
+
   //animations come last
   for (int i=0; i<scene->mNumAnimations; ++i)
   {
@@ -279,9 +302,7 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
     {
       aiNodeAnim *dischannel = disanimation->mChannels[j];
       fprintf(stderr, "animation channel for node %s\r\n", dischannel->mNodeName.C_Str());
-      //assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys == dischannel->mNumScalingKeys);
       fprintf(stderr, "rotation keys: %d position keys: %d\r\n", dischannel->mNumRotationKeys, dischannel->mNumPositionKeys);
-      //assert(dischannel->mNumRotationKeys == dischannel->mNumPositionKeys);
       vector<vec3> poskeys;
       vector<vec3> scalekeys;
       vector<quat> rotationkeys;
@@ -294,14 +315,10 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
       for (int keynum=0; keynum<dischannel->mNumPositionKeys; ++keynum)
       {
         poskeys.push_back(aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue));
-        //scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
-        //rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
         vec3 posframe = aiVec3toVec3(dischannel->mPositionKeys[keynum].mValue);
-        //fprintf(stderr, "found position keyframe %f %f %f\r\n", posframe.x, posframe.y, posframe.z);
       }
       for (int keynum=0; keynum<dischannel->mNumRotationKeys; ++keynum)
       {
-        //scalekeys.push_back(aiVec3toVec3(dischannel->mScalingKeys[keynum].mValue));
         rotationkeys.push_back(aiQuattoQuat(dischannel->mRotationKeys[keynum].mValue));
       }
       for (int keynum=0; keynum<dischannel->mNumScalingKeys; ++keynum)

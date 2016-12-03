@@ -334,6 +334,18 @@ void SceneGraph::animate(double timestep)
   }
 }
 
+Camera *SceneGraph::getCamera(unsigned num)
+{
+  if (num<cameras.size())
+  {
+    return cameras[num];
+  }
+  else
+  {
+    return NULL;
+  }
+}
+
 void SceneGraph::doMouseInput(double xpos, double ypos)
 {
 }

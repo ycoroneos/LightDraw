@@ -19,6 +19,7 @@ FPSCamera *camera;
 AssimpGraph *sgr;
 LIDR *lidr;
 ShaderLib shaderlib;
+Camera *active_camera=NULL;
 
 int voxelprog;
 int default_mesh_prog;
@@ -48,6 +49,11 @@ int initScene(mat4 Projection)
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr->enableInput();
   sgr->bake();
+  active_camera = sgr->getCamera(0);
+  if (active_camera == NULL)
+  {
+    active_camera = camera;
+  }
   return 0;
 }
 
@@ -57,7 +63,7 @@ void drawScene(double timestep)
   sgr->animate(timestep);
 
   //first fill the z buffer
-  int zprog = lidr->ZPrePass(camera);
+  int zprog = lidr->ZPrePass(active_camera);
   sgr->zPreBaked(zprog);
 
   //draw shadowmaps for each light
@@ -65,13 +71,13 @@ void drawScene(double timestep)
 
   //draw lightvolumes
   int lightvolume_prog = lidr->LightVolumes();
-  sgr->drawLightVolumes(lightvolume_prog, camera);
+  sgr->drawLightVolumes(lightvolume_prog, active_camera);
   lidr->LightVolumesEnd();
 
   //update the light textures
   lidr->packLightTextures(sgr->getLights());
 
-  sgr->drawBaked(camera, camera->viewWire());
+  sgr->drawBaked(active_camera, active_camera->viewWire());
   lidr->cornerWindow();
   lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
 }

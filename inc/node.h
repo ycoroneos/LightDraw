@@ -33,6 +33,7 @@ class Node
     void setM(glm::mat4 M_1);
     Node *getParent();
     glm::mat4 getM();
+    void addCamera(Camera *camera);
     void bakeLower();
   private:
   bool baked=false;
