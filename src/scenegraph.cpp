@@ -100,6 +100,9 @@ void SceneGraph::drawBaked(Camera *camera, bool wireframe)
 //  }
 }
 
+//void SceneGraph::drawForward(Camera *camera, bool wireframe)
+//{
+//}
 
 void SceneGraph::zPreBaked(int program)
 {
@@ -346,6 +349,51 @@ Camera *SceneGraph::getCamera(unsigned num)
   }
 }
 
+void SceneGraph::setAllMeshProgram(int program)
+{
+  for (int i=0; i<meshes.size(); ++i)
+  {
+    meshes[i]->setProgram(program);
+  }
+  bake();
+}
+
+void SceneGraph::setAllLightsOn()
+{
+  for (int i=0; i<lights.size(); ++i)
+  {
+    lights[i]->turnOn();
+  }
+  lightson = true;
+}
+
+void SceneGraph::setAllLightsOff()
+{
+  for (int i=0; i<lights.size(); ++i)
+  {
+    lights[i]->turnOff();
+  }
+  lightson = false;
+}
+
+void SceneGraph::setAllShadowsOn()
+{
+  for (int i=0; i<lights.size(); ++i)
+  {
+    lights[i]->shadowsOn();
+  }
+  shadows = true;
+}
+
+void SceneGraph::setAllShadowsOff()
+{
+  for (int i=0; i<lights.size(); ++i)
+  {
+    lights[i]->shadowsOff();
+  }
+  shadows = false;
+}
+
 void SceneGraph::doMouseInput(double xpos, double ypos)
 {
 }
@@ -361,20 +409,20 @@ void SceneGraph::doKeyboardInput(int key, int scancode, int action, int mods)
     // here: http://www.glfw.org/docs/latest/group__keys.html
     switch (key)
     {
-      case 'F':
-        for (int i=0; i<meshes.size(); ++i)
-        {
-          meshes[i]->setProgram(default_mesh_prog);
-        }
-        bake();
-        break;
-      case 'L':
-        for (int i=0; i<meshes.size(); ++i)
-        {
-          meshes[i]->setProgram(mesh_lidr_prog);
-        }
-        bake();
-        break;
+    //  case 'F':
+    //    for (int i=0; i<meshes.size(); ++i)
+    //    {
+    //      meshes[i]->setProgram(default_mesh_prog);
+    //    }
+    //    bake();
+    //    break;
+    //  case 'L':
+    //    for (int i=0; i<meshes.size(); ++i)
+    //    {
+    //      meshes[i]->setProgram(mesh_lidr_prog);
+    //    }
+    //    bake();
+    //    break;
       case '1':
         for (int i=0; i<lights.size(); ++i)
         {

@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-int initScene(glm::mat4 Projection, bool benchmark);
+int initScene(glm::mat4 Projection, bool benchmark, bool uselidr);
 
 void drawScene(double timestep, bool uselidr);
 

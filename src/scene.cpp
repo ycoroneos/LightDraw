@@ -31,7 +31,7 @@ int lidr_lightvolume_program;
 int viewport_program;
 int mesh_lidr_prog;
 
-int initScene(mat4 Projection, bool benchmark)
+int initScene(mat4 Projection, bool benchmark, bool uselidr)
 {
   camera = new FPSCamera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
@@ -49,6 +49,7 @@ int initScene(mat4 Projection, bool benchmark)
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr->enableInput();
   sgr->bake();
+  sgr->setAllShadowsOff();
   if (benchmark)
   {
     active_camera = sgr->getCamera(0);
@@ -56,6 +57,14 @@ int initScene(mat4 Projection, bool benchmark)
   if (active_camera == NULL)
   {
     active_camera = camera;
+  }
+  if (uselidr)
+  {
+    sgr->setAllMeshProgram(mesh_lidr_prog);
+  }
+  else
+  {
+    sgr->setAllMeshProgram(default_mesh_prog);
   }
   return 0;
 }

@@ -35,6 +35,11 @@ class SceneGraph : public InputResponder
     Node *findNodeByName(const char *name);
     void animate(double timestep);
     Camera *getCamera(unsigned num);
+    void setAllMeshProgram(int program); //for benchmarking
+    void setAllLightsOn();
+    void setAllLightsOff();
+    void setAllShadowsOn();
+    void setAllShadowsOff();
 
     void doMouseInput(double xpos, double ypos) override;
     void doKeyboardInput(int key, int scancode, int action, int mods) override;
@@ -48,7 +53,7 @@ class SceneGraph : public InputResponder
     std::vector<KeyframeAnimation *> animations;
     std::vector<Camera *> cameras;
     bool lightson=true;
-    bool shadows=false;
+    bool shadows=true;
   private:
     GLuint lightvolume_vao;
     GLuint lightvolume_vertex_buffer;

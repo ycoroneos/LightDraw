@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    if (initScene(Projection, benchmark)<0)
+    if (initScene(Projection, benchmark, true)<0)
     {
       cleanupScene();
       glfwTerminate();
