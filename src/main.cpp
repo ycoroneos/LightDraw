@@ -7,6 +7,7 @@
 #include "inc/scene.h"
 #include "inc/input.h"
 #include <stdio.h>
+#include <cstring>
 
 glm::mat4 Projection;
 
@@ -34,8 +35,17 @@ void window_size_callback(GLFWwindow* window, int width, int height)
   Projection = glm::perspective(fovy, aspect, nearz, farz);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+    //parse input arguments
+    bool benchmark=false;
+    for (int i=0; i<argc; ++i)
+    {
+      if (strcmp(argv[i], "benchmark")==0)
+      {
+        benchmark=true;
+      }
+    }
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -57,13 +67,15 @@ int main(void)
     glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    if (initScene(Projection)<0)
+    if (initScene(Projection, benchmark)<0)
     {
       cleanupScene();
       glfwTerminate();
       return -1;
     }
     double time = glfwGetTime();
+    int framecount=0;
+    double hundred_time = time;
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
@@ -73,11 +85,18 @@ int main(void)
         double newtime = glfwGetTime();
         double diff = newtime - time;
         time=newtime;
+        if (framecount>100)
+        {
+          fprintf(stderr, "drew 100 frames in %f seconds\r\n", newtime - hundred_time);
+          hundred_time=newtime;
+          framecount=0;
+        }
         //draw
         drawScene(diff);
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+        ++framecount;
 
         /* Poll for and process events */
         glfwPollEvents();
