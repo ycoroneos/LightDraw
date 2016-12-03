@@ -5,7 +5,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include "inc/recorder.h"
-#include "inc/camera.h"
+#include "inc/fpscamera.h"
 #include "inc/cube.h"
 #include "inc/voxel.h"
 #include "inc/lidr.h"
@@ -15,7 +15,7 @@
 #include <time.h>
 
 
-Camera *camera;
+FPSCamera *camera;
 AssimpGraph *sgr;
 LIDR *lidr;
 ShaderLib shaderlib;
@@ -32,7 +32,7 @@ int mesh_lidr_prog;
 
 int initScene(mat4 Projection)
 {
-  camera = new Camera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
+  camera = new FPSCamera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
 
   voxelprog                         = shaderlib.loadShader("../shaders/voxel.vert", "../shaders/voxel.frag");

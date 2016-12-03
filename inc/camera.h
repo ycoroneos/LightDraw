@@ -6,25 +6,21 @@ using namespace glm;
 class Camera : public InputResponder
 {
   public:
-    Camera(vec3 eye, vec2 pitchandyaw, mat4 Projection);
+    Camera(vec3 eye, mat4 Projection, const char *name_1);
+    void setProjection(mat4 newProjection);
+    void updatePos(mat4 M);
     mat4 getViewMatrix();
     mat4 getProjectionMatrix();
     mat4 getProjectionViewInverse();
-    void computeViewMatrix();
-    void updatePitchYaw(vec2 pitchyawdelta);
-    void updateTranslation(vec2 translation);
     vec3 getPos();
     void updateUniforms(unsigned program);
     bool viewWire();
-
-    void doMouseInput(double xpos, double ypos) override;
-    void doKeyboardInput(int key, int scancode, int action, int mods) override;
-  private:
-    vec2 pitchyaw;
+  protected:
+    char name[25];
     vec3 pos;
     mat4 View;
+    mat4 local_View; //used for animation
     mat4 Projection;
     mat4 invProjection;
     bool wireframe=false;
-    bool sprint=false;
 };

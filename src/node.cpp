@@ -108,6 +108,12 @@ void Node::bakeLower()
     lights[i]->updatePos(&M);
   }
 
+  //update camera transforms
+  for (int i=0; i<cameras.size(); ++i)
+  {
+    cameras[i]->updatePos(M);
+  }
+
   for (int i=0; i<children.size(); ++i)
   {
     children[i]->bakeLower();

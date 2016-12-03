@@ -45,6 +45,7 @@ class SceneGraph : public InputResponder
     std::vector<Material*> materials;
     std::vector<Light *> lights;
     std::vector<KeyframeAnimation *> animations;
+    std::vector<Camera *> cameras;
     bool lightson=true;
     bool shadows=true;
   private:
