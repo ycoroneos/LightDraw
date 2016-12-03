@@ -48,7 +48,7 @@ class SceneGraph : public InputResponder
     std::vector<KeyframeAnimation *> animations;
     std::vector<Camera *> cameras;
     bool lightson=true;
-    bool shadows=true;
+    bool shadows=false;
   private:
     GLuint lightvolume_vao;
     GLuint lightvolume_vertex_buffer;
