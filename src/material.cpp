@@ -23,8 +23,6 @@ Material::Material(const char *name_1, vec3 ambient_1, vec3 diffuse_1, vec3 spec
   : ambient(ambient_1), diffuse(diffuse_1), specular(specular_1), shininess(shininess_1)
 {
   strncpy(name, name_1, sizeof(name));
-//  fprintf(stderr, "loading material %s\r\n", name);
-//  fprintf(stderr, "loading texture %s\r\n", diffuse_texture);
   glGenTextures(1,&texID);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texID);
@@ -37,7 +35,6 @@ Material::Material(const char *name_1, vec3 ambient_1, vec3 diffuse_1, vec3 spec
   }
   //invert image along y axis
   struct color *flipped = (struct color*) malloc(width*height*sizeof(struct color));
-  //fprintf(stderr, "size of color is %d\r\n", sizeof(struct color));
   for (int w=0; w<width; ++w)
   {
     for (int h=0; h<height; ++h)
@@ -51,7 +48,6 @@ Material::Material(const char *name_1, vec3 ambient_1, vec3 diffuse_1, vec3 spec
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)flipped);
   SOIL_free_image_data(image);
   free(flipped);
-//  fprintf(stderr, "loaded texture %s\r\n", diffuse_texture);
   refcount=0;
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -67,12 +63,6 @@ Material::~Material()
 
 void Material::Use(int program)
 {
-  int texLoc = glGetUniformLocation(program, "texture_obj");
-  if (texLoc<0)
-  {
-    fprintf(stderr,"cant find texture uniform\r\n");
-  }
-  glUniform1i(texLoc, 0);
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, texID);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);

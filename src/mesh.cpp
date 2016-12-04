@@ -20,6 +20,8 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
 
   glBindVertexArray(vertexarray);
 
+  fprintf(stderr, "make mesh\r\n");
+
   //upload indices
   n_indices = indices.size();
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexbuffer);
@@ -82,6 +84,20 @@ mat4 Mesh::getWorldPos()
 void Mesh::setProgram(unsigned newprogram)
 {
   program = newprogram;
+  glUseProgram(program);
+  M_loc = glGetUniformLocation(program, "M");
+  if (M_loc<0)
+  {
+    fprintf(stderr, "error binding mesh: could not find M matrix location\r\n");
+    return;
+  }
+  N_loc = glGetUniformLocation(program, "N");
+  if (N_loc<0)
+  {
+    fprintf(stderr, "error binding mesh: could not find N matrix location\r\n");
+  //  return;
+  }
+  glUseProgram(0);
 }
 
 unsigned Mesh::getProgram()
@@ -101,14 +117,10 @@ unsigned Mesh::getQuickProgram()
 
 void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
 {
-  //glUseProgram(program);
-  //fprintf(stderr, "draw mesh\r\n");
   glBindVertexArray(vertexarray);
   glUniformMatrix4fv(M_loc, 1, false, M);
   glUniformMatrix3fv(N_loc, 1, false, N);
-  //update shading uniforms for the material
   drawmaterial->Use(program);
-  //fprintf(stderr, "draw elements\r\n");
   if (lines)
   {
      glDrawElements(GL_LINES, n_indices, GL_UNSIGNED_INT, 0);
@@ -118,8 +130,6 @@ void Mesh::draw(bool lines, GLfloat *M, GLfloat *N)
      glDrawElements(GL_TRIANGLES, n_indices, GL_UNSIGNED_INT, 0);
   }
   glBindVertexArray(0);
-  //fprintf(stderr, "done draw elements\r\n");
-  //glUseProgram(0);
 }
 
 

@@ -32,7 +32,7 @@ int viewport_program;
 int mesh_lidr_prog;
 int mesh_forward_prog;
 
-int initScene(mat4 Projection, bool benchmark, bool uselidr)
+int initScene(mat4 Projection, bool benchmark, bool uselidr, bool shadows)
 {
   camera = new FPSCamera(vec3(5.0f,1.0f, 0.0f), vec2(0.0f,0.0f), Projection);
   camera->enableInput();
@@ -51,7 +51,14 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr)
   sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza.dae");
   sgr->enableInput();
   sgr->bake();
-  sgr->setAllShadowsOff();
+  if (shadows)
+  {
+    sgr->setAllShadowsOn();
+  }
+  else
+  {
+    sgr->setAllShadowsOff();
+  }
   if (benchmark)
   {
     active_camera = sgr->getCamera(0);
@@ -79,7 +86,7 @@ void drawScene(double timestep, bool uselidr)
 
   if (uselidr)
   {
-    //first fill the z buffer for both render passes
+    //first fill the z buffer
     int zprog = lidr->ZPrePass(active_camera);
     sgr->zPreBaked(zprog);
 
@@ -112,7 +119,6 @@ void drawScene(double timestep, bool uselidr)
 
     //do regular forward pass
     sgr->drawForwardBaked(active_camera, active_camera->viewWire());
-    //glDepthMask(GL_TRUE);
   }
 }
 

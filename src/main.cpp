@@ -40,6 +40,7 @@ int main(int argc, char **argv)
     //parse input arguments
     bool benchmark=false;
     bool uselidr=true;
+    bool shadows=false;
     for (int i=0; i<argc; ++i)
     {
       if (strcmp(argv[i], "benchmark")==0)
@@ -50,6 +51,10 @@ int main(int argc, char **argv)
       {
         uselidr=false;
       }
+      if (strcmp(argv[i], "shadows")==0)
+      {
+        shadows=true;
+      }
     }
     GLFWwindow* window;
 
@@ -57,8 +62,8 @@ int main(int argc, char **argv)
     if (!glfwInit())
         return -1;
 
-    int width = 1920;
-    int height = 1080;
+    int width = 1024;
+    int height = 768;
     window_width = width;
     window_height = height;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
@@ -72,7 +77,7 @@ int main(int argc, char **argv)
     glEnable(GL_CULL_FACE);
 
     /* Loop until the user closes the window */
-    if (initScene(Projection, benchmark, uselidr)<0)
+    if (initScene(Projection, benchmark, uselidr, shadows)<0)
     {
       cleanupScene();
       glfwTerminate();

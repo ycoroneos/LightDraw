@@ -338,7 +338,7 @@ Node * AssimpGraph::recursive_copy(aiNode *curnode, Node *parent)
   newnode->setName(ainode->mName.data);
   mat4 transform = aiMat4toMat4(ainode->mTransformation);
   newnode->setTransform(transform);
-  fprintf(stderr, "name %s \r\n", newnode->getName());
+  //fprintf(stderr, "name %s \r\n", newnode->getName());
   for (int i=0; i<ainode->mNumMeshes; ++i)
   {
     newnode->addMesh(meshes[ainode->mMeshes[i]]);
