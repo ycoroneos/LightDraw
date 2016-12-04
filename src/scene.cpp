@@ -102,16 +102,17 @@ void drawScene(double timestep, bool uselidr)
   {
     //depth pre-pass
     glColorMask(0,0,0,0);
-    glDepthMask(GL_TRUE);
     glUseProgram(lidr_z_program);
     active_camera->updateUniforms(lidr_z_program);
     sgr->zPreBaked(lidr_z_program);
     glColorMask(1,1,1,1);
-    glDepthMask(GL_FALSE);
+
+    //shadow maps
+    sgr->drawShadowMaps();
 
     //do regular forward pass
     sgr->drawForwardBaked(active_camera, active_camera->viewWire());
-    glDepthMask(GL_TRUE);
+    //glDepthMask(GL_TRUE);
   }
 }
 

@@ -109,6 +109,7 @@ void SceneGraph::drawForwardBaked(Camera *camera, bool wireframe)
       glUseProgram(program);
       camera->updateUniforms(program);
       lights[lnum]->updateForwardUniforms(program);
+      lights[lnum]->updateShadowUniforms(program);
       mat4 M = meshes[i]->getWorldPos();
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);

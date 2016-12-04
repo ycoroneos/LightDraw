@@ -30,6 +30,14 @@ uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
 uniform vec3 lightSpecular;
 
+//light supplied for shadows
+uniform sampler2D shadowmap;
+uniform samplerCube cube_shadowmap;
+uniform mat4 light_PV;
+uniform float shadows;
+uniform float far_plane;
+
+
 vec3 ambient(vec3 lightAmbient)
 {
   return matAmbient * lightAmbient;
@@ -59,10 +67,11 @@ void main () {
 
 
   out_Color = vec4(0.0f, 0.0f, 0.0f, 0.0f);
+  vec3 lightPos = lightPos_att.xyz;
+
 
   //some variables we will always use
   float radius = lightPos_att.w;
-  vec3 lightPos = lightPos_att.xyz;
   float distance = length(lightPos - pos_world.xyz);
   vec3 diffuseColor = texture(texture_obj, var_texcoords).rgb;
   vec3 D = lightCone_direction_angle.xyz;
@@ -72,6 +81,29 @@ void main () {
   //first check if fragment is inside the light volume
   if (distance < radius && acos(angle) < cone_angle)
   {
+    //calculate shadows for spot light
+    if (shadows>2.0f)
+    {
+      vec4 light_ndc = light_PV * pos_world;
+      light_ndc = light_ndc/light_ndc.w;
+      light_ndc = light_ndc*0.5f + 0.5f;
+      float light_z = light_ndc.z;
+      float light_depth = texture(shadowmap, light_ndc.xy).r;
+      if (light_depth < (light_z - 0.02))
+      {
+        discard;
+      }
+    }
+    //calculate shadows for point light
+    else if (shadows>0.0f)
+    {
+      vec3 lookup = pos_world.xyz - lightPos;
+      float light_depth = texture(cube_shadowmap, lookup).r * far_plane;
+      if (light_depth < (length(lookup) - 0.02))
+      {
+        discard;
+      }
+    }
 
     float att = lightPos_att.w;
     vec3 L = normalize(lightPos.xyz - pos_world.xyz);
