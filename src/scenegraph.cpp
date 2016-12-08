@@ -101,7 +101,9 @@ void SceneGraph::drawForwardBaked(Camera *camera, bool wireframe)
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   glDepthFunc(GL_LEQUAL);
-  for (int lnum=0; lnum<lights.size(); ++lnum)
+  int nlights = lights.size();
+  float nlightfl = float(nlights);
+  for (int lnum=0; lnum<nlights; ++lnum)
   {
     for (int i=0; i<meshes.size(); ++i)
     {
@@ -110,6 +112,8 @@ void SceneGraph::drawForwardBaked(Camera *camera, bool wireframe)
       camera->updateUniforms(program);
       lights[lnum]->updateForwardUniforms(program);
       lights[lnum]->updateShadowUniforms(program);
+      int nlight_loc = glGetUniformLocation(program, "nLights");
+      glUniform1fv(nlight_loc, 1, &nlightfl);
       mat4 M = meshes[i]->getWorldPos();
       mat3 N = transpose(inverse(glm::mat3(M)));
       meshes[i]->draw(wireframe, &M[0][0], &N[0][0]);
