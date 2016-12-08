@@ -102,8 +102,8 @@ void drawScene(double timestep, bool uselidr)
     lidr->packLightTextures(sgr->getLights());
 
     sgr->drawBaked(active_camera, active_camera->viewWire());
-    lidr->cornerWindow();
-    lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
+    //lidr->cornerWindow();
+    //lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
   }
   else
   {
