@@ -48,7 +48,7 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr, bool shadows)
   mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vert", "../shaders/lidr_light.frag");
   mesh_forward_prog                 = shaderlib.loadShader("../shaders/forward.vert", "../shaders/forward.frag");
   lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
-  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza_20lights.dae");
+  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza_80lights.dae");
   sgr->enableInput();
   sgr->bake();
   if (shadows)

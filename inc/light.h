@@ -37,6 +37,7 @@ class Light
     void turnOn();
     void turnOff();
     GLuint getDepthMap();
+    bool hasMoved();
    // float getRadius();
    // float getAngle();
   protected:
@@ -48,6 +49,7 @@ class Light
     vec3 worldpos;
     bool shadows=0;
     bool on=1;
+    bool hasmoved=true;
 
     //GL things for shadows
     GLuint depth_fbo;

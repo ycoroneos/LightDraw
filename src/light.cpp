@@ -114,6 +114,11 @@ void Light::updateForwardUniforms(unsigned program)
   glUniform3fv(specular_loc, 1, &specular[0]);
 }
 
+bool Light::hasMoved()
+{
+  return hasmoved;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 void PointLight::updatePos(mat4 *M)
 {
@@ -123,6 +128,7 @@ void PointLight::updatePos(mat4 *M)
   vec4 world = mm*vec4(pos, 1.0f);
   world/=world.w;
   worldpos = vec3(world);
+  hasmoved=true;
 }
 
 PointLight::PointLight(const char *name_1, vec3 pos_1, vec3 ambient_1, vec3 diffuse_1, vec3 specular_1, float radius_1)
@@ -245,6 +251,7 @@ int PointLight::shadowMap()
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
   glClear(GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_FRONT);
+  hasmoved=false;
   return shadowmap_program;
 
 }
@@ -290,6 +297,7 @@ void SpotLight::updatePos(mat4 *M)
   world/=world.w;
   worldpos = vec3(world);
   world_direction = normalize(mat3(mm)*direction);
+  hasmoved=true;
   //vec3 direction_inv = mat3(mm)*direction;
 //  fprintf(stderr, "spot light local direction : %f %f %f\r\n", direction.x, direction.y, direction.z);
 //  fprintf(stderr, "spot light world direction : %f %f %f\r\n", world_direction.x, world_direction.y, world_direction.z);
@@ -410,6 +418,7 @@ int SpotLight::shadowMap()
   glBindFramebuffer(GL_FRAMEBUFFER, depth_fbo);
   glClear(GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_FRONT);
+  hasmoved=false;
   return shadowmap_program;
 
 }
@@ -497,6 +506,7 @@ void DirectionLight::updatePos(mat4 *M)
   //direction = vec3(*M * vec4(1.0f, 1.0f, 1.0f, 0.0f)) + direction;
   direction = vec3(-1.0f, -1.0f, -1.0f);
   fprintf(stderr, "sun direction: %f %f %f\r\n", direction.x, direction.y, direction.z);
+  hasmoved=true;
 }
 
 void DirectionLight::updateUniforms(unsigned program)
@@ -560,6 +570,7 @@ int DirectionLight::shadowMap()
   glReadBuffer(GL_NONE);
   glClear(GL_DEPTH_BUFFER_BIT);
   glCullFace(GL_FRONT);
+  hasmoved=false;
   return shadowmap_program;
 }
 

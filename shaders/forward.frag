@@ -29,6 +29,7 @@ uniform vec4 lightCone_direction_angle;
 uniform vec3 lightAmbient;
 uniform vec3 lightDiffuse;
 uniform vec3 lightSpecular;
+uniform float nLights;
 
 //light supplied for shadows
 uniform sampler2D shadowmap;
@@ -121,7 +122,7 @@ void main () {
   }
   else
   {
-    out_Color.xyz = diffuseColor / 10.0f;
+    out_Color.xyz = diffuseColor / 10.0f / nLights;
   }
 }
 

@@ -328,6 +328,8 @@ AssimpGraph::AssimpGraph(const char *filename) : SceneGraph()
       animations.push_back(new KeyframeAnimation(ticks_per_second, poskeys, scalekeys, rotationkeys, target));
     }
   }
+
+  fprintf(stderr, "there are %d lights\r\n", lights.size());
 }
 
 

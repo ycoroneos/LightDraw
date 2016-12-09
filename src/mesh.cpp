@@ -20,7 +20,6 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned> indices, const ch
 
   glBindVertexArray(vertexarray);
 
-  fprintf(stderr, "make mesh\r\n");
 
   //upload indices
   n_indices = indices.size();
