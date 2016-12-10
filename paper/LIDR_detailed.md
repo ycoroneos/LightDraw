@@ -81,6 +81,18 @@ depth is recovered by simply looking it up from the depth buffer that
 was generated earlier. This is a complicated step, so I will illustrate
 the method below:
 
+Reconstruct scenepos in clip space:
+````
+  //xyz scenepos in clip space
+  float scenedepth = texture(depthmap, var_texcoords).r * 2.0f - 1.0f;
+  vec4 scenepos_clip = vec4((var_texcoords*2.0f) - 1.0f, scenedepth, 1.0f);
+````
+
+
+There is one more shortcut I took. Instead of rendering a full-screen
+quad, which is 6 vertices the gpu must draw, I rendered an oversized
+triangle. The gpu clips the triangle and interpolates the fragment
+coordinates so it becomes the same thing in the fragment shader.
 
 ###Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
