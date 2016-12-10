@@ -3,7 +3,26 @@ A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
 
 This used to be a minecraft-style voxel rendering engine. The pipeline is still there and it
-actually works but its just unused for now
+actually works but its just unused for now. Check out inc/chunk.h if you
+care about that.
+
+
+##How to Use
+My benchmark scenes of the Crytek Sponza Atrium could not fit on github
+so you must download them here and put them in the root of
+this directory tree.
+
+##Build Instructions
+This is a CMake project with all dependencies included in the repo. If
+you know CMake, then stop here and do the normal thing. Otherwise:
+
+mkdir build
+
+cd build
+
+cmake ..
+
+make -j4
 
 ##Feature List
   -Light Indexed Deferred Rendering with up to 4 lights per fragment and
@@ -46,23 +65,6 @@ it with collada, fbx, and 3ds so I know those work.
   -Uses GLFW for rendering context
 
   -Uses GLEW for managing extensions
-
-##How to Use
-My benchmark scenes of the Crytek Sponza Atrium could not fit on github
-so you must download them here and put them in the root of
-this directory tree.
-
-##Build Instructions
-This is a CMake project with all dependencies included in the repo. If
-you know CMake, then stop here and do the normal thing. Otherwise:
-
-mkdir build
-
-cd build
-
-cmake ..
-
-make -j4
 
 
 ##Basic Idea of LIDR
