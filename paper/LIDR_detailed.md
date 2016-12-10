@@ -58,11 +58,16 @@ order to avoid submitting 6 draw calls, the FBO for the point light
 shadowmap can be a cubemap and each side can be rendered to with the
 help of a geometry shader.
 
+insert picture here
 
 ###Light Map Generation
 Determine which lights hit each fragment in the camera's view and write
-this into a new FBO. Lights are identified by their index in a list.
-Index 0 means no light.
+this into a new FBO. Lights are identified by their index in a list and
+index 0 means no light hit. Each light is represented by an implicit
+volume. Spot lights are represented as cones, which have a radius and
+cone angle. In order for a point to be inside a cone volume, it must be
+inside the radius and also within the cone's light angle. Point lights
+are just a special case of a cone with an angle of 2\*PI.
 
 
 ###Bit Packing and Render Buffer Size
