@@ -90,6 +90,12 @@ Reconstruct scenepos in clip space:
   vec4 scenepos_clip = vec4((var_texcoords*2.0f) - 1.0f, scenedepth, 1.0f);
 ````
 
+Transform from clip space to world space:
+  ````
+  //PV_inverse is from camera
+  vec4 scenepos_world = PV_inverse * scenepos_clip;
+  vec3 scenepos_world_fixed = scenepos_world.xyz/scenepos_world.w;
+````
 
 There is one more shortcut I took. Instead of rendering a full-screen
 quad, which is 6 vertices the gpu must draw, I rendered an oversized
