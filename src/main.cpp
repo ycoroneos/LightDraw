@@ -16,6 +16,8 @@ glm::mat4 Projection;
 int window_width;
 int window_height;
 
+bool screenshot=false;
+
 void setViewport(GLFWwindow* window)
 {
     int width, height;
@@ -90,11 +92,7 @@ int main(int argc, char **argv)
       glfwTerminate();
       return -1;
     }
-    unsigned char *pixels=NULL;
-    if (record)
-    {
-      pixels= new unsigned char[width*height*4];
-    }
+    unsigned char *pixels = new unsigned char[width*height*4*4];
     double time = glfwGetTime();
     int framecount=0;
     double hundred_time = time;
@@ -118,17 +116,27 @@ int main(int argc, char **argv)
           framecount=0;
         }
         //draw
-        drawScene(diff, uselidr);
-
-        //record maybe
         if (record)
         {
+          drawScene(1.0/60.0f, uselidr);
+        }
+        else
+        {
+          drawScene(diff, uselidr);
+        }
+
+        //record maybe
+        if (record || screenshot)
+        {
           double distime = glfwGetTime();
-          glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+          glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+          glReadPixels(0, 0, width*2, height*2, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
           char name[50];
           sprintf(name, "frame_%d.png", writeframe);
-          encodeOneStep(name, (const unsigned char*)pixels, width, height);
+          encodeOneStep(name, (const unsigned char*)pixels, width*2, height*2);
+          fprintf(stderr, "screenshot %d %d\r\n", width, height);
           ++writeframe;
+          screenshot=false;
           glfwSetTime(distime);
         }
 
