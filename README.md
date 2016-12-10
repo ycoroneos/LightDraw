@@ -45,16 +45,19 @@ it with collada, fbx, and 3ds so I know those work.
 
 ##How to Use
 My benchmark scenes of the Crytek Sponza Atrium could not fit on github
-so you must download them here <coming soon> and put them in the root of
+so you must download them here and put them in the root of
 this directory tree.
 
 ##Build Instructions
 This is a CMake project with all dependencies included in the repo. If
 you know CMake, then stop here and do the normal thing. Otherwise:
-    mkdir build
-    cd build
-    cmake ..
-    make -j4
+mkdir build
+
+cd build
+
+cmake ..
+
+make -j4
 
 
 ##Basic Idea of LIDR
