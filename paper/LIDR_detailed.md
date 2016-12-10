@@ -7,7 +7,9 @@ pipeline consists of a Z Pre Pass, shadowmapping, and, finally,
 rendering the objects. The runtime breakdown is below in sequence of
 operations.
 
-Forward rendering: c1*O + c2*O*L + c3*O*L
+-                  Z-Pre  Shadow   Shading
+
+Forward rendering: O(M) + O(M*L) + O(M*L)
 
 G Buffer Deferred: c1*O + c2*O*L + c3*(O+L)
 
