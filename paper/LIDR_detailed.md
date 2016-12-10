@@ -69,6 +69,18 @@ cone angle. In order for a point to be inside a cone volume, it must be
 inside the radius and also within the cone's light angle. Point lights
 are just a special case of a cone with an angle of 2\*PI.
 
+Insert picture here
+
+In order to generate the Light Map, light volumes have to be rendered
+into it. Since the light volumes are implicit, no real geometry must be
+dispatched to the gpu in order to render the light volumes. Instead a
+full-screen quad is rendered and, for every single fragment on the quad,
+its world-space position is recovered from multiplying the NDC
+coordinated with the camera's inverse ProjectionView matrix. World-space
+depth is recovered by simply looking it up from the depth buffer that
+was generated earlier. This is a complicated step, so I will illustrate
+the method below:
+
 
 ###Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
