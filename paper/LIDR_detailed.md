@@ -8,7 +8,9 @@ rendering the objects. The runtime breakdown is below in sequence of
 operations.
 
 Forward rendering: c1*O + c2*O*L + c3*O*L
+
 G Buffer Deferred: c1*O + c2*O*L + c3*(O+L)
+
 LIDR:              c1*O + c2*O*L + c3*(L+O)
 
 Both G buffer deferred and LIDR shade all the objects in linear time but
