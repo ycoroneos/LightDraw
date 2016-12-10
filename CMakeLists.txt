@@ -41,6 +41,12 @@ if (NOT APPLE)
   SOURCE_GROUP(GLEW FILES 3rd_party/glew/src/glew.c)
 endif()
 
+#lodePNG
+list(APPEND voxl_INCLUDES 3rd_party/lodepng)
+list(APPEND voxl_SRC
+  3rd_party/lodepng/lodepng.cpp
+  )
+
 #GLM
 list(APPEND voxl_INCLUDES 3rd_party/glm)
 list(APPEND voxl_INCLUDES .)

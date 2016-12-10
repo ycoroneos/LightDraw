@@ -6,8 +6,10 @@
 #include "inc/glt.h"
 #include "inc/scene.h"
 #include "inc/input.h"
+#include "lodepng.h"
 #include <stdio.h>
 #include <cstring>
+void encodeOneStep(const char* filename, const unsigned char* image, unsigned width, unsigned height);
 
 glm::mat4 Projection;
 
@@ -41,6 +43,7 @@ int main(int argc, char **argv)
     bool benchmark=false;
     bool uselidr=true;
     bool shadows=false;
+    bool record=false;
     for (int i=0; i<argc; ++i)
     {
       if (strcmp(argv[i], "benchmark")==0)
@@ -55,6 +58,10 @@ int main(int argc, char **argv)
       {
         shadows=true;
       }
+      if (strcmp(argv[i], "record")==0)
+      {
+        record=true;
+      }
     }
     GLFWwindow* window;
 
@@ -62,8 +69,8 @@ int main(int argc, char **argv)
     if (!glfwInit())
         return -1;
 
-    int width = 3840;
-    int height = 2160;
+    int width = 1024;
+    int height = 768;
     window_width = width;
     window_height = height;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
@@ -83,11 +90,20 @@ int main(int argc, char **argv)
       glfwTerminate();
       return -1;
     }
+    unsigned char *pixels=NULL;
+    if (record)
+    {
+      pixels= new unsigned char[width*height*4];
+    }
     double time = glfwGetTime();
     int framecount=0;
     double hundred_time = time;
+    int writeframe=0;
     while (!glfwWindowShouldClose(window))
     {
+        /* Poll for and process events */
+        glfwPollEvents();
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -104,15 +120,39 @@ int main(int argc, char **argv)
         //draw
         drawScene(diff, uselidr);
 
+        //record maybe
+        if (record)
+        {
+          double distime = glfwGetTime();
+          glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+          char name[50];
+          sprintf(name, "frame_%d.png", writeframe);
+          encodeOneStep(name, (const unsigned char*)pixels, width, height);
+          ++writeframe;
+          glfwSetTime(distime);
+        }
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
         ++framecount;
 
-        /* Poll for and process events */
-        glfwPollEvents();
     }
 
+    if (record)
+    {
+      delete[] pixels;
+    }
     cleanupScene();
     glfwTerminate();
     return 0;
 }
+
+void encodeOneStep(const char* filename, const unsigned char* image, unsigned width, unsigned height)
+{
+  /*Encode the image*/
+  unsigned error = lodepng_encode32_file(filename, image, width, height);
+
+  /*if there's an error, display it*/
+  if(error) printf("error %u: %s\n", error, lodepng_error_text(error));
+}
+
