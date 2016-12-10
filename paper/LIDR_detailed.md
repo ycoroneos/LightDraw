@@ -53,7 +53,10 @@ Render the scene from the light's point of view but only store the
 depth. This is exactly the same as the Z Pre Pass, but it is done for
 every light. For spotlights, construct a view matrix from where it's
 located and where it's looking at. For point lights, construct 6 view
-matrices to represent each side of the cube that contains the it.
+matrices to represent each side of the cube that contains the it. In
+order to avoid submitting 6 draw calls, the FBO for the point light
+shadowmap can be a cubemap and each side can be rendered to with the
+help of a geometry shader.
 
 
 ###Light Map Generation
