@@ -78,12 +78,14 @@ full-screen quad is rendered and, for every single fragment on the quad,
 its world-space position is recovered from multiplying the NDC
 coordinated with the camera's inverse ProjectionView matrix. World-space
 depth is recovered by simply looking it up from the depth buffer that
-was generated earlier. This is a complicated step, so I will illustrate
-the method below:
+was generated earlier. This is a complicated step, so I will walk
+through the code below:
 
 Reconstruct scenepos in clip space:
 ````
   //xyz scenepos in clip space
+  //clip space goes from [0,1]
+  //var_texcoords are (x,y) position of fragment on the full screen quad
   float scenedepth = texture(depthmap, var_texcoords).r * 2.0f - 1.0f;
   vec4 scenepos_clip = vec4((var_texcoords*2.0f) - 1.0f, scenedepth, 1.0f);
 ````
