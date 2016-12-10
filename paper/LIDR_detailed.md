@@ -1,3 +1,22 @@
+#Light Indexed Deferred Rendering
+Is the main point of this project. LIDR is a linear time rendering
+algorithm for scenes with many lights and objects. It's possible to
+reason about how long it takes to render a scene. Assume there exists a
+scene with L lights, and M meshes. Also assume that the rendering
+pipeline consists of a Z Pre Pass, shadowmapping, and, finally,
+rendering the objects. The runtime breakdown is below in sequence of
+operations.
+
+Forward rendering: c1*O + c2*O*L + c3*O*L
+G Buffer Deferred: c1*O + c2*O*L + c3*(O+L)
+LIDR:              c1*O + c2*O*L + c3*(L+O)
+
+Both G buffer deferred and LIDR shade all the objects in linear time but
+LIDR can do it while consuming less memory and allowing more varied
+material properties. With extremely large scenes that have many dynamic
+shadows, both methods of deferred rendering are bottlenecked by
+shadowmapping.
+
 ##Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
