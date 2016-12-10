@@ -36,8 +36,33 @@ Render the scene from the camera's point of view into an FBO which is
 the same size as the window. I used a 32bit depth buffer for precision
 but 24bits can probably work too.
 
+Insert picture here
 
-##Bit Packing and Render Buffer Size
+###Shadow Map Generation
+|Source                         | Function        |
+|-------------------------------|:---------------:|
+|src/light.cpp                  |shadowMap()      |
+|src/scenegraph.cpp             |drawShadowMaps() |
+|shaders/spotlight\_shadow.vert |                 |
+|shaders/spotlight\_shadow.frag |                 |
+|shaders/point\_shadow.vert     |                 |
+|shaders/point\_shadow.geom     |                 |
+|shaders/point\_shadow.frag     |                 |
+
+Render the scene from the light's point of view but only store the
+depth. This is exactly the same as the Z Pre Pass, but it is done for
+every light. For spotlights, construct a view matrix from where it's
+located and where it's looking at. For point lights, construct 6 view
+matrices to represent each side of the cube that contains the it.
+
+
+###Light Map Generation
+Determine which lights hit each fragment in the camera's view and write
+this into a new FBO. Lights are identified by their index in a list.
+Index 0 means no light.
+
+
+###Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
 buffer. I am using a single render buffer of type RGBA_32 which means I
