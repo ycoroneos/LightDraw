@@ -72,5 +72,33 @@ fragments they hit. All geometry is then rendered in a forward manner
 and a "lightmap" texture is sampled to see which lights hit the current
 fragment. Lights are identified by a number, which is its index in my light
 array and also its index in a 1D texture containing all of the light
-properties of the scene. Check out the paper for more info.
+properties of the scene. The rendering steps are:
 
+1. Z Pre-Pass the entire scene into a depth FBO
+
+2 (Optional). Render shadow maps for each light
+
+3. Construct the Light Index Map by rendering and accumulating light
+   volumes into a full screen quad. All light volumes are implicitly
+defined as a sphere or a cone. If shadows are desired, apply
+shadowmapping here by discarding fragments that are in the light's
+shadow.
+
+4. Pack light properties into 1D textures so that the light index can be
+   used to sample the texture and retrieve the light properties
+
+5. Draw scene in a forward manner. Make the light properties texture as
+   well as the Light Index Map available to the shader in order to
+extract which lights hit the current fragment.
+
+Check out the paper for more detailed info.
+
+##Performance and Graphs
+I ran my benchmark scene on this computer:
+
+CPU: intel 5820k
+RAM: 64GB 2666MHz
+GPU: nvidia gtx 980 ti
+OpenGL version string: 4.5.0 NVIDIA 367.57
+
+graphs coming soon
