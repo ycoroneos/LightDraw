@@ -97,8 +97,11 @@ Check out the paper for more detailed info.
 I ran my benchmark scene on this computer:
 
 CPU: intel 5820k
+
 RAM: 64GB 2666MHz
+
 GPU: nvidia gtx 980 ti
+
 OpenGL version string: 4.5.0 NVIDIA 367.57
 
 graphs coming soon
