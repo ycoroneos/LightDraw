@@ -110,4 +110,6 @@ GPU: nvidia gtx 980 ti
 
 OpenGL version string: 4.5.0 NVIDIA 367.57
 
+Linux Kernel: 4.4.0-53-generic
+
 graphs coming soon
