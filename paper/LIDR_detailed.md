@@ -25,8 +25,16 @@ Later drawing passes can simply do a texture lookup to see which lights
 shade a given fragment.
 
 ###Z Pre Pass
+|Source             | Function  |
+|-------------------|:---------:|
+|src/lidr.cpp       |ZPrePass() |
+|src/scenegraph.cpp |zPreBaked()|
+|shaders/depth.vert |           |
+|shaders/depth.frag |           |
+
 Render the scene from the camera's point of view into an FBO which is
-the same size as the window.
+the same size as the window. I used a 32bit depth buffer for precision
+but 24bits can probably work too.
 
 
 ##Bit Packing and Render Buffer Size
