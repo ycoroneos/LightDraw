@@ -13,6 +13,7 @@
 #include "stdio.h"
 #include "inc/scenegraph.h"
 #include <time.h>
+#include "GLFW/glfw3.h"
 
 
 FPSCamera *camera;
@@ -80,8 +81,13 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr, bool shadows)
 
 void drawScene(double timestep, bool uselidr)
 {
+//  double time = glfwGetTime();
   //animate
   sgr->animate(timestep);
+//  glFlush();
+//  double stop = glfwGetTime();
+//  fprintf(stderr, "\tanimations: %f sec\r\n", stop-time);
+//  time=stop;
 
 
   if (uselidr)
@@ -89,21 +95,41 @@ void drawScene(double timestep, bool uselidr)
     //first fill the z buffer
     int zprog = lidr->ZPrePass(active_camera);
     sgr->zPreBaked(zprog);
+//    glFlush();
+//    stop=glfwGetTime();
+//    fprintf(stderr, "\tzPre: %f sec\r\n", stop-time);
+//    time=stop;
 
     //draw shadowmaps for each light
     sgr->drawShadowMaps();
+//    glFlush();
+//    stop=glfwGetTime();
+//    fprintf(stderr, "\tshadow maps: %f sec\r\n", stop-time);
+//    time=stop;
 
     //draw lightvolumes
     int lightvolume_prog = lidr->LightVolumes();
     sgr->drawLightVolumes(lightvolume_prog, active_camera);
     lidr->LightVolumesEnd();
+//    glFlush();
+//    stop=glfwGetTime();
+//    fprintf(stderr, "\tlight volumes: %f sec\r\n", stop-time);
+//    time=stop;
 
     //update the light textures
     lidr->packLightTextures(sgr->getLights());
+//    glFlush();
+//    stop=glfwGetTime();
+//    fprintf(stderr, "\tpack light textures: %f sec\r\n", stop-time);
+//    time=stop;
 
     sgr->drawBaked(active_camera, active_camera->viewWire());
-    //lidr->cornerWindow();
-    //lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
+//    glFlush();
+//    stop=glfwGetTime();
+//    fprintf(stderr, "\tdraw forward: %f sec\r\n", stop-time);
+//    time=stop;
+    lidr->cornerWindow();
+    lidr->textureWindow(sgr->getLights()[0]->getDepthMap());
   }
   else
   {

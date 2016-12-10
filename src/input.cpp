@@ -5,6 +5,8 @@
 #include <algorithm>
 #include "stdio.h"
 
+extern bool screenshot;
+
 InputResponder *actors[100];
 unsigned nactors=0;
 
@@ -59,6 +61,13 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
    case GLFW_KEY_ESCAPE:
      glfwSetWindowShouldClose(window, GLFW_TRUE);
      return;
+     break;
+
+   case GLFW_KEY_F12:
+     if (screenshot==false)
+     {
+       screenshot=true;
+     }
      break;
   }
   for (unsigned int i=0; i<nactors; ++i)
