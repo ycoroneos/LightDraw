@@ -15,6 +15,12 @@ G Buffer Deferred: c1*O + c2*O*L + c3*(O+L)
 
 LIDR:              c1*O + c2*O*L + c3*(L+O)
 
+| Method              |      Runtime  |
+|---------------------|:-------------:|
+| Forward Rendering   |  left-aligned |
+| G Buffer Deferred   |    centered   |
+| LIDR                | right-aligned |
+
 Both G buffer deferred and LIDR shade all the objects in linear time but
 LIDR can do it while consuming less memory and allowing more varied
 material properties. With extremely large scenes that have many dynamic
