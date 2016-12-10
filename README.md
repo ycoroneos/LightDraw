@@ -43,6 +43,10 @@ it with collada, fbx, and 3ds so I know those work.
 
   -Uses lodePNG to record videos
 
+  -Uses GLFW for rendering context
+
+  -Uses GLEW for managing extensions
+
 ##How to Use
 My benchmark scenes of the Crytek Sponza Atrium could not fit on github
 so you must download them here and put them in the root of
@@ -69,3 +73,11 @@ and a "lightmap" texture is sampled to see which lights hit the current
 fragment. Lights are identified by a number, which is its index in my light
 array and also its index in a 1D texture containing all of the light
 properties of the scene.
+
+##Bit Packing and Render Buffer Size
+Since we are storing light properties for later use, we cannot have
+infinite lights. The constraints are set by the size of the render
+buffer. I am using a single render buffer of type RGBA_32 which means I
+can store 32bits of data per fragment. Partitioning these bits is sort
+of arbitrary, but I chose to store 4 lights per fragment. This limits me
+to 2^8 = 256 total active lights in the scene.
