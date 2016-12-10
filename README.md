@@ -80,7 +80,7 @@ properties of the scene. The rendering steps are:
 
 1. Z Pre-Pass the entire scene into a depth FBO
 
-2 (Optional). Render shadow maps for each light
+2. (Optional) Render shadow maps for each light
 
 3. Construct the Light Index Map by rendering and accumulating light
    volumes into a full screen quad. All light volumes are implicitly
