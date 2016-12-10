@@ -66,6 +66,8 @@ it with collada, fbx, and 3ds so I know those work.
 
   -Uses GLEW for managing extensions
 
+  -Can load voxel objects out of the binvox format
+
 
 ##Basic Idea of LIDR
 Instead of storing objects and material properties in a G buffer, like
