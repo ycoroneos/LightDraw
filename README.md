@@ -76,7 +76,7 @@ fragments they hit. All geometry is then rendered in a forward manner
 and a "lightmap" texture is sampled to see which lights hit the current
 fragment. Lights are identified by a number, which is its index in my light
 array and also its index in a 1D texture containing all of the light
-properties of the scene. The rendering steps are:
+properties of the scene. The rendering steps of my implementation are:
 
 1. Z Pre-Pass the entire scene into a depth FBO
 
