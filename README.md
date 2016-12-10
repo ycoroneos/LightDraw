@@ -9,7 +9,7 @@ care about that.
 
 ##How to Use
 My benchmark scenes of the Crytek Sponza Atrium could not fit on github
-so you must download them here and put them in the root of
+so you must download them [here](http://people.csail.mit.edu/spock/) and put them in the root of
 this directory tree.
 
 ##Build Instructions
