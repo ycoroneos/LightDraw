@@ -51,6 +51,7 @@ this directory tree.
 ##Build Instructions
 This is a CMake project with all dependencies included in the repo. If
 you know CMake, then stop here and do the normal thing. Otherwise:
+
 mkdir build
 
 cd build
