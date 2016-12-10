@@ -19,6 +19,16 @@ material properties. With extremely large scenes that have many dynamic
 shadows, both methods of deferred rendering are bottlenecked by
 shadowmapping.
 
+##Overview of the Algorithm
+LIDR stores light properties, and the fragments they hit, in textures.
+Later drawing passes can simply do a texture lookup to see which lights
+shade a given fragment.
+
+###Z Pre Pass
+Render the scene from the camera's point of view into an FBO which is
+the same size as the window.
+
+
 ##Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
@@ -36,4 +46,4 @@ properties in LIDR is much less than the amount the G buffer consumes.
 Since all objects are drawn sequentially in a forward pass, transparency
 and varied material properties are easy to implement. Transparency is
 done exactly the same way as in a standard forward renderer: Z-PrePass
-all opaque objects 
+all opaque objects
