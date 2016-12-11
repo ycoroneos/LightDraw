@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     if (!glfwInit())
         return -1;
 
-    int width = 1024;
-    int height = 768;
+    int width = 1920;
+    int height = 1080;
     window_width = width;
     window_height = height;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
@@ -130,8 +130,8 @@ int main(int argc, char **argv)
         {
           double distime = glfwGetTime();
           glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-          //glReadPixels(0, 0, width*2, height*2, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-          glReadPixels(0, 0, width*2, height*2, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, pixels);
+          glReadPixels(0, 0, width*2, height*2, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+          //glReadPixels(0, 0, width*2, height*2, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, pixels);
           char name[50];
           sprintf(name, "frame_%d.png", writeframe);
           encodeOneStep(name, (const unsigned char*)pixels, width*2, height*2);

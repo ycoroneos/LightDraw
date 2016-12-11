@@ -58,7 +58,6 @@ order to avoid submitting 6 draw calls, the FBO for the point light
 shadowmap can be a cubemap and each side can be rendered to with the
 help of a geometry shader.
 
-insert picture here
 
 ###Light Map Generation
 Determine which lights hit each fragment in the camera's view and write
@@ -69,7 +68,7 @@ cone angle. In order for a point to be inside a cone volume, it must be
 inside the radius and also within the cone's light angle. Point lights
 are just a special case of a cone with an angle of 2\*PI.
 
-Insert picture here
+<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/lightvolumes.png">
 
 In order to generate the Light Map, light volumes have to be rendered
 into it. Since the light volumes are implicit, no real geometry must be
