@@ -68,7 +68,8 @@ cone angle. In order for a point to be inside a cone volume, it must be
 inside the radius and also within the cone's light angle. Point lights
 are just a special case of a cone with an angle of 2\*PI.
 
-Light map on the bottom right:<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/lightvolumes.png">
+Light map on the bottom right:
+![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/lightvolumes.png)
 
 In order to generate the Light Map, light volumes have to be rendered
 into it. Since the light volumes are implicit, no real geometry must be
