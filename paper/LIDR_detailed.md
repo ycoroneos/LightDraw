@@ -51,12 +51,13 @@ but 24bits can probably work too.
 
 Render the scene from the light's point of view but only store the
 depth. This is exactly the same as the Z Pre Pass, but it is done for
-every light. For spotlights, construct a view matrix from where it's
-located and where it's looking at. For point lights, construct 6 view
-matrices to represent each side of the cube that contains the it. In
+every light. For spotlights, construct a view matrix from where the
+light is located and where it's looking at. For point lights, construct 6 view
+matrices to represent each side of the cube that contains the light. In
 order to avoid submitting 6 draw calls, the FBO for the point light
-shadowmap can be a cubemap and each side can be rendered to with the
-help of a geometry shader.
+shadowmap can be a cubemap and each side can be rendered to in a single
+draw call with the help of a geometry shader. Shadow map resolution is
+1024x1024 and there is no PCF so all shadows are hard.
 
 
 ###Light Map Generation
