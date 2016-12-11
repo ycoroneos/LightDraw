@@ -111,7 +111,8 @@ Transform from clip space to world space:
 There is one more shortcut I took. Instead of rendering a full-screen
 quad, which is 6 vertices the gpu must draw, I rendered an oversized
 triangle. The gpu clips the triangle and interpolates the fragment
-coordinates so it becomes the same thing in the fragment shader.
+coordinates so it effectively becomes a quad in the fragment shader.
+It is decribed in more detail [here](https://rauwendaal.net/2014/06/14/rendering-a-screen-covering-triangle-in-opengl/)
 
 ###Bit Packing and Render Buffer Size
 |Source                         | Function        |
