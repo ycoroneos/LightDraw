@@ -105,10 +105,46 @@ coordinates so it becomes the same thing in the fragment shader.
 ###Bit Packing and Render Buffer Size
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
-buffer. I am using a single render buffer of type RGBA_32 which means I
+buffer. I am using a single render buffer of type RGBA_32 which means it
 can store 32bits of data per fragment. Partitioning these bits is sort
 of arbitrary, but I chose to store 4 lights per fragment. This limits me
-to 2^8 = 256 total active lights in the scene.
+to 2^(32/4) = 256 total active lights in the scene. The lightvolume
+shader takes a light index as input, and it outputs it for every
+fragment that is inside the light's volume. The goal of this procedure
+is to have sequential runs of the light volume shader simply shift down
+the bits of the previous output, packing the bits. This is illustrated
+below.
+
+Initial state of framebuffer:
+|       |R|G|B|A|
+|-------|-|-|-|-|
+|       | | | | |
+|-------|-|-|-|-|
+|       | | | | |
+|-------|-|-|-|-|
+|       | | | | |
+|-------|-|-|-|-|
+|       | | | | |
+|-------|-|-|-|-|
+
+|Source                         | Function        |
+|-------------------------------|---------------|
+|src/light.cpp                  |shadowMap()      |
+|src/scenegraph.cpp             |drawShadowMaps() |
+|shaders/spotlight\_shadow.vert |                 |
+|shaders/spotlight\_shadow.frag |                 |
+|shaders/point\_shadow.vert     |                 |
+|shaders/point\_shadow.geom     |                 |
+|shaders/point\_shadow.frag     |                 |
+
+Storing light
+indices in the light map proceeds as follows:
+''''
+for every light:
+  upload radius, angle, position, direction to shader
+  index = lightnum + 1
+  vec4 
+''''
 
 LIDR has numerous advantages compared to G buffer deferred rendering.
 There are typically less lights in a scene than objects. Also, each
