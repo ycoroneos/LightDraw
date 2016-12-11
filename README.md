@@ -106,7 +106,7 @@ triangle meshes and varying amounts of lights. This is a stress test so
 every single light is assumed to be dynamic and all light volumes and
 shadowmaps are re-calculated on every frame.
 This is why the performance collapses so
-dramatically with shadows enabled.
+dramatically with shadows enabled. V-sync is enabled too.
 
 
 I ran my benchmark scene on this computer:

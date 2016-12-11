@@ -135,7 +135,7 @@ sequential runs of the light volume shader simply shift down
 the bits of the previous output, packing the bits. This is illustrated
 below for a series of fake lights.
 
-Initial state of framebuffer for a single fragment:
+Initial state of the framebuffer for a single fragment:
 
 | Color Channel | 0x3<<6 | 0x3<<4 | 0x3<<2 | 0x3 |
 |---------------|--------|--------|--------|-----|
@@ -197,6 +197,8 @@ framebuffer = new_framebuffer + 0.25*framebuffer
 This is why light indices will be evicted out of the light map if there
 are more than four lights hitting a single fragment.
 
+The total amount of space consumed by the lightmap is
+x\_pixels\*y\_pixels*4. For a resolution of 3840x2160 this is 33.18MB
 
 ###Light Property Packing
 The lightmap identifies the indices of the lights hitting a given
@@ -223,6 +225,8 @@ and radius can be packed into a single vec4.
   glBindTexture(GL_TEXTURE_1D, light_position_tex);
   glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGBA, GL_FLOAT, &light_pos_radius[0]);
 ````
+
+The total amount of space used by all of these textures is 13.36kB
 
 ###Bit Unpacking and Shading in the Forward Pass
 Now that the light map has been generated and the light properties have
@@ -301,3 +305,45 @@ the Blinn-Phong shading model.
         float distance = 1.0f / length(lightPos - pos_world.xyz);
         out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * distance * att;
 ````
+
+##Evaluation and Conclusion
+Graphs are shown [here](https://github.com/ycoroneos/LightDraw/blob/condensed/README.md) at the bottom.
+The benchmark scene was made by animating a camera on a predetermined
+path. Every run of the benchmark consisted of the same fly through so
+the computational variance is low.
+
+At resolutions below 3840x2160, LIDR without shadows can easily maintain
+a smooth frame rate no matter how many lights. There are two interesting
+observations that result from the data though:
+1. Performance of LIDR collapses with shadowmaps
+2. Performance of LIDR collapses at high resolutions with many lights
+
+The first observation can be explained by remembering the runtime of the
+shadowmapping algorithm: O(M\*L). On a large scene, with many shadow
+casting lights, there is almost no hope. A small trick you can play is
+to only update shadowmaps for lights that have moved. This is merely an
+improvement by a constant factor though. Realistically, great care must
+be taken to minimize the amount of shadow casting lights.
+
+The performance collapse of LIDR with many lights is harder to explain,
+that's why I haven't written this yet.
+
+##Compared to G-Buffer Based Deferred Rendering
+At a resolution of 3840x2160:
+
+
+G buffer stores depth, ambient, diffuse, specular, surface normal
+
+|       | depth | ambient | diffuse | specular | surface normal | total   |
+|-------|-------|---------|---------|----------|----------------|---------|
+| bytes | 4     | 12      | 12      |    12    |             12 | 431.3MB |
+
+
+LIDR stores depth, light index, ambient, diffuse, specular, position, radius.
+Remember that the light properties are stored per-light, and not
+per-pixel.
+
+|       | depth | light index | ambient | diffuse | specular | position | radius | total   |
+|-------|-------|-------------|---------|---------|----------|----------|--------|---------|
+| bytes | 4     | 4           | 12      |    12   |       12 | 12       | 4      | 66.37MB |
+
