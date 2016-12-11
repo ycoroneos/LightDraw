@@ -87,7 +87,7 @@ into it. Since the light volumes are implicit, no real geometry must be
 dispatched to the gpu in order to render the light volumes. Instead a
 full-screen quad is rendered and, for every single fragment on the quad,
 its world-space position is recovered from multiplying the NDC
-coordinated with the camera's inverse ProjectionView matrix. NDC depth
+coordinate with the camera's inverse ProjectionView matrix. NDC depth
 is recovered by looking it up from the depth buffer generated earlier.
 This is a complicated step, so I will walk through the code below:
 
