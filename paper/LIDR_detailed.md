@@ -159,19 +159,12 @@ total number of lights. This is because the fragment shader clips its
 output value to [0,1]. The light index to be sent to the shader is then
 constructed as follows:
 
-''''
+
+````
     //Pack the RGBA channels of the color
     vec4 index = vec4((index&0x3) << 6, (index&0xC) << 4, (index&0x30) << 2, (index&0xC0) << 0)/255.0f;
-''''
+````
 
-Storing light
-indices in the light map proceeds as follows:
-''''
-for every light:
-  upload radius, angle, position, direction to shader
-  index = lightnum + 1
-  vec4
-''''
 
 LIDR has numerous advantages compared to G buffer deferred rendering.
 There are typically less lights in a scene than objects. Also, each
