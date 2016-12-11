@@ -102,8 +102,10 @@ Check out the paper for more detailed info.
 
 ##Performance and Graphs
 My Sponza benchmark is basically the Crytek modified Sponza with 582
-triangle meshes and varying amounts of lights. Every single light is
-assumed to be dynamic. This is why the performance collapses so
+triangle meshes and varying amounts of lights. This is a stress test so
+every single light is assumed to be dynamic and all light volumes and
+shadowmaps are re-calculated on every frame.
+This is why the performance collapses so
 dramatically with shadows enabled.
 
 
