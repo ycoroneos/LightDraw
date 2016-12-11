@@ -1,0 +1,14 @@
+there are 30 lights
+drew 100 frames in 4.275136 seconds -> 23.391067 fps
+drew 100 frames in 4.237071 seconds -> 23.601211 fps
+drew 100 frames in 4.224938 seconds -> 23.668988 fps
+drew 100 frames in 4.217819 seconds -> 23.708935 fps
+drew 100 frames in 4.329453 seconds -> 23.097604 fps
+drew 100 frames in 4.285519 seconds -> 23.334395 fps
+drew 100 frames in 4.214766 seconds -> 23.726110 fps
+drew 100 frames in 4.174456 seconds -> 23.955217 fps
+drew 100 frames in 4.224076 seconds -> 23.673816 fps
+drew 100 frames in 4.296523 seconds -> 23.274633 fps
+drew 100 frames in 4.293808 seconds -> 23.289349 fps
+drew 100 frames in 4.311332 seconds -> 23.194688 fps
+
