@@ -36,7 +36,7 @@ Render the scene from the camera's point of view into an FBO which is
 the same size as the window. I used a 32bit depth buffer for precision
 but 24bits can probably work too.
 
-Insert picture here
+<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/depth.png">
 
 ###Shadow Map Generation
 |Source                         | Function        |

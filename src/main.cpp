@@ -130,7 +130,8 @@ int main(int argc, char **argv)
         {
           double distime = glfwGetTime();
           glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-          glReadPixels(0, 0, width*2, height*2, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+          //glReadPixels(0, 0, width*2, height*2, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+          glReadPixels(0, 0, width*2, height*2, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, pixels);
           char name[50];
           sprintf(name, "frame_%d.png", writeframe);
           encodeOneStep(name, (const unsigned char*)pixels, width*2, height*2);
