@@ -231,7 +231,18 @@ restriction at all on the material properties of each object and, in
 fact, each object can be drawn using a substantially different shader.
 The only thing required for lighting is that the shader unpack light
 index values from the lightmap and use them to index the light
-properties table. Unpacking the light map is the opposite set of
+properties table. The declarations in the shader look like:
+
+````
+//lidr supplied
+uniform sampler2D lightindex_tex;     //2
+uniform sampler1D lightambient_tex;   //3
+uniform sampler1D lightdiffuse_tex;   //4
+uniform sampler1D lightspecular_tex;  //5
+uniform sampler1D lightposition_tex;  //6
+````
+
+Unpacking the light map is the opposite set of
 operations that was used to pack it. Once again, the GPU doesn't support
 bit operations so they must be faked with floating-point operations.
 
@@ -263,4 +274,29 @@ highp vec4 unpacklights(vec4 packedLight)
   }
   return lightIndex;
 }
+````
+
+Each fragment can have 4 light indices so the final color output is the
+sum of each light contribution. The index of each light is used to
+sample the set of 1D property textures for the lights.
+
+````
+        vec4 lightPos_att = texture(lightposition_tex, index).xyzw;
+        vec3 lightPos = lightPos_att.xyz;
+        float att = lightPos_att.w;
+        vec3 L = normalize(lightPos.xyz - pos_world.xyz);
+        vec3 V = normalize(camPos - pos_world.xyz);
+        vec3 N = normalize(var_Normal);
+
+        vec3 lightAmbient = texture(lightambient_tex, index).xyz;
+        vec3 Iamb = ambient(lightAmbient);
+
+        vec3 lightDiffuse = texture(lightdiffuse_tex, index).xyz;
+        vec3 Idif = diffuse(N, L, lightDiffuse);
+
+        vec3 lightSpecular = texture(lightspecular_tex, index).xyz;
+        vec3 Ispe = specular(N, L, V, lightSpecular);
+
+        float distance = 1.0f / length(lightPos - pos_world.xyz);
+        out_Color.xyz += (Iamb * (Idif + Ispe)) * diffuseColor * distance * distance * att;
 ````
