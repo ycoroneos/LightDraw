@@ -236,6 +236,7 @@ operations that was used to pack it. Once again, the GPU doesn't support
 bit operations so they must be faked with floating-point operations.
 
 ````
+//Bit unpacking in the wild
 #define NUM_LIGHTS 256.0
 highp vec4 unpacklights(vec4 packedLight)
 {
