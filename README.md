@@ -1,5 +1,5 @@
 # LightDraw
-
+[paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md)
 <img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png">
 
 A game engine based on the light-indexed deferred rendering technique
