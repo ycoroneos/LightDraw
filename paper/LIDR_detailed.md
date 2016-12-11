@@ -350,8 +350,9 @@ to see if the collapse is linear. It's not:
 In order to characterize this, timers were added into the main rendering
 loop to see where most of the time was spent. Impressively, most of the
 time was spent by OpenGL swapping the front and back buffers. This is
-not a good enough answer though, because the OpenGL driver tried to be
-intelligent about when it submits commands to the GPU. In order to
+not a good enough answer though, because the OpenGL driver tries to be
+intelligent about when it submits commands to the GPU, so it may be
+deferring the critical computations. In order to
 bypass this, calls to glFlush() were added after every step in the LIDR
 algorithm. Specifically, calls to glFlush() were added after:
 
