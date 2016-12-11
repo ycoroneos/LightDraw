@@ -380,7 +380,39 @@ Here are the results for 1024x768, 196 lights:
 
 Here are the results for 3840x2160, 196 lights
 
+|            | frame time (sec) | swap time (sec) | swap time % total |
+|------------|------------------|-----------------|-------------------|
+| no flush   | .002471          | .047278         | 95.032%           |
+| with flush | .002389          | .03705          | 93.94%            |
+|            |                  |                 |                   |
+
+At the smaller resolution, flush has the desired effect of making the
+draw time of the scene longer than the buffer swap time. This indicates
+that the OpenGL driver does indeed defer computation until later.
+
+At the larger resolution of 3840x2160, flush reduces the time it takes
+to swap the buffers but buffer swapping still eats up most of the time.
+Now, I will go ahead and shift blame to the OpenGL driver because that's
+where the bottleneck is. It seems that the driver cannot efficiently
+optimize command dispatch for the LightDraw game engine that I made. In
+order to further increase performance, I will have to supply more driver
+hints while rendering, switch to a new rendering algorithm, or abandon
+OpenGL altogether and try out a different API like Vulkan.
+
+In conclusion, LIDR is an effective algorithm for rendering lit scenes.
+It dwarves forward rendering in performance when there are no shadows
+(or few shadows) but, because the shadowmapping algorithm is polynomial
+time, LIDR performance collapses with many shadows in the scene. An
+extremely useful comparison that I didn't do would have been to compare
+LIDR performance with traditional G buffer-based deferred rendering and with newer
+algorithms such as tile-based deferred rendering. This goal was
+unreasonable for this project because there was not enough time to
+implmement two more complicated renderers.
+
 ##Compared to G-Buffer Based Deferred Rendering
+The G buffer typically stores all the material properties of the objects
+in the scene, as well as their surface normals and depths.
+
 At a resolution of 3840x2160:
 
 
