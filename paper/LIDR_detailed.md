@@ -354,7 +354,7 @@ not a good enough answer though, because the OpenGL driver tries to be
 intelligent about when it submits commands to the GPU, so it may be
 deferring the critical computations. In order to
 bypass this, calls to glFlush() were added after every step in the LIDR
-algorithm. Specifically, calls to glFlush() were added after:
+algorithm and time was measured again. Specifically, calls to glFlush() were added after:
 
 -Animation
 
@@ -367,6 +367,18 @@ algorithm. Specifically, calls to glFlush() were added after:
 -Light property texture packing
 
 -Forward rendering of scene objects
+
+This test was run on resolutions of 1024x768 and 3840x2160
+
+Here are the results for 1024x768, 196 lights:
+
+|            | frame time (sec) | swap time (sec) | swap time % total |
+|------------|------------------|-----------------|-------------------|
+| no flush   | .00238           | .005919         | 71.32%            |
+| with flush | .003617          | .000993         | 21.54%            |
+|            |                  |                 |                   |
+
+Here are the results for 3840x2160, 196 lights
 
 ##Compared to G-Buffer Based Deferred Rendering
 At a resolution of 3840x2160:
