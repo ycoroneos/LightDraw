@@ -340,12 +340,32 @@ objects, their computational difficulties are within an order of magnitude.
 <img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/runtimes.png">
 
 The performance collapse of LIDR with many lights is a more interesting
-problem. First I re-collected data with V-Sync turned off in order to
-see if the collapse was linear, and it wasn't.
+problem. First, the benchmark was re-run with V-Sync disabled in order
+to see if the collapse is linear. It's not:
 
 ![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1024x768_novsync.png)
 ![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1920x1080_novsync.png)
 ![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/3840x2160_novsync.png)
+
+In order to characterize this, timers were added into the main rendering
+loop to see where most of the time was spent. Impressively, most of the
+time was spent by OpenGL swapping the front and back buffers. This is
+not a good enough answer though, because the OpenGL driver tried to be
+intelligent about when it submits commands to the GPU. In order to
+bypass this, calls to glFlush() were added after every step in the LIDR
+algorithm. Specifically, calls to glFlush() were added after:
+
+-Animation
+
+-Z Pre-Pass
+
+-Shadow maps calculation
+
+-Light volume map calculation
+
+-Light property texture packing
+
+-Forward rendering of scene objects
 
 ##Compared to G-Buffer Based Deferred Rendering
 At a resolution of 3840x2160:
