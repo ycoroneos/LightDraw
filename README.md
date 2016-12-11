@@ -77,7 +77,7 @@ Instead of storing objects and material properties in a G buffer, like
 traditional deferred rendering, LIDR stores light properties and the
 fragments they hit. All geometry is then rendered in a forward manner
 and a "lightmap" texture is sampled to see which lights hit the current
-fragment. Lights are identified by a number, which is its index in my light
+fragment. Lights are identified by a number, which is its index in the light
 array and also its index in a 1D texture containing all of the light
 properties of the scene. The rendering steps of my implementation are:
 
@@ -98,11 +98,11 @@ shadow.
    well as the Light Index Map available to the shader in order to
 extract which lights hit the current fragment.
 
-Check out the paper for more detailed info.
+Check out the [paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md) for more detailed info.
 
 ##Performance and Graphs
-My Sponza benchmark is basically the Crytek modified Sponza with 582
-triangle meshes and varying amounts of lights. This is a stress test so
+My Sponza benchmark is basically the Crytek modified Sponza with 693,838
+triangles and varying amounts of lights. This is a stress test so
 every single light is assumed to be dynamic and all light volumes and
 shadowmaps are re-calculated on every frame.
 This is why the performance collapses so
