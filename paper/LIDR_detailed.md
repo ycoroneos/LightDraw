@@ -86,16 +86,17 @@ In order to generate the Light Map, light volumes have to be rendered
 into it. Since the light volumes are implicit, no real geometry must be
 dispatched to the gpu in order to render the light volumes. Instead a
 full-screen quad is rendered and, for every single fragment on the quad,
-its world-space position is recovered from multiplying the NDC
-coordinate with the camera's inverse ProjectionView matrix. NDC depth
+its world-space position is recovered from multiplying the clip space
+coordinate with the camera's inverse ProjectionView matrix. Clip space depth
 is recovered by looking it up from the depth buffer generated earlier.
 This is a complicated step, so I will walk through the code below:
 
 Reconstruct scenepos in clip space:
 ````
   //xyz scenepos in clip space
-  //clip space goes from [0,1]
+  //clip space goes from [-1,1] but NDC depth goes from [0,1] and
   //var_texcoords are (x,y) position of fragment on the full screen quad
+  //var_texcoords go from [0,1]
   float scenedepth = texture(depthmap, var_texcoords).r * 2.0f - 1.0f;
   vec4 scenepos_clip = vec4((var_texcoords*2.0f) - 1.0f, scenedepth, 1.0f);
 ````
