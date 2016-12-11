@@ -110,19 +110,59 @@ can store 32bits of data per fragment. Partitioning these bits is sort
 of arbitrary, but I chose to store 4 lights per fragment. This limits me
 to 2^(32/4) = 256 total active lights in the scene. The lightvolume
 shader takes a light index as input, and it outputs it for every
-fragment that is inside the light's volume. The goal of this procedure
-is to have sequential runs of the light volume shader simply shift down
+fragment that is inside the light's volume. The goal is to have
+sequential runs of the light volume shader simply shift down
 the bits of the previous output, packing the bits. This is illustrated
-below.
+below for a series of fake lights.
 
-Initial state of framebuffer:
+Initial state of framebuffer for a single fragment:
 
-| bitmask | R | G | B | A |
-|---------|---|---|---|---|
-| 0x3<<6  | 0 | 0 | 0 | 0 |
-| 0x3<<4  | 0 | 0 | 0 | 0 |
-| 0x3<<2  | 0 | 0 | 0 | 0 |
-| 0x3     | 0 | 0 | 0 | 0 |
+| Color Channel | 0x3<<6 | 0x3<<4 | 0x3<<2 | 0x3 |
+|---------------|--------|--------|--------|-----|
+| R             | 0      | 0      |    0   |   0 |
+| G             | 0      | 0      |    0   |   0 |
+| B             | 0      | 0      |    0   |   0 |
+| A             | 0      | 0      | 0      | 0   |
+
+
+After fragment is hit by light 1:
+
+| Color Channel | 0x3<<6 | 0x3<<4 | 0x3<<2 | 0x3 |
+|---------------|--------|--------|--------|-----|
+| R             | 1      | 0      |    0   |   0 |
+| G             | 0      | 0      |    0   |   0 |
+| B             | 0      | 0      |    0   |   0 |
+| A             | 0      | 0      | 0      | 0   |
+
+After fragment is hit by light 200:
+
+| Color Channel | 0x3<<6 | 0x3<<4 | 0x3<<2 | 0x3 |
+|---------------|--------|--------|--------|-----|
+| R             | 0      | 1      |    0   |   0 |
+| G             | 2      | 0      |    0   |   0 |
+| B             | 0      | 0      |    0   |   0 |
+| A             | 3      | 0      | 0      | 0   |
+
+After fragment is hit by light 75:
+
+| Color Channel | 0x3<<6 | 0x3<<4 | 0x3<<2 | 0x3 |
+|---------------|--------|--------|--------|-----|
+| R             | 3      | 0      |    1   |   0 |
+| G             | 2      | 2      |    0   |   0 |
+| B             | 0      | 0      |    0   |   0 |
+| A             | 1      | 3      | 0      | 0   |
+
+In order to make the framebuffer obey these rules for bit packing, the
+GPU's floating point unit must be abused in order to enable bit
+manipulations. First, the light index must be normalized against the
+total number of lights. This is because the fragment shader clips its
+output value to [0,1]. The light index to be sent to the shader is then
+constructed as follows:
+
+''''
+    //Pack the RGBA channels of the color
+    vec4 index = vec4((index&0x3) << 6, (index&0xC) << 4, (index&0x30) << 2, (index&0xC0) << 0)/255.0f;
+''''
 
 Storing light
 indices in the light map proceeds as follows:
