@@ -335,7 +335,7 @@ shadows, the bottleneck becomes apparent: On scenes with many lights and
 objects, their computational difficulties are within an order of magnitude.
 
 
-<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/runtimes.svg">
+<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/runtimes.png">
 
 The performance collapse of LIDR with many lights is harder to explain,
 that's why I haven't written this yet.
