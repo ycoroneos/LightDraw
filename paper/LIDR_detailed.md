@@ -224,7 +224,42 @@ and radius can be packed into a single vec4.
   glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGBA, GL_FLOAT, &light_pos_radius[0]);
 ````
 
-###Bit Unpacking in the Forward Pass
-Now that the light map has been generated
+###Bit Unpacking and Shading in the Forward Pass
+Now that the light map has been generated and the light properties have
+been packed, all the objects in the scene can be drawn. There is NO
+restriction at all on the material properties of each object and, in
+fact, each object can be drawn using a substantially different shader.
+The only thing required for lighting is that the shader unpack light
+index values from the lightmap and use them to index the light
+properties table. Unpacking the light map is the opposite set of
+operations that was used to pack it. Once again, the GPU doesn't support
+bit operations so they must be faked with floating-point operations.
 
+````
+#define NUM_LIGHTS 256.0
+highp vec4 unpacklights(vec4 packedLight)
+{
+  //assemble the weights of different bits in the packed index
+  highp vec4 unpackConst = vec4(4.0, 16.0, 64.0 , 256.0) / NUM_LIGHTS;
 
+  //undo the scaling from [0,1]
+  highp vec4 floorValues = ceil(packedLight * 254.5);
+  highp vec4 lightIndex;
+  for (int i=0; i<4; i++)
+  {
+    //shift out 1 column
+    packedLight = floorValues * 0.25;
+
+    //round down to integers
+    floorValues = floor(packedLight);
+
+    //extract what was shifted out
+    highp vec4 fracpart = packedLight - floorValues;
+
+    //re-assemble into the 8-bit light index but then divide by 256 in
+    //order to scale for the texture lookup
+    lightIndex[i]=dot(fracpart, unpackConst);
+  }
+  return lightIndex;
+}
+````
