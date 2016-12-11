@@ -163,6 +163,15 @@ constructed as follows:
 ````
     //Pack the RGBA channels of the color
     vec4 index = vec4((index&0x3) << 6, (index&0xC) << 4, (index&0x30) << 2, (index&0xC0) << 0)/255.0f;
+    glUniform4fv(lightindex_loc, 1, &index[0]);
+````
+
+In order to make the bit shifting work, blending is enabled in
+CONSTANT_COLOR mode with a value of (0.25f, 0.25f, 0.25f, 0.25f).
+This blend mode produces:
+
+````
+framebuffer = new_framebuffer + 0.25*framebuffer
 ````
 
 
