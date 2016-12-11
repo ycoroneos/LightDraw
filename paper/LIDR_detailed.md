@@ -347,3 +347,12 @@ per-pixel.
 |-------|-------|-------------|---------|---------|----------|----------|--------|---------|
 | bytes | 4     | 4           | 12      |    12   |       12 | 12       | 4      | 66.37MB |
 
+LIDR also easily allows for transparent materials, even though I did not
+demonstrate this ability in my demo. The reason for this is because all
+of the objects in the scene are drawn during a forward pass and each
+object's final color is determined in 1 pass.
+
+In G buffer deferred rendering, an object's final color is the
+composition of its components in the G buffer. By the time an object is
+determined to be transparent in the final pass, the information of what objects live
+behind it has already been lost.
