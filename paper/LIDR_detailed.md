@@ -200,11 +200,12 @@ are more than four lights hitting a single fragment.
 
 ###Light Property Packing
 The lightmap identifies the indices of the lights hitting a given
-fragment but, in order to shade the fragment, light properties must be
+fragment but, in order to actually shade the fragment, light properties must be
 fetched from a different table. LIDR uses 1D texture maps for the
 property tables because texture lookups are very fast in the gpu.
 Assembling these property tables is very straight forward and I used 4 1D
-textures to store: ambient, diffuse, specular, position+radius.
+textures to store: ambient, diffuse, specular, position+radius. Position
+and radius can be packed into a single vec4.
   ````
   glActiveTexture(GL_TEXTURE3);
   glBindTexture(GL_TEXTURE_1D, light_ambient_tex);
