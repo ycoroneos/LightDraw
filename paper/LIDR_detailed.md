@@ -198,7 +198,7 @@ This is why light indices will be evicted out of the light map if there
 are more than four lights hitting a single fragment.
 
 The total amount of space consumed by the lightmap is
-x\_pixels\*y\_pixels*4. For a resolution of 3840x2160 this is 33.18MB
+x\_pixels\*y\_pixels*4 bytes. For a resolution of 3840x2160 this is 33.18MB
 
 ###Light Property Packing
 The lightmap identifies the indices of the lights hitting a given
