@@ -1,4 +1,5 @@
 #include "inc/scenegraph.h"
+#include "GLFW/glfw3.h"
 #include <inc/gl.h>
 #include "inc/mesh.h"
 #include <glm/glm.hpp>
