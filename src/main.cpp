@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     if (!glfwInit())
         return -1;
 
-    int width = 1920;
-    int height = 1080;
+    int width = 640;
+    int height = 480;
     window_width = width;
     window_height = height;
     window = createOpenGLWindow(width, height,"tears_have_been_shed");
@@ -82,6 +82,7 @@ int main(int argc, char **argv)
     glfwSetKeyCallback(window, keyCallback);
     glfwSetCursorPosCallback(window, mouseCallback);
     glfwSetWindowPos(window, 0, 0);
+    glfwSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
