@@ -339,8 +339,13 @@ objects, their computational difficulties are within an order of magnitude.
 
 <img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/runtimes.png">
 
-The performance collapse of LIDR with many lights is harder to explain,
-that's why I haven't written this yet.
+The performance collapse of LIDR with many lights is a more interesting
+problem. First I re-collected data with V-Sync turned off in order to
+see if the collapse was linear, and it wasn't.
+
+![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1024x768_novsync.png)
+![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1920x1080_novsync.png)
+![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/3840x2160_novsync.png)
 
 ##Compared to G-Buffer Based Deferred Rendering
 At a resolution of 3840x2160:

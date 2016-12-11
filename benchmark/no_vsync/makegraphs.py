@@ -23,8 +23,8 @@ if (__name__=="__main__"):
         lidr_shadow = [map(lambda x: float(x), lights), map(lambda x:get_data(resolution[i], x, 'lidr', 'shadow'), lights)]
         forward_noshadow = [map(lambda x: float(x), lights), map(lambda x:get_data(resolution[i], x, 'forward', 'noshadow'), lights)]
         forward_shadow = [map(lambda x: float(x), lights), map(lambda x:get_data(resolution[i], x, 'forward', 'shadow'), lights)]
-        plt.plot(lidr_noshadow[0], lidr_noshadow[1], 'b.-', label='lidr no shadow')
-        plt.plot(lidr_shadow[0], lidr_shadow[1], 'g.-', label='lidr shadow')
+        plt.plot(lidr_noshadow[0], lidr_noshadow[1], 'b.-', label='lidr no shadow no vsync')
+        plt.plot(lidr_shadow[0], lidr_shadow[1], 'g.-', label='lidr shadow no vsync')
         plt.plot(forward_noshadow[0], forward_noshadow[1], 'r.-', label='forward no shadow')
         plt.plot(forward_shadow[0], forward_shadow[1], 'c.-', label='forward shadow')
         plt.legend()
