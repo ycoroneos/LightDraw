@@ -49,7 +49,7 @@ int initScene(mat4 Projection, bool benchmark, bool uselidr, bool shadows)
   mesh_lidr_prog                    = shaderlib.loadShader("../shaders/lidr.vert", "../shaders/lidr_light.frag");
   mesh_forward_prog                 = shaderlib.loadShader("../shaders/forward.vert", "../shaders/forward.frag");
   lidr = new LIDR(lidr_z_program, lidr_lightvolume_program);
-  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza_196lights.dae");
+  sgr = new AssimpGraph("../data/crytek-sponza-dragon/sponza_60lights.dae");
   sgr->enableInput();
   sgr->bake();
   if (shadows)
@@ -84,7 +84,7 @@ void drawScene(double timestep, bool uselidr)
 //  double time = glfwGetTime();
   //animate
   sgr->animate(timestep);
-  glFlush();
+//  glFlush();
 //  double stop = glfwGetTime();
 //  fprintf(stderr, "\tanimations: %f sec\r\n", stop-time);
 //  time=stop;
@@ -95,14 +95,14 @@ void drawScene(double timestep, bool uselidr)
     //first fill the z buffer
     int zprog = lidr->ZPrePass(active_camera);
     sgr->zPreBaked(zprog);
-    glFlush();
+//    glFlush();
 //    stop=glfwGetTime();
 //    fprintf(stderr, "\tzPre: %f sec\r\n", stop-time);
 //    time=stop;
 
     //draw shadowmaps for each light
     sgr->drawShadowMaps();
-    glFlush();
+//    glFlush();
 //    stop=glfwGetTime();
 //    fprintf(stderr, "\tshadow maps: %f sec\r\n", stop-time);
 //    time=stop;
@@ -111,20 +111,20 @@ void drawScene(double timestep, bool uselidr)
     int lightvolume_prog = lidr->LightVolumes();
     sgr->drawLightVolumes(lightvolume_prog, active_camera);
     lidr->LightVolumesEnd();
-    glFlush();
+//    glFlush();
 //    stop=glfwGetTime();
 //    fprintf(stderr, "\tlight volumes: %f sec\r\n", stop-time);
 //    time=stop;
 
     //update the light textures
     lidr->packLightTextures(sgr->getLights());
-    glFlush();
+//    glFlush();
 //    stop=glfwGetTime();
 //    fprintf(stderr, "\tpack light textures: %f sec\r\n", stop-time);
 //    time=stop;
 
     sgr->drawBaked(active_camera, active_camera->viewWire());
-    glFlush();
+//    glFlush();
 //    stop=glfwGetTime();
 //    fprintf(stderr, "\tdraw forward: %f sec\r\n", stop-time);
 //    time=stop;
