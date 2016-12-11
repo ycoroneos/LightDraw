@@ -1,4 +1,7 @@
 # LightDraw
+
+<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png">
+
 A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
 
