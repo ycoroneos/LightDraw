@@ -60,6 +60,15 @@ help of a geometry shader.
 
 
 ###Light Map Generation
+|Source                         | Function        |
+|-------------------------------|:---------------:|
+|src/lidr.cpp                  |lightVolumes()      |
+|src/lidr.cpp                  |lightVolumesEnd()      |
+|src/scenegraph.cpp             |drawLightVolumes()|
+|shaders/lidr\_volume.vert |                 |
+|shaders/lidr\_volume.frag |                 |
+
+
 Determine which lights hit each fragment in the camera's view and write
 this into a new FBO. Lights are identified by their index in a list and
 index 0 means no light hit. Each light is represented by an implicit
@@ -103,6 +112,15 @@ triangle. The gpu clips the triangle and interpolates the fragment
 coordinates so it becomes the same thing in the fragment shader.
 
 ###Bit Packing and Render Buffer Size
+|Source                         | Function        |
+|-------------------------------|:---------------:|
+|src/light.cpp                  |shadowMap()      |
+|src/scenegraph.cpp             |drawShadowMaps() |
+|shaders/spotlight\_shadow.vert |                 |
+|shaders/spotlight\_shadow.frag |                 |
+|shaders/point\_shadow.vert     |                 |
+|shaders/point\_shadow.geom     |                 |
+|shaders/point\_shadow.frag     |                 |
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
 buffer. I am using a single render buffer of type RGBA_32 which means it
@@ -174,14 +192,5 @@ This blend mode produces:
 framebuffer = new_framebuffer + 0.25*framebuffer
 ````
 
-
-LIDR has numerous advantages compared to G buffer deferred rendering.
-There are typically less lights in a scene than objects. Also, each
-light usually has less shading parameters than an arbitrary scene
-object. Because of this, the amount of video memory used to store light
-properties in LIDR is much less than the amount the G buffer consumes.
-
-Since all objects are drawn sequentially in a forward pass, transparency
-and varied material properties are easy to implement. Transparency is
-done exactly the same way as in a standard forward renderer: Z-PrePass
-all opaque objects
+This is why light indices will be evicted out of the light map if there
+are more than four lights hitting a single fragment.
