@@ -278,7 +278,8 @@ highp vec4 unpacklights(vec4 packedLight)
 
 Each fragment can have 4 light indices so the final color output is the
 sum of each light contribution. The index of each light is used to
-sample the set of 1D property textures for the lights.
+sample the set of 1D property textures for the lights. Here it is with
+the Blinn-Phong shading model.
 
 ````
         vec4 lightPos_att = texture(lightposition_tex, index).xyzw;
