@@ -65,6 +65,7 @@ help of a geometry shader.
 |src/lidr.cpp                  |lightVolumes()      |
 |src/lidr.cpp                  |lightVolumesEnd()      |
 |src/scenegraph.cpp             |drawLightVolumes()|
+|src/camera.cpp             |getProjectionViewInverse()|
 |shaders/lidr\_volume.vert |                 |
 |shaders/lidr\_volume.frag |                 |
 
@@ -114,13 +115,14 @@ coordinates so it becomes the same thing in the fragment shader.
 ###Bit Packing and Render Buffer Size
 |Source                         | Function        |
 |-------------------------------|:---------------:|
-|src/light.cpp                  |shadowMap()      |
-|src/scenegraph.cpp             |drawShadowMaps() |
-|shaders/spotlight\_shadow.vert |                 |
-|shaders/spotlight\_shadow.frag |                 |
-|shaders/point\_shadow.vert     |                 |
-|shaders/point\_shadow.geom     |                 |
-|shaders/point\_shadow.frag     |                 |
+|src/lidr.cpp                  |lightVolumes()      |
+|src/lidr.cpp                  |lightVolumesEnd()      |
+|src/scenegraph.cpp             |drawLightVolumes()|
+|src/camera.cpp             |getProjectionViewInverse()|
+|shaders/lidr\_volume.vert |                 |
+|shaders/lidr\_volume.frag |                 |
+
+
 Since we are storing light properties for later use, we cannot have
 infinite lights. The constraints are set by the size of the render
 buffer. I am using a single render buffer of type RGBA_32 which means it
@@ -194,3 +196,34 @@ framebuffer = new_framebuffer + 0.25*framebuffer
 
 This is why light indices will be evicted out of the light map if there
 are more than four lights hitting a single fragment.
+
+
+###Light Property Packing
+The lightmap identifies the indices of the lights hitting a given
+fragment but, in order to shade the fragment, light properties must be
+fetched from a different table. LIDR uses 1D texture maps for the
+property tables because texture lookups are very fast in the gpu.
+Assembling these property tables is very straight forward and I used 4 1D
+textures to store: ambient, diffuse, specular, position+radius.
+  ````
+  glActiveTexture(GL_TEXTURE3);
+  glBindTexture(GL_TEXTURE_1D, light_ambient_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGB, GL_FLOAT, &light_ambient[0]);
+
+  glActiveTexture(GL_TEXTURE4);
+  glBindTexture(GL_TEXTURE_1D, light_diffuse_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGB, GL_FLOAT, &light_diffuse[0]);
+
+  glActiveTexture(GL_TEXTURE5);
+  glBindTexture(GL_TEXTURE_1D, light_specular_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGB, GL_FLOAT, &light_specular[0]);
+
+  glActiveTexture(GL_TEXTURE6);
+  glBindTexture(GL_TEXTURE_1D, light_position_tex);
+  glTexSubImage1D(GL_TEXTURE_1D, 0, 0, nlights+1, GL_RGBA, GL_FLOAT, &light_pos_radius[0]);
+````
+
+###Bit Unpacking in the Forward Pass
+Now that the light map has been generated
+
+
