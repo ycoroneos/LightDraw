@@ -315,6 +315,7 @@ animations so the computational variance is low.
 At resolutions below 3840x2160, LIDR without shadows can easily maintain
 a smooth frame rate no matter how many lights. There are two interesting
 observations that result from the data though:
+
 1. Performance of LIDR collapses with shadowmaps
 
 2. Performance of LIDR collapses at high resolutions with many lights
