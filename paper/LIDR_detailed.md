@@ -309,8 +309,8 @@ the Blinn-Phong shading model.
 ##Evaluation and Conclusion
 Graphs are shown [here](https://github.com/ycoroneos/LightDraw/blob/condensed/README.md) at the bottom.
 The benchmark scene was made by animating a camera on a predetermined
-path. Every run of the benchmark consisted of the same fly through so
-the computational variance is low.
+path. Every run of the benchmark consisted of the same fly-through and
+animations so the computational variance is low.
 
 At resolutions below 3840x2160, LIDR without shadows can easily maintain
 a smooth frame rate no matter how many lights. There are two interesting
