@@ -5,8 +5,8 @@
 A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
 
-This used to be a minecraft-style voxel rendering engine. The pipeline is still there and it
-actually works but its just unused for now. Check out inc/chunk.h if you
+This project used to be a minecraft-style voxel rendering engine. The pipeline is still there and it
+actually works but it's just unused for now. Check out inc/chunk.h if you
 care about that.
 
 
