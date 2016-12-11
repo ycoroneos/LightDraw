@@ -116,6 +116,7 @@ the bits of the previous output, packing the bits. This is illustrated
 below.
 
 Initial state of framebuffer:
+
 |   mask|R|G|B|A|
 |-------|-|-|-|-|
 
