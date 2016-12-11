@@ -91,7 +91,7 @@ Reconstruct scenepos in clip space:
 ````
 
 Transform from clip space to world space:
-  ````
+````
   //PV_inverse is from camera
   vec4 scenepos_world = PV_inverse * scenepos_clip;
   vec3 scenepos_world_fixed = scenepos_world.xyz/scenepos_world.w;
@@ -116,6 +116,7 @@ the bits of the previous output, packing the bits. This is illustrated
 below.
 
 Initial state of framebuffer:
+
 | bitmask | R | G | B | A |
 |---------|---|---|---|---|
 | 0x3<<6  | 0 | 0 | 0 | 0 |
@@ -129,7 +130,7 @@ indices in the light map proceeds as follows:
 for every light:
   upload radius, angle, position, direction to shader
   index = lightnum + 1
-  vec4 
+  vec4
 ''''
 
 LIDR has numerous advantages compared to G buffer deferred rendering.
