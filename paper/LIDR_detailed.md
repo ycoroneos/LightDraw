@@ -350,7 +350,9 @@ per-pixel.
 LIDR also easily allows for transparent materials, even though I did not
 demonstrate this ability in my demo. The reason for this is because all
 of the objects in the scene are drawn during a forward pass and each
-object's final color is determined in 1 pass.
+object's final color is determined in 1 pass. In a scene with
+transparent objects: first render all opaque objects, then turn on
+blending and render the transparent objects from back to front.
 
 In G buffer deferred rendering, an object's final color is the
 composition of its components in the G buffer. By the time an object is
