@@ -310,7 +310,11 @@ the Blinn-Phong shading model.
 Graphs are shown [here](https://github.com/ycoroneos/LightDraw/blob/condensed/README.md) at the bottom.
 The benchmark scene was made by animating a camera on a predetermined
 path. Every run of the benchmark consisted of the same fly-through and
-animations so the computational variance is low.
+animations so the computational variance is low. There are between 5 and
+192 fully-dynamic, shadow-casting lights. This scene represents a
+nightmare scenario for a videogame. The light count stops at 192 because
+the performance was abysmal at the important resolutions of 1920x1080
+and 3840x2160.
 
 At resolutions below 3840x2160, LIDR without shadows can easily maintain
 a smooth frame rate no matter how many lights. There are two interesting
