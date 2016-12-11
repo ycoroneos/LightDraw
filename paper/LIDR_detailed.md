@@ -329,7 +329,13 @@ shadowmapping algorithm: O(M\*L). On a large scene, with many shadow
 casting lights, there is almost no hope. A small trick you can play is
 to only update shadowmaps for lights that have moved. This is merely an
 improvement by a constant factor though. Realistically, great care must
-be taken to minimize the amount of shadow casting lights.
+be taken to minimize the amount of shadow casting lights. By plotting
+the log of the runtimes of LIDR with shadows and forward rendering with
+shadows, the bottleneck becomes apparent: On scenes with many lights and
+objects, their computational difficulties are within an order of magnitude.
+
+
+![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/runtimes.svg)
 
 The performance collapse of LIDR with many lights is harder to explain,
 that's why I haven't written this yet.
