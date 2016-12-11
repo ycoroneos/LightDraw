@@ -116,12 +116,12 @@ the bits of the previous output, packing the bits. This is illustrated
 below.
 
 Initial state of framebuffer:
-|       |R|G|B|A|
+|   mask|R|G|B|A|
 |-------|-|-|-|-|
-|       | | | | |
-|       | | | | |
-|       | | | | |
-|       | | | | |
+|0x3<<6 |0|0|0|0|
+|0x3<<4 |0|0|0|0|
+|0x3<<2 |0|0|0|0|
+|0x3<<0 |0|0|0|0|
 
 |Source                         | Function        |
 |-------------------------------|---------------|
