@@ -31,14 +31,14 @@ make -j4
   -Light Indexed Deferred Rendering with up to 4 lights per fragment and
 256 total scene lights
 
-  -Standard forward rendering for comparison pruposes
+  -Standard forward rendering for comparison purposes
 
   -Per-light shadow mapping (and point light omnidirectional shadow
 maps)
 
   -Easily extensible Input class for all of your inputting needs (used by camera and scenegraph)
 
-  -FPSCamera like counterstrike. Operates in clip mode right now. Press 'v' to toggle wireframe rendering.
+  -FPS Camera like counterstrike. Operates in clip mode right now. Press 'v' to toggle wireframe rendering.
 
   -Scenegraph implementation with things like Pre-baking, Z-prepass, and
 efficient transform propagation
@@ -63,7 +63,7 @@ it with collada, fbx, and 3ds so I know those work.
 
   -Uses glm for GLSL-like vector math
 
-  -Uses lodePNG to record videos
+  -Uses lodePNG to record videos and screenshots
 
   -Uses GLFW for rendering context
 
