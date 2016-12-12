@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-        fprintf(stderr, "frametime: %f swaptime: %f\r\n", frametime-newtime, glfwGetTime()-frametime);
+        //fprintf(stderr, "frametime: %f swaptime: %f\r\n", frametime-newtime, glfwGetTime()-frametime);
         ++framecount;
 
     }
