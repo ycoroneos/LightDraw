@@ -116,7 +116,8 @@ Unfortuneately, not all vendors support this functionality yet so I've
 done the second-best thing. ShaderLib explicitly sets texture binding
 locations upon loading a shader. ShaderLib can't set all uniform binding
 locations because OpenGL doesn't support that but it can reduce the
-overhead associated with binding textures.
+overhead associated with binding textures. Now the programmer can
+directly bind a texture to the correct binding spot.
 
 ##Assimp
 In order to get any external object data into LightDraw, Assimp is used
