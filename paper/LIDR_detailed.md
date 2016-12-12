@@ -59,6 +59,28 @@ shadowmap can be a cubemap and each side can be rendered to in a single
 draw call with the help of a geometry shader. Shadow map resolution is
 1024x1024 and there is no PCF so all shadows are hard.
 
+There are two ways that shadowmaps can be combined with LIDR. The first
+way is deferring the shadowmapping algorithm until the final forward
+pass. This approach allows for an easy implementation of soft shadows
+because the final color of a fragment in shadow can multiplied by a
+constant. The disadvantage of this method is that it can lead to an
+articially lower light count per fragment. Consider the scenario where a
+fragment can be hit by 5 lights but one of them is completely blocked by
+geometry. LIDR will evict one of the lights from the fragment, possibly
+a light that actually affects the fragment. Then, in the final forward
+pass, the fragment will actually only be lit by 3 lights instead of 4.
+
+The alternative method of incorporating shadow maps that LightDraw uses
+is to consider them in the light volume calculation. This way, if a certain
+fragment is in shadow, the occluded light is not even considered to
+affect it.
+Returning to the previous example, the occluded light will not be
+included in the list of lights affecting the fragment. This method
+guarantees that a fragment is visually affected by the maximum amount of
+lights. The downside to this method is that all shadows from individual
+lights are now hard. Soft shadows can still be achieved in the case
+where multiple shadowing lights hit a fragment.
+
 
 ###Light Map Generation
 |Source                         | Function        |
