@@ -1,19 +1,20 @@
 # LightDraw
 [paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md)
-<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png">
+[design doc](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LightDrawDesignandImplementation.md)
+[![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png)](http://people.csail.mit.edu/spock/)
 
 A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
-
-This project used to be a minecraft-style voxel rendering engine. The pipeline is still there and it
-actually works but it's just unused for now. Check out inc/chunk.h if you
-care about that.
 
 
 ##How to Use
 My benchmark scenes of the Crytek Sponza Atrium could not fit on github
 so you must download them [here](http://people.csail.mit.edu/spock/) and put them in the root of
-this directory tree.
+this directory tree. The scene uses a re-creation of the Doom3
+Hell Knight I got from
+[here](https://sketchfab.com/models/6dc36ba89c18429283203c6e97ca3fe6)
+and a christmas tree I got from
+[here](http://resources.blogscopia.com/2015/04/15/christmas-tree/)
 
 ##Build Instructions
 This is a CMake project with all dependencies included in the repo. If
@@ -26,6 +27,22 @@ cd build
 cmake ..
 
 make -j4
+
+./ldraw <options>
+
+###run options
+The default run mode is LIDR with no shadows in FPS camera mode.
+
+Use:
+
+"benchmark" to run the benchmark scene
+
+"forward" to use forward rendering
+
+"shadows" to turn on shadows
+
+Shadows can also be toggled by pressing '2' on the keyboard. Screenshots
+can be taken with F12
 
 ##Feature List
   -Light Indexed Deferred Rendering with up to 4 lights per fragment and

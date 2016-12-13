@@ -141,7 +141,7 @@ void SceneGraph::drawShadowMaps()
   for (int i=0; i<lights.size(); ++i)
   {
     Light *dislight = lights[i];
-    if (!dislight->isShadowing() || !dislight->isOn())// || !dislight->hasMoved())
+    if (!dislight->isShadowing() || !dislight->isOn() || !dislight->hasMoved())
     {
       continue;
     }

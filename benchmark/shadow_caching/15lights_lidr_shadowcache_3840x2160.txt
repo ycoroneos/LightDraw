@@ -1,0 +1,27 @@
+there are 15 lights
+drew 100 frames in 0.800728 seconds -> 124.886291 fps
+drew 100 frames in 0.739513 seconds -> 135.224154 fps
+drew 100 frames in 0.719002 seconds -> 139.081677 fps
+drew 100 frames in 0.714574 seconds -> 139.943449 fps
+drew 100 frames in 0.834889 seconds -> 119.776444 fps
+drew 100 frames in 0.788182 seconds -> 126.874216 fps
+drew 100 frames in 0.714594 seconds -> 139.939514 fps
+drew 100 frames in 0.678973 seconds -> 147.281268 fps
+drew 100 frames in 0.723715 seconds -> 138.175983 fps
+drew 100 frames in 0.796349 seconds -> 125.573112 fps
+drew 100 frames in 0.783047 seconds -> 127.706304 fps
+drew 100 frames in 0.803653 seconds -> 124.431849 fps
+drew 100 frames in 0.745827 seconds -> 134.079350 fps
+drew 100 frames in 0.766716 seconds -> 130.426313 fps
+drew 100 frames in 0.731261 seconds -> 136.750006 fps
+drew 100 frames in 0.767506 seconds -> 130.292198 fps
+drew 100 frames in 0.767633 seconds -> 130.270639 fps
+drew 100 frames in 0.705523 seconds -> 141.738909 fps
+drew 100 frames in 0.723953 seconds -> 138.130430 fps
+drew 100 frames in 0.704859 seconds -> 141.872364 fps
+drew 100 frames in 0.760580 seconds -> 131.478674 fps
+drew 100 frames in 0.752286 seconds -> 132.928252 fps
+drew 100 frames in 0.687816 seconds -> 145.387809 fps
+drew 100 frames in 0.723928 seconds -> 138.135352 fps
+drew 100 frames in 0.725749 seconds -> 137.788622 fps
+

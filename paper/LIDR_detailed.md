@@ -29,6 +29,7 @@ shade a given fragment.
 |-------------------|:---------:|
 |src/lidr.cpp       |ZPrePass() |
 |src/scenegraph.cpp |zPreBaked()|
+|src/mesh.cpp       |quickdraw()|
 |shaders/depth.vert |           |
 |shaders/depth.frag |           |
 
@@ -57,7 +58,7 @@ matrices to represent each side of the cube that contains the light. In
 order to avoid submitting 6 draw calls, the FBO for the point light
 shadowmap can be a cubemap and each side can be rendered to in a single
 draw call with the help of a geometry shader. Shadow map resolution is
-1024x1024 and there is no PCF so all shadows are hard.
+1024x1024 and there is no PCF so all shadows have hard edges.
 
 
 ###Light Map Generation
@@ -203,6 +204,9 @@ The total amount of space consumed by the lightmap is
 x\_pixels\*y\_pixels*4 bytes. For a resolution of 3840x2160 this is 33.18MB
 
 ###Light Property Packing
+|Source                         | Function        |
+|-------------------------------|:---------------:|
+|src/lidr.cpp                  |packLightTextures()      |
 The lightmap identifies the indices of the lights hitting a given
 fragment but, in order to actually shade the fragment, light properties must be
 fetched from a different table. LIDR uses 1D texture maps for the
@@ -231,6 +235,12 @@ and radius can be packed into a single vec4.
 The total amount of space used by all of these textures is 13.36kB
 
 ###Bit Unpacking and Shading in the Forward Pass
+|Source                         | Function        |
+|-------------------------------|:---------------:|
+|src/scenegraph.cpp                   |drawBaked()      |
+|src/mesh.cpp                         |draw()      |
+|shaders/lidr.vert | |
+|shaders/lidr_light.frag | |
 Now that the light map has been generated and the light properties have
 been packed, all the objects in the scene can be drawn. There is NO
 restriction at all on the material properties of each object and, in
@@ -408,6 +418,7 @@ LIDR performance with traditional G buffer-based deferred rendering and with new
 algorithms such as tile-based deferred rendering. This goal was
 unreasonable for this project because there was not enough time to
 implmement two more complicated renderers.
+
 
 ##Compared to G-Buffer Based Deferred Rendering
 The G buffer typically stores all the material properties of the objects

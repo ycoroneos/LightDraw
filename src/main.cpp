@@ -110,12 +110,12 @@ int main(int argc, char **argv)
         double newtime = glfwGetTime();
         double diff = newtime - time;
         time=newtime;
-       // if (framecount>100)
-       // {
-       //   fprintf(stderr, "drew 100 frames in %f seconds -> %f fps\r\n", newtime - hundred_time, 100.0f/(newtime - hundred_time));
-       //   hundred_time=newtime;
-       //   framecount=0;
-       // }
+        if (framecount>100)
+        {
+          fprintf(stderr, "drew 100 frames in %f seconds -> %f fps\r\n", newtime - hundred_time, 100.0f/(newtime - hundred_time));
+          hundred_time=newtime;
+          framecount=0;
+        }
         //draw
         if (record)
         {
