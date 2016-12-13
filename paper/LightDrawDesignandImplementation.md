@@ -6,6 +6,11 @@ keyframe animations, light properties, and the entire scene graph will
 be imported. Really, all that's missing is a game.
 
 ##Scenegraph
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/scenegraph.h ||
+|inc/node.h ||
+
 The scenegraph is the primary data structure of the game engine. It
 consists of a list of every node in the scene. Nodes are recursive data
 structures that contain transformations relative to their parents. A
@@ -23,6 +28,10 @@ modifed, only it's children are re-baked. In this way, animation only
 costs as much the number of objects that have moved.
 
 ##Meshes
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/mesh.h ||
+
 Each mesh in LightDraw can have its own unique lighting model and
 material properties. The unique lighting model is achieved by letting
 each mesh have its own shader to draw with. Material properties are
@@ -32,6 +41,10 @@ The vertex data is stored in an interleaved buffer on the GPU during
 mesh instantiation.
 
 ##Materials
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/material.h ||
+
 Materials in LightDraw are managed by the Material class. It is in
 charge of binding textures and uploading material parameters to the
 shader before the draw call. Naturally, each mesh contains a pointer to
@@ -39,6 +52,11 @@ a material object. Material loads textures and stores them in video
 memory upon instantiation.
 
 ##Lights
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/light.h ||
+|src/lidr.cpp                  |packLightTextures()      |
+
 Lights are extremely important because they are the objects of interest
 in LIDR. LightDraw supports point lights, spot lights, and directional
 lights. Each specific type of light inherits from an abstract base class
@@ -61,6 +79,12 @@ this, it knows that the light is a directional light so the position and
 cone angle is ignored.
 
 ##Cameras
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/camera.h ||
+|inc/fpscamera.h ||
+|inc/assimpcamera.h ||
+
 There are two kinds of cameras supported in LightDraw: FPS-like cameras
 and animated, keyframed cameras. You can guess which one I used for the
 benchmark.. Each camera is responsible for its own projection and view
@@ -68,6 +92,10 @@ matrices. It is also responsible for uploading these parameters to the
 shaders.
 
 ##Keyframe Animations
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/animation.h ||
+
 LightDraw supports keyframe animations on any set of nodes in its
 scenegraph. This is especially powerful because it allows for things
 animated cutscenes and linear blend skinning. Each keyframe is a
@@ -78,6 +106,12 @@ Once again, it is the recursive nature of the Node structure that makes
 this so easy.
 
 ##Keyboard and Mouse Input
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/input.h ||
+|inc/camera.h ||
+|inc/scenegraph.h ||
+
 There is an abstract base class called Input which can register derived
 objects in the keyboard and mouse trap handler. Each derived instance of the
 Input class (currently they are: Camera and Scenegraph) must override a
@@ -86,6 +120,12 @@ also optionally mask its input functionality if desired. This is useful
 for when the player-controlled object changes.
 
 ##ShaderLib
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/shaderlib.h ||
+|src/shaderlib.cpp |loadShader()|
+|src/shaderlib.cpp |canonicalize()|
+
 There is a database for loading and managing shaders. LightDraw
 currently uses 17 different shaders for different purposes. GLSL has no
 langauge support for naming a shader, so I added a small hack to enable
@@ -120,9 +160,31 @@ overhead associated with binding textures. Now the programmer can
 directly bind a texture to the correct binding spot.
 
 ##Assimp
+|Source             | Function  |
+|-------------------|:---------:|
+|inc/scenegraph.h ||
+|src/assimpgraph.cpp |all of it|
+
 In order to get any external object data into LightDraw, Assimp is used
 because it presents a uniform interface for reading game assets in
 almost any format! Instead of writing a seperate OBJ, collada, md5, 3ds,
 and fbx importer I just wrote a single importer for the Assimp format!
 This limits LightDraw's import capabilities to Assimp's but that hasn't
 been a problem yet.
+
+##Performance Hacks
+|Source             | Function  |
+|-------------------|:---------:|
+|src/scenegraph.cpp |drawShadowMaps()|
+
+The realistic cost of shadowmapping can be reduced by caching old
+shadowmaps. Conceptually, a new shadowmap must only be re-calculated
+when the shadow-casting light moves. A typical 3D game may only have a
+few dynamic shadow-casting lights visible at a time in order to take
+advantage of this tweak. LightDraw also supports shadowmap caching and
+the benchmark was re-run at a resolution of 4K with shadowmap caching
+enabled:
+
+<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadowcache_3840x2160.png">
+
+

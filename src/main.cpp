@@ -121,6 +121,11 @@ int main(int argc, char **argv)
         {
           drawScene(1.0/60.0f, uselidr);
         }
+        //draw
+        if (record)
+        {
+          drawScene(1.0/60.0f, uselidr);
+        }
         else
         {
           drawScene(diff, uselidr);
