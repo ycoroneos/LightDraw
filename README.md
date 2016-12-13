@@ -139,6 +139,6 @@ OpenGL version string: 4.5.0 NVIDIA 367.57
 
 Linux Kernel: 4.4.0-53-generic
 
-![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1024x768.png)
-![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1920x1080.png)
-![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/3840x2160.png)
+![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/1024x768.png)
+![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/1920x1080.png)
+![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/3840x2160.png)
