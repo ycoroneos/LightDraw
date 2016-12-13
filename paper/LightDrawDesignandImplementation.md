@@ -5,11 +5,13 @@ Blender and LightDraw will directly import them. Textures,
 keyframe animations, light properties, and the entire scene graph will
 be imported. Really, all that's missing is a game.
 
-##Scenegraph
+
+##Scene Graph
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/scenegraph.h ||
 |inc/node.h ||
+
 
 The scenegraph is the primary data structure of the game engine. It
 consists of a list of every node in the scene. Nodes are recursive data
@@ -18,19 +20,22 @@ node can have lights, meshes, and cameras associated with it. In this
 way, whenever a node is transformed during an animation, the objects attached to it can
 reflect the transformation too.
 
+
 Recomputing the world transforms of the scene graph in every single
 frame is too expensive for real time rendering. The Crytek Sponza demo
 scene consists of 582 triangle meshes. Each of these occupy a node in
 the scene graph and recalculating their world matrices every frame would
 incur the cost of 582 matrix multiplies on the CPU. Instead, the
 scenegraph is baked on startup and whenever the transform of a node is
-modifed, only it's children are re-baked. In this way, animation only
+modified, only it's children are re-baked. In this way, animation only
 costs as much the number of objects that have moved.
+
 
 ##Meshes
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/mesh.h ||
+
 
 Each mesh in LightDraw can have its own unique lighting model and
 material properties. The unique lighting model is achieved by letting
@@ -40,10 +45,12 @@ consists of vertex positions, texture coordinates, normals, and indices.
 The vertex data is stored in an interleaved buffer on the GPU during
 mesh instantiation.
 
+
 ##Materials
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/material.h ||
+
 
 Materials in LightDraw are managed by the Material class. It is in
 charge of binding textures and uploading material parameters to the
@@ -51,14 +58,16 @@ shader before the draw call. Naturally, each mesh contains a pointer to
 a material object. Material loads textures and stores them in video
 memory upon instantiation.
 
+
 ##Lights
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/light.h ||
 |src/lidr.cpp                  |packLightTextures()      |
 
+
 Lights are extremely important because they are the objects of interest
-in LIDR. LightDraw supports point lights, spot lights, and directional
+in LIDR. LightDraw supports point lights, spotlights, and directional
 lights. Each specific type of light inherits from an abstract base class
 of Light. Each light is responsible for generating its own shadow maps
 and uploading properties to the shaders. Each light has an ambient
@@ -67,16 +76,20 @@ nd radius. Notice how this set of properties may seem specific to a
 spotlight, but with some clever packing, these properties can represent
 every light.
 
+
 First of all, position and radius can be packed into a single vec4. This
 is done.
+
 
 For point lights the cone angle is set to 2\*PI. This essentially
 removes the direction from the math calculations, so it left to be
 garbage.
 
+
 For directional lights, the radius is set to -1. When the shader sees
 this, it knows that the light is a directional light so the position and
 cone angle is ignored.
+
 
 ##Cameras
 |Source             | Function  |
@@ -85,16 +98,19 @@ cone angle is ignored.
 |inc/fpscamera.h ||
 |inc/assimpcamera.h ||
 
+
 There are two kinds of cameras supported in LightDraw: FPS-like cameras
 and animated, keyframed cameras. You can guess which one I used for the
 benchmark.. Each camera is responsible for its own projection and view
 matrices. It is also responsible for uploading these parameters to the
 shaders.
 
+
 ##Keyframe Animations
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/animation.h ||
+
 
 LightDraw supports keyframe animations on any set of nodes in its
 scenegraph. This is especially powerful because it allows for things
@@ -105,12 +121,14 @@ the target node, and then recursively baking all children of that node.
 Once again, it is the recursive nature of the Node structure that makes
 this so easy.
 
+
 ##Keyboard and Mouse Input
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/input.h ||
 |inc/camera.h ||
 |inc/scenegraph.h ||
+
 
 There is an abstract base class called Input which can register derived
 objects in the keyboard and mouse trap handler. Each derived instance of the
@@ -119,6 +137,7 @@ virtual function to receive and handle input. Each derived class can
 also optionally mask its input functionality if desired. This is useful
 for when the player-controlled object changes.
 
+
 ##ShaderLib
 |Source             | Function  |
 |-------------------|:---------:|
@@ -126,9 +145,10 @@ for when the player-controlled object changes.
 |src/shaderlib.cpp |loadShader()|
 |src/shaderlib.cpp |canonicalize()|
 
+
 There is a database for loading and managing shaders. LightDraw
 currently uses 17 different shaders for different purposes. GLSL has no
-langauge support for naming a shader, so I added a small hack to enable
+language support for naming a shader, so I added a small hack to enable
 this. At the top of every vertex shader is a line like
 ````
 //name=lidr
@@ -136,7 +156,8 @@ this. At the top of every vertex shader is a line like
 ShaderLib sees this and associates the shader with that name. That is
 not the only thing ShaderLib does though! It also compiles the shaders
 and prints out compiler errors when they don't compile. Shaderlib also
-canonicalizes texture and uniform binding locations.
+canonicalized texture and uniform binding locations.
+
 
 Updating a uniform in OpenGL is usually done by a two-part process:
 ````
@@ -147,17 +168,20 @@ This needs to happen because the programmer has no clue where OpenGL
 bound the uniforms. Furthermore, glGetUniformLocation() is extremely
 expensive when it's called millions of times per frame:
 
+
 <img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/call_stats.png">
+
 
 OpenGL 4.3 and up introduced a feature to GLSL that allows programmers
 to explicitly assign a binding location to uniforms and samplers in the
 shader. Using this feature, all calls to glGetUniformLocation() can be avoided.
-Unfortuneately, not all vendors support this functionality yet so I've
+Unfortunately, not all vendors support this functionality yet so I've
 done the second-best thing. ShaderLib explicitly sets texture binding
 locations upon loading a shader. ShaderLib can't set all uniform binding
 locations because OpenGL doesn't support that but it can reduce the
 overhead associated with binding textures. Now the programmer can
 directly bind a texture to the correct binding spot.
+
 
 ##Assimp
 |Source             | Function  |
@@ -165,26 +189,33 @@ directly bind a texture to the correct binding spot.
 |inc/scenegraph.h ||
 |src/assimpgraph.cpp |all of it|
 
+
 In order to get any external object data into LightDraw, Assimp is used
 because it presents a uniform interface for reading game assets in
-almost any format! Instead of writing a seperate OBJ, collada, md5, 3ds,
+almost any format! Instead of writing a separate OBJ, collada, md5, 3ds,
 and fbx importer I just wrote a single importer for the Assimp format!
 This limits LightDraw's import capabilities to Assimp's but that hasn't
 been a problem yet.
+
 
 ##Performance Hacks
 |Source             | Function  |
 |-------------------|:---------:|
 |src/scenegraph.cpp |drawShadowMaps()|
 
-The realistic cost of shadowmapping can be reduced by caching old
-shadowmaps. Conceptually, a new shadowmap must only be re-calculated
+
+The realistic cost of shadow mapping can be reduced by caching old
+shadowmaps. Conceptually, a new shadow map must only be re-calculated
 when the shadow-casting light moves. A typical 3D game may only have a
 few dynamic shadow-casting lights visible at a time in order to take
-advantage of this tweak. LightDraw also supports shadowmap caching and
-the benchmark was re-run at a resolution of 4K with shadowmap caching
+advantage of this tweak. LightDraw also supports shadow map caching and
+the benchmark was re-run at a resolution of 4K with shadow map caching
 enabled:
 
+
 <img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadowcache_3840x2160.png">
+
+
+
 
 
