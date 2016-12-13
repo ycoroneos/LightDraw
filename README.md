@@ -1,8 +1,8 @@
 # LightDraw
-[paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md)
-[design doc](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LightDrawDesignandImplementation.md)
-[presentation](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/presentation.pdf)
-[![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png)](http://people.csail.mit.edu/spock/)
+[paper](https://github.com/ycoroneos/LightDraw/tree/master/paper/LIDR_detailed.md)
+[design doc](https://github.com/ycoroneos/LightDraw/tree/master/paper/LightDrawDesignandImplementation.md)
+[presentation](https://github.com/ycoroneos/LightDraw/tree/master/paper/presentation.pdf)
+[![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/tree/master/paper/shadows.png)](http://people.csail.mit.edu/spock/)
 
 A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
@@ -116,7 +116,7 @@ shadow.
    well as the Light Index Map available to the shader in order to
 extract which lights hit the current fragment.
 
-Check out the [paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md) for more detailed info.
+Check out the [paper](https://github.com/ycoroneos/LightDraw/tree/master/paper/LIDR_detailed.md) for more detailed info.
 
 ##Performance and Graphs
 My Sponza benchmark is basically the Crytek modified Sponza with 693,838
@@ -139,6 +139,6 @@ OpenGL version string: 4.5.0 NVIDIA 367.57
 
 Linux Kernel: 4.4.0-53-generic
 
-![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1024x768.png)
-![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/1920x1080.png)
-![alt text](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/3840x2160.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1024x768.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1920x1080.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/3840x2160.png)
