@@ -43,7 +43,7 @@ the same size as the window. I used a 32bit depth buffer for precision
 but 24bits can probably work too.
 
 
-<img src="https://github.com/ycoroneos/LightDraw/blob/master/paper/depth.png">
+<img src="https://github.com/ycoroneos/LightDraw/tree/master/paper/depth.png">
 
 
 ###Shadow Map Generation
@@ -118,7 +118,7 @@ are just a special case of a cone with an angle of 2\*PI.
 
 
 Light map on the bottom right:
-![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/lightvolumes.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/lightvolumes.png)
 
 
 In order to generate the Light Map, light volumes have to be rendered
@@ -399,7 +399,7 @@ the Blinn-Phong shading model.
 
 
 ##Evaluation and Conclusion
-Graphs are shown [here](https://github.com/ycoroneos/LightDraw/blob/master/README.md) at the bottom.
+Graphs are shown [here](https://github.com/ycoroneos/LightDraw/tree/master/README.md) at the bottom.
 The benchmark scene was made by animating a camera on a predetermined
 path. Every run of the benchmark consisted of the same fly-through and
 animations so the computational variance is low. There are between 5 and
@@ -433,7 +433,7 @@ objects, their computational difficulties are within an order of magnitude.
 
 
 
-<img src="https://github.com/ycoroneos/LightDraw/blob/master/paper/runtimes.png">
+<img src="https://github.com/ycoroneos/LightDraw/tree/master/paper/runtimes.png">
 
 
 The performance collapse of LIDR with many lights is a more interesting
@@ -441,9 +441,9 @@ problem. First, the benchmark was rerun with V-Sync disabled in order
 to see if the collapse is linear. It's not:
 
 
-![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/1024x768_novsync.png)
-![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/1920x1080_novsync.png)
-![alt text](https://github.com/ycoroneos/LightDraw/blob/master/paper/3840x2160_novsync.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1024x768_novsync.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/1920x1080_novsync.png)
+![alt text](https://github.com/ycoroneos/LightDraw/tree/master/paper/3840x2160_novsync.png)
 
 
 In order to characterize this, timers were added into the main rendering
