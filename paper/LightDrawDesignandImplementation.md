@@ -169,7 +169,7 @@ bound the uniforms. Furthermore, glGetUniformLocation() is extremely
 expensive when it's called millions of times per frame:
 
 
-<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/call_stats.png">
+<img src="https://github.com/ycoroneos/LightDraw/blob/master/paper/call_stats.png">
 
 
 OpenGL 4.3 and up introduced a feature to GLSL that allows programmers
@@ -213,7 +213,7 @@ the benchmark was re-run at a resolution of 4K with shadow map caching
 enabled:
 
 
-<img src="https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadowcache_3840x2160.png">
+<img src="https://github.com/ycoroneos/LightDraw/blob/master/paper/shadowcache_3840x2160.png">
 
 
 
