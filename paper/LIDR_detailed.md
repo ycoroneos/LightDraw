@@ -1,5 +1,7 @@
 #Light Indexed Deferred Rendering
-Is the main point of this project. LIDR is a linear time rendering
+Is the main point of this project. There is also an associated
+[rendering framework / game engine](https://github.com/ycoroneos/LightDraw/blob/master/paper/LightDrawDesignandImplementation.md)
+that LIDR is built on top of. LIDR is a linear time rendering
 algorithm for scenes with many lights and objects. We can reason about
 LIDR's performance by considering the runtime of a typical scene. Assume
 there exists a scene with L lights, and M meshes. Also assume that the rendering
