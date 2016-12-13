@@ -2,7 +2,7 @@
 [paper](https://github.com/ycoroneos/LightDraw/tree/master/paper/LIDR_detailed.md)
 [design doc](https://github.com/ycoroneos/LightDraw/tree/master/paper/LightDrawDesignandImplementation.md)
 [presentation](https://github.com/ycoroneos/LightDraw/tree/master/paper/presentation.pdf)
-[![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/tree/master/paper/shadows.png)](http://people.csail.mit.edu/spock/)
+[![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/blob/master/paper/shadows.png)](http://people.csail.mit.edu/spock/)
 
 A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
