@@ -1,6 +1,7 @@
 # LightDraw
 [paper](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LIDR_detailed.md)
 [design doc](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/LightDrawDesignandImplementation.md)
+[presentation](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/presentation.pdf)
 [![IMAGE ALT TEXT](https://github.com/ycoroneos/LightDraw/blob/condensed/paper/shadows.png)](http://people.csail.mit.edu/spock/)
 
 A game engine based on the light-indexed deferred rendering technique
