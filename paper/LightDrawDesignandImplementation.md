@@ -1,4 +1,4 @@
-#Design and Implementation of the LightDraw Game Engine
+# Design and Implementation of the LightDraw Game Engine
 Besides showcasing the Light Indexed Deferred Rendering algorithm,
 LightDraw is a fairly complete game engine. Artists can model scenes in
 Blender and LightDraw will directly import them. Textures,
@@ -6,7 +6,7 @@ keyframe animations, light properties, and the entire scene graph will
 be imported. Really, all that's missing is a game.
 
 
-##Scene Graph
+## Scene Graph
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/scenegraph.h ||
@@ -31,7 +31,7 @@ modified, only it's children are re-baked. In this way, animation only
 costs as much the number of objects that have moved.
 
 
-##Meshes
+## Meshes
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/mesh.h ||
@@ -46,7 +46,7 @@ The vertex data is stored in an interleaved buffer on the GPU during
 mesh instantiation.
 
 
-##Materials
+## Materials
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/material.h ||
@@ -59,7 +59,7 @@ a material object. Material loads textures and stores them in video
 memory upon instantiation.
 
 
-##Lights
+## Lights
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/light.h ||
@@ -91,7 +91,7 @@ this, it knows that the light is a directional light so the position and
 cone angle is ignored.
 
 
-##Cameras
+## Cameras
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/camera.h ||
@@ -106,7 +106,7 @@ matrices. It is also responsible for uploading these parameters to the
 shaders.
 
 
-##Keyframe Animations
+## Keyframe Animations
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/animation.h ||
@@ -122,7 +122,7 @@ Once again, it is the recursive nature of the Node structure that makes
 this so easy.
 
 
-##Keyboard and Mouse Input
+## Keyboard and Mouse Input
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/input.h ||
@@ -138,7 +138,7 @@ also optionally mask its input functionality if desired. This is useful
 for when the player-controlled object changes.
 
 
-##ShaderLib
+## ShaderLib
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/shaderlib.h ||
@@ -183,7 +183,7 @@ overhead associated with binding textures. Now the programmer can
 directly bind a texture to the correct binding spot.
 
 
-##Assimp
+## Assimp
 |Source             | Function  |
 |-------------------|:---------:|
 |inc/scenegraph.h ||
@@ -198,7 +198,7 @@ This limits LightDraw's import capabilities to Assimp's but that hasn't
 been a problem yet.
 
 
-##Performance Hacks
+## Performance Hacks
 |Source             | Function  |
 |-------------------|:---------:|
 |src/scenegraph.cpp |drawShadowMaps()|

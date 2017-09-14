@@ -8,7 +8,7 @@ A game engine based on the light-indexed deferred rendering technique
 described by Damien Trebilco. Check out https://github.com/dtrebilco/lightindexed-deferredrender
 
 
-##How to Use
+## How to Use
 My benchmark scenes of the Crytek Sponza Atrium could not fit on github
 so you must download them [here](http://people.csail.mit.edu/spock/) and put them in the root of
 this directory tree. The scene uses a re-creation of the Doom3
@@ -17,7 +17,7 @@ Hell Knight I got from
 and a christmas tree I got from
 [here](http://resources.blogscopia.com/2015/04/15/christmas-tree/)
 
-##Build Instructions
+## Build Instructions
 This is a CMake project with all dependencies included in the repo. If
 you know CMake, then stop here and do the normal thing. Otherwise:
 
@@ -31,7 +31,7 @@ make -j4
 
 ./ldraw <options>
 
-###run options
+### run options
 The default run mode is LIDR with no shadows in FPS camera mode.
 
 Use:
@@ -45,7 +45,7 @@ Use:
 Shadows can also be toggled by pressing '2' on the keyboard. Screenshots
 can be taken with F12
 
-##Feature List
+## Feature List
   -Light Indexed Deferred Rendering with up to 4 lights per fragment and
 256 total scene lights
 
@@ -90,7 +90,7 @@ it with collada, fbx, and 3ds so I know those work.
   -Can load voxel objects out of the binvox format
 
 
-##Basic Idea of LIDR
+## Basic Idea of LIDR
 Instead of storing objects and material properties in a G buffer, like
 traditional deferred rendering, LIDR stores light properties and the
 fragments they hit. All geometry is then rendered in a forward manner
@@ -118,7 +118,7 @@ extract which lights hit the current fragment.
 
 Check out the [paper](https://github.com/ycoroneos/LightDraw/tree/master/paper/LIDR_detailed.md) for more detailed info.
 
-##Performance and Graphs
+## Performance and Graphs
 My Sponza benchmark is basically the Crytek modified Sponza with 693,838
 triangles and varying amounts of lights. This is a stress test so
 every single light is assumed to be dynamic and all light volumes and

@@ -1,4 +1,4 @@
-#Light Indexed Deferred Rendering
+# Light Indexed Deferred Rendering
 Is the main point of this project. There is also an associated
 [rendering framework / game engine](https://github.com/ycoroneos/LightDraw/blob/master/paper/LightDrawDesignandImplementation.md)
 that LIDR is built on top of. LIDR is a linear time rendering
@@ -24,13 +24,13 @@ shadows, both methods of deferred rendering are bottlenecked by
 shadow mapping.
 
 
-##Overview of the Algorithm
+## Overview of the Algorithm
 LIDR stores light properties, and the fragments they hit, in textures.
 Later drawing passes can simply do a texture lookup to see which lights
 shade a given fragment.
 
 
-###Z Pre Pass
+### Z Pre Pass
 |Source             | Function  |
 |-------------------|:---------:|
 |src/lidr.cpp       |ZPrePass() |
@@ -48,7 +48,7 @@ but 24bits can probably work too.
 <img src="https://github.com/ycoroneos/LightDraw/blob/master/paper/depth.png">
 
 
-###Shadow Map Generation
+### Shadow Map Generation
 |Source                         | Function        |
 |-------------------------------|:---------------:|
 |src/light.cpp                  |shadowMap()      |
@@ -97,7 +97,7 @@ where multiple shadowing lights hit a fragment.
 
 
 
-###Light Map Generation
+### Light Map Generation
 |Source                         | Function        |
 |-------------------------------|:---------------:|
 |src/lidr.cpp                  |lightVolumes()      |
@@ -159,7 +159,7 @@ coordinates so it effectively becomes a quad in the fragment shader.
 It is decribed in more detail [here](https://rauwendaal.net/2014/06/14/rendering-a-screen-covering-triangle-in-opengl/)
 
 
-###Bit Packing and Render Buffer Size
+### Bit Packing and Render Buffer Size
 |Source                         | Function        |
 |-------------------------------|:---------------:|
 |src/lidr.cpp                  |lightVolumes()      |
@@ -266,7 +266,7 @@ The total amount of space consumed by the lightmap is
 x\_pixels\*y\_pixels*4 bytes. For a resolution of 3840x2160 this is 33.18MB
 
 
-###Light Property Packing
+### Light Property Packing
 |Source                         | Function        |
 |-------------------------------|:---------------:|
 |src/lidr.cpp                  |packLightTextures()      |
@@ -302,7 +302,7 @@ and radius can be packed into a single vec4.
 The total amount of space used by all of these textures is 13.36kB
 
 
-###Bit Unpacking and Shading in the Forward Pass
+### Bit Unpacking and Shading in the Forward Pass
 |Source                         | Function        |
 |-------------------------------|:---------------:|
 |src/scenegraph.cpp                   |drawBaked()      |
@@ -400,7 +400,7 @@ the Blinn-Phong shading model.
 ````
 
 
-##Evaluation and Conclusion
+## Evaluation and Conclusion
 Graphs are shown [here](https://github.com/ycoroneos/LightDraw/tree/master/README.md) at the bottom.
 The benchmark scene was made by animating a camera on a predetermined
 path. Every run of the benchmark consisted of the same fly-through and
@@ -525,7 +525,7 @@ unreasonable for this project because there was not enough time to
 implement two more complicated renderers.
 
 
-##Compared to G-Buffer Based Deferred Rendering
+## Compared to G-Buffer Based Deferred Rendering
 The G buffer typically stores all the material properties of the objects
 in the scene, as well as their surface normals and depths.
 
